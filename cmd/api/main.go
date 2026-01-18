@@ -16,7 +16,7 @@ func main() {
 		}
 	})
 
-	address := ":8080"
+	address := "0.0.0.0:8080"
 	log.Printf("Server running on http://localhost%s\n\n", address)
 
 	if err := http.ListenAndServe(address, nil); err != nil {
