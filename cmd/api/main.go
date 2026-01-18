@@ -3,9 +3,22 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	env := os.Getenv("APP_ENV")
+	if env == "" {
+		env = "develop"
+	}
+	err := godotenv.Load(".env/" + env + ".env")
+	if err != nil {
+		log.Printf("No .env file found for %s environment", env)
+	}
+
 	log.Println("🚆 Railway Ticketing System API starting...")
 
 	http.HandleFunc("/health", func(responseWriter http.ResponseWriter, request *http.Request) {
