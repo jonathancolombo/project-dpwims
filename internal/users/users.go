@@ -1,0 +1,10 @@
+package users
+
+type User struct {
+	Id         int64  `json:"id"`
+	Username   string `json:"username"`
+	Password   string `json:"password"`
+	FiscalCode string `json:"fiscalCode"`
+	Email      string `json:"email"`
+	Telephone  string `json:"telephone"`
+}
