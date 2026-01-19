@@ -1,0 +1,22 @@
+{
+  "name": "Go devcontainer",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+  "customizations": {
+    "jetbrains": {
+      "backend": "IntelliJ",
+      "settings": {},
+      "plugins": []
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git": {},
+    "ghcr.io/devcontainers/features/go": {
+      "version": "1.25"
+    },
+    "ghcr.io/devcontainers/features/node": {
+      "version": "20"
+    }
+  },
+  "remoteUser": "ubuntu"
+}
