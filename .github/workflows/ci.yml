@@ -7,9 +7,8 @@ on:
     branches: [ "develop" ]
 
 jobs:
-  build_and_test:
+  user-service:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,10 +26,13 @@ jobs:
           restore-keys: ${{ runner.os }}-go-
 
       - name: Install dependencies
+        working-directory: ./user-service
         run: go mod tidy
 
       - name: Build
+        working-directory: ./user-service
         run: go build ./...
 
       - name: Run tests
+        working-directory: ./user-service
         run: go test ./... -v
