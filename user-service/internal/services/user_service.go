@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"strings"
 	"user-service/internal/models"
 	"user-service/internal/repositories"
 )
@@ -20,6 +21,11 @@ func (service *UserService) CreateUser(user *models.User) (*models.User, error) 
 	if user == nil {
 		return nil, errors.New("user is nil")
 	}
+	if strings.TrimSpace(user.Username) == "" {
+		return nil, errors.New("username is required")
+	}
+
+	user.Username = strings.ToLower(strings.TrimSpace(user.Username))
 	return service.repository.Create(user)
 }
 
@@ -31,11 +37,11 @@ func (service *UserService) GetAllUsers() ([]*models.User, error) {
 	return service.repository.GetAll()
 }
 
-// DeleteUserByHisId deletes a user by their ID
-func (service *UserService) DeleteUserByHisId(id int64) error {
-	return service.repository.Delete(id)
+// DeleteUserByID deletes a user by their ID
+func (service *UserService) DeleteUserByID(id int64) error {
+	return service.repository.DeleteByID(id)
 }
 
 func (service *UserService) GetUser(id int64) (*models.User, error) {
-	return service.repository.FindById(id)
+	return service.repository.FindByID(id)
 }

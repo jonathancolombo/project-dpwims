@@ -6,18 +6,26 @@ import (
 	"user-service/internal/handlers"
 	"user-service/internal/repositories"
 	"user-service/internal/services"
+
+	"github.com/go-chi/chi/v5"
 )
 
+const pattern = "/users/{id}"
+
 func main() {
-	repo := repositories.NewInMemoryUserRepository()
-	service := services.NewUserService(repo)
+	repository := repositories.NewInMemoryUserRepository()
+	service := services.NewUserService(repository)
 	handler := handlers.NewUserHandler(service)
 
-	http.HandleFunc("/users", handler.CreateUser)
-	http.HandleFunc("/user", handler.GetUser)
+	router := chi.NewRouter()
 
-	log.Println("User Service running on port 8081")
-	err := http.ListenAndServe(":8081", nil)
+	router.Post("/users", handler.CreateUser)
+	router.Get("/users", handler.GetAllUsers)
+	router.Get(pattern, handler.GetUser)
+	router.Delete(pattern, handler.DeleteUser)
+
+	log.Println("User Service running on port 8081 with url http://localhost:8081")
+	err := http.ListenAndServe(":8081", router)
 	if err != nil {
 		return
 	}

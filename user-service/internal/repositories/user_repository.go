@@ -10,8 +10,8 @@ import (
 // IUserRepository defines the interface for a user repository
 type IUserRepository interface {
 	Create(user *models.User) (*models.User, error)
-	Delete(id int64) error
-	FindById(id int64) (*models.User, error)
+	DeleteByID(id int64) error
+	FindByID(id int64) (*models.User, error)
 	GetAll() ([]*models.User, error)
 }
 
@@ -42,8 +42,8 @@ func (repository *InMemoryRepositoryUsers) Create(user *models.User) (*models.Us
 	return created, nil
 }
 
-// DeleteById removes a user from the repository
-func (repository *InMemoryRepositoryUsers) Delete(id int64) error {
+// DeleteByID removes a user from the repository
+func (repository *InMemoryRepositoryUsers) DeleteByID(id int64) error {
 	if id <= 0 {
 		return errors.New("id must be greater than 0")
 	}
@@ -58,8 +58,8 @@ func (repository *InMemoryRepositoryUsers) Delete(id int64) error {
 	return nil
 }
 
-// FindById returns a user from the repository by its ID
-func (repository *InMemoryRepositoryUsers) FindById(id int64) (*models.User, error) {
+// FindByID returns a user from the repository by its ID
+func (repository *InMemoryRepositoryUsers) FindByID(id int64) (*models.User, error) {
 	if id <= 0 {
 		return nil, errors.New("id must be greater than 0")
 	}
@@ -77,7 +77,7 @@ func (repository *InMemoryRepositoryUsers) FindById(id int64) (*models.User, err
 
 // GetAll returns all users from the repository
 func (repository *InMemoryRepositoryUsers) GetAll() ([]*models.User, error) {
-	if len(repository.users) < 0 {
+	if len(repository.users) <= 0 {
 		return nil, errors.New("no users found")
 	}
 
@@ -89,8 +89,8 @@ func NewInMemoryRepositoryUsers() *InMemoryRepositoryUsers {
 	return &InMemoryRepositoryUsers{
 		users: []*models.User{
 			{
-				ID:         1,
-				Username:   "username",
+				ID:         0,
+				Username:   "",
 				Password:   "",
 				FiscalCode: "",
 				Email:      "",
