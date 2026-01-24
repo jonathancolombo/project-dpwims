@@ -10,6 +10,9 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+const KeyContentType = "Content-Type"
+const ValueAppJson = "application/json"
+
 type UserHandler struct {
 	service *services.UserService
 }
@@ -32,12 +35,9 @@ func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *
 		return
 	}
 
-	writer.Header().Set("Content-Type", "application/json")
+	writer.Header().Set(KeyContentType, ValueAppJson)
 	writer.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(writer).Encode(created)
-	if err != nil {
-		return
-	}
 }
 
 func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *http.Request) {
@@ -50,27 +50,25 @@ func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *htt
 		return
 	}
 
-	writer.Header().Set("Content-Type", "application/json")
+	writer.Header().Set(KeyContentType, ValueAppJson)
 	err = json.NewEncoder(writer).Encode(user)
-	checkStatusInternalServerError(writer, err)
 }
 
 // GetAllUsers a handler method to get all users into repository memory
 func (userHandler *UserHandler) GetAllUsers(writer http.ResponseWriter, _ *http.Request) {
 	users, err := userHandler.service.GetAllUsers()
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	writer.Header().Set("Content-Type", "application/json")
+	writer.Header().Set(KeyContentType, ValueAppJson)
 	err = json.NewEncoder(writer).Encode(users)
-	checkStatusInternalServerError(writer, err)
 }
 
 func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *http.Request) {
-	idStr := request.URL.Query().Get("id")
-	id, err := strconv.ParseInt(idStr, 10, 64)
+	idString := chi.URLParam(request, "id")
+	id, err := strconv.ParseInt(idString, 10, 64)
 	if err != nil {
 		http.Error(writer, "invalid id", http.StatusBadRequest)
 		return
@@ -80,12 +78,5 @@ func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *
 		http.Error(writer, "user not found", http.StatusNotFound)
 		return
 	}
-	writer.WriteHeader(http.StatusNoContent) // 204
-}
-
-func checkStatusInternalServerError(writer http.ResponseWriter, err error) {
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	writer.WriteHeader(http.StatusNoContent)
 }
