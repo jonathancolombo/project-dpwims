@@ -141,7 +141,7 @@ func (r *FailingUserRepository) DeleteByID(id int64) error {
 	return errors.New("forced error")
 }
 
-func (r *FailingUserRepository) FindByID(id int64) (*models.User, error) {
+func (r *FailingUserRepository) GetByID(id int64) (*models.User, error) {
 	return nil, errors.New("forced error")
 }
 

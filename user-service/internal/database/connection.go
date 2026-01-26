@@ -1,8 +1,20 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
-func NewMySQLConnection() (*sql.DB, error) {
-	var dataSourceName = "root:password@tcp(mysql:3306)/userservice?parseTime=true"
-	return sql.Open("mysql", dataSourceName)
+func NewMySQLConnection(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, err
+	}
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(5)
+	db.SetConnMaxLifetime(time.Hour)
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+	return db, nil
 }

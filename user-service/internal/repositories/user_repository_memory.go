@@ -37,7 +37,7 @@ func (inMemoryUserRepository *InMemoryUserRepository) Create(user *models.User) 
 }
 
 // FindByID is a method that search a user by his id and returns it
-func (inMemoryUserRepository *InMemoryUserRepository) FindByID(id int64) (*models.User, error) {
+func (inMemoryUserRepository *InMemoryUserRepository) GetByID(id int64) (*models.User, error) {
 	inMemoryUserRepository.rwMutex.RLock()
 	defer inMemoryUserRepository.rwMutex.RUnlock()
 

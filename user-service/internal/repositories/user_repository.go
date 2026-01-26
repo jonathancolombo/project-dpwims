@@ -11,7 +11,7 @@ import (
 type IUserRepository interface {
 	Create(user *models.User) (*models.User, error)
 	DeleteByID(id int64) error
-	FindByID(id int64) (*models.User, error)
+	GetByID(id int64) (*models.User, error)
 	GetAll() ([]*models.User, error)
 }
 
@@ -39,29 +39,30 @@ func (repository *InMemoryRepositoryUsers) Create(user *models.User) (*models.Us
 		Telephone:  user.Telephone,
 	}
 	repository.users = append(repository.users, created)
+	fmt.Println("user created")
 	return created, nil
 }
 
 // DeleteByID removes a user from the repository
 func (repository *InMemoryRepositoryUsers) DeleteByID(id int64) error {
-	if id <= 0 {
-		return errors.New("id must be greater than 0")
-	}
+	_, _ = checkIdIntoUsersList(id)
 
 	for index, user := range repository.users {
 		if user.ID == id {
 			repository.users = append(repository.users[:index], repository.users[index+1:]...)
+			fmt.Println("user found and deleted")
 			return nil
 		}
 	}
-
+	fmt.Println("user not found")
 	return nil
 }
 
 // FindByID returns a user from the repository by its ID
-func (repository *InMemoryRepositoryUsers) FindByID(id int64) (*models.User, error) {
-	if id <= 0 {
-		return nil, errors.New("id must be greater than 0")
+func (repository *InMemoryRepositoryUsers) GetByID(id int64) (*models.User, error) {
+	user, err := checkIdIntoUsersList(id)
+	if err != nil {
+		return user, err
 	}
 
 	for _, user := range repository.users {
@@ -75,27 +76,26 @@ func (repository *InMemoryRepositoryUsers) FindByID(id int64) (*models.User, err
 	return nil, nil
 }
 
+func checkIdIntoUsersList(id int64) (*models.User, error) {
+	if id <= 0 {
+		return nil, errors.New("id must be greater than 0")
+	}
+	return nil, nil
+}
+
 // GetAll returns all users from the repository
 func (repository *InMemoryRepositoryUsers) GetAll() ([]*models.User, error) {
 	if len(repository.users) <= 0 {
 		return nil, errors.New("no users found")
 	}
 
+	fmt.Println("users found")
 	return repository.users, nil
 }
 
 // NewInMemoryRepositoryUsers creates a new instance of InMemoryRepositoryUsers
 func NewInMemoryRepositoryUsers() *InMemoryRepositoryUsers {
 	return &InMemoryRepositoryUsers{
-		users: []*models.User{
-			{
-				ID:         0,
-				Username:   "",
-				Password:   "",
-				FiscalCode: "",
-				Email:      "",
-				Telephone:  "",
-			},
-		},
+		users: []*models.User{},
 	}
 }

@@ -43,5 +43,5 @@ func (service *UserService) DeleteUserByID(id int64) error {
 }
 
 func (service *UserService) GetUser(id int64) (*models.User, error) {
-	return service.repository.FindByID(id)
+	return service.repository.GetByID(id)
 }
