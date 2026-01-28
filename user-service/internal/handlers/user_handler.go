@@ -12,6 +12,8 @@ import (
 
 const KeyContentType = "Content-Type"
 const ValueAppJson = "application/json"
+const baseNumber = 10
+const bitSize = 64
 
 type UserHandler struct {
 	service *services.UserService
@@ -42,7 +44,7 @@ func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *
 
 func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "id")
-	id, err := strconv.ParseInt(idStr, 10, 64)
+	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
 	user, err := userHandler.service.GetUser(id)
 
 	if err != nil || user == nil {
@@ -68,8 +70,6 @@ func (userHandler *UserHandler) GetAllUsers(writer http.ResponseWriter, _ *http.
 
 func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
-	baseNumber := 10
-	bitSize := 64
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
 	if err != nil {
 		http.Error(writer, "invalid id", http.StatusBadRequest)
