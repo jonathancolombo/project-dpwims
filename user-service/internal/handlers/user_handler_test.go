@@ -58,8 +58,8 @@ func TestCreateAndGetUser(testing *testing.T) {
 	body := `{
 				"username": "usernametest", 
 				"password": "passwordtest", 
-				"email": "emailtest", 
-				"fiscalCode": "fiscalcodetest", 
+				"email": "emailtest@mail.it", 
+				"fiscal_code": "RSSMRA80A01H501U", 
 				"telephone": "39852049548" }`
 	request := httptest.NewRequest("POST", "/users", strings.NewReader(body))
 	request.Header.Set("Content-Type", "application/json")
@@ -105,8 +105,8 @@ func TestGetAllUser(testing *testing.T) {
 		ID:         1,
 		Username:   "usernametest",
 		Password:   "passwordtest",
-		Email:      "emailtest",
-		FiscalCode: "fiscalcodetest",
+		Email:      "emailtest@email.it",
+		FiscalCode: "VRDLGI85C60H501Z",
 		Telephone:  "39852049548",
 	})
 
@@ -114,8 +114,8 @@ func TestGetAllUser(testing *testing.T) {
 		ID:         2,
 		Username:   "usernametest2",
 		Password:   "passwordtest",
-		Email:      "emailtest",
-		FiscalCode: "fiscalcodetest",
+		Email:      "emailtest2@email.it",
+		FiscalCode: "VRDLGI84C60H501Z",
 		Telephone:  "39852049548",
 	})
 

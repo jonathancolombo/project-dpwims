@@ -58,7 +58,7 @@ func (repository *InMemoryRepositoryUsers) DeleteByID(id int64) error {
 	return nil
 }
 
-// FindByID returns a user from the repository by its ID
+// GetByID FindByID returns a user from the repository by its ID
 func (repository *InMemoryRepositoryUsers) GetByID(id int64) (*models.User, error) {
 	user, err := checkIdIntoUsersList(id)
 	if err != nil {

@@ -3,9 +3,13 @@ package repositories
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	"strings"
 	"user-service/internal/models"
 )
+
+var ErrUserNotFound = errors.New("user not found")
 
 type MySQLUserRepository struct {
 	database *sql.DB
@@ -17,11 +21,13 @@ func NewMySQLRepositoryUsers(db *sql.DB) *MySQLUserRepository {
 
 func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, user *models.User) (*models.User, error) {
 	query := `INSERT INTO users 
-    			(username, password, email, fiscal_code, telephone) 
-					VALUES (?, ?, ?, ?, ?)`
+    			(username, password, password_salt, email, fiscal_code, telephone) 
+					VALUES (?, ?, ?, ?, ?, ?)`
+
 	statement, err := mySqlUserRepository.database.PrepareContext(context, query)
 
 	if err != nil {
+		_ = fmt.Errorf("prepare statement: %w", err)
 		return nil, err
 	}
 
@@ -32,7 +38,7 @@ func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, 
 		}
 	}(statement)
 
-	result, err := statement.Exec(user.Username, user.Password, user.Email, user.Telephone)
+	result, err := statement.Exec(strings.ToLower(user.Username), user.Password, user.PasswordSalt, user.Email, user.FiscalCode, user.Telephone)
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert user: %w", err)
 	}
@@ -44,20 +50,19 @@ func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, 
 	return user, nil
 }
 
-/*
-func (r *MySQLUserRepository) FindByID(ctx context.Context, id int64) (*models.User, error) {
+func (mySqlUserRepository *MySQLUserRepository) FindByID(context context.Context, id int64) (*models.User, error) {
 	query := `
         SELECT id, username, password, email, fiscal_code, telephone
         FROM users
         WHERE id = ?
     `
 
-	row := r.database.QueryRowContext(ctx, query, id)
+	row := mySqlUserRepository.database.QueryRowContext(context, query, id)
 
 	var user models.User
 	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.FiscalCode, &user.Telephone)
-	if err == sql.ErrNoRows {
-		return nil, repositories.ErrUserNotFound
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, ErrUserNotFound
 	}
 	if err != nil {
 		return nil, fmt.Errorf("scan user: %w", err)
@@ -66,17 +71,22 @@ func (r *MySQLUserRepository) FindByID(ctx context.Context, id int64) (*models.U
 	return &user, nil
 }
 
-func (r *MySQLUserRepository) GetAll(ctx context.Context) ([]*models.User, error) {
+func (mySqlUserRepository *MySQLUserRepository) GetAll(context context.Context) ([]*models.User, error) {
 	query := `
         SELECT id, username, password, email, fiscal_code, telephone
         FROM users
     `
 
-	rows, err := r.database.QueryContext(ctx, query)
+	rows, err := mySqlUserRepository.database.QueryContext(context, query)
 	if err != nil {
 		return nil, fmt.Errorf("query all users: %w", err)
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			return
+		}
+	}(rows)
 
 	var users []*models.User
 	for rows.Next() {
@@ -90,10 +100,10 @@ func (r *MySQLUserRepository) GetAll(ctx context.Context) ([]*models.User, error
 	return users, nil
 }
 
-func (r *MySQLUserRepository) DeleteByID(ctx context.Context, id int64) error {
+func (mySqlUserRepository *MySQLUserRepository) DeleteByID(ctx context.Context, id int64) error {
 	query := `DELETE FROM users WHERE id = ?`
 
-	result, err := r.database.ExecContext(ctx, query, id)
+	result, err := mySqlUserRepository.database.ExecContext(ctx, query, id)
 	if err != nil {
 		return fmt.Errorf("delete user: %w", err)
 	}
@@ -104,9 +114,8 @@ func (r *MySQLUserRepository) DeleteByID(ctx context.Context, id int64) error {
 	}
 
 	if rows == 0 {
-		return repositories.ErrUserNotFound
+		return ErrUserNotFound
 	}
 
 	return nil
 }
-*/

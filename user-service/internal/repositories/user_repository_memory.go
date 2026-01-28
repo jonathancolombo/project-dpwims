@@ -13,9 +13,10 @@ type InMemoryUserRepository struct {
 }
 
 func NewInMemoryUserRepository() *InMemoryUserRepository {
+	var firstID int64 = 1
 	return &InMemoryUserRepository{
 		data:   make(map[int64]*models.User),
-		nextID: 1,
+		nextID: firstID,
 	}
 }
 
@@ -36,7 +37,7 @@ func (inMemoryUserRepository *InMemoryUserRepository) Create(user *models.User) 
 	return user, nil
 }
 
-// FindByID is a method that search a user by his id and returns it
+// GetByID FindByID is a method that searches a user by his id and returns it
 func (inMemoryUserRepository *InMemoryUserRepository) GetByID(id int64) (*models.User, error) {
 	inMemoryUserRepository.rwMutex.RLock()
 	defer inMemoryUserRepository.rwMutex.RUnlock()
@@ -48,6 +49,7 @@ func (inMemoryUserRepository *InMemoryUserRepository) GetByID(id int64) (*models
 	return user, nil
 }
 
+// FindByUsername is a method that searches a user by his username and returns it
 func (inMemoryUserRepository *InMemoryUserRepository) FindByUsername(username string) (*models.User, error) {
 	inMemoryUserRepository.rwMutex.RLock()
 	defer inMemoryUserRepository.rwMutex.RUnlock()
@@ -60,7 +62,7 @@ func (inMemoryUserRepository *InMemoryUserRepository) FindByUsername(username st
 	return nil, nil
 }
 
-// DeleteByID is a method that's delete a user by id into memory
+// DeleteByID is a method that deletes a user by id in memory
 func (inMemoryUserRepository *InMemoryUserRepository) DeleteByID(id int64) error {
 	inMemoryUserRepository.rwMutex.Lock()
 	defer inMemoryUserRepository.rwMutex.Unlock()
@@ -73,6 +75,7 @@ func (inMemoryUserRepository *InMemoryUserRepository) DeleteByID(id int64) error
 	return nil
 }
 
+// GetAll retrieves all user records from the in-memory repository and returns.
 func (inMemoryUserRepository *InMemoryUserRepository) GetAll() ([]*models.User, error) {
 	inMemoryUserRepository.rwMutex.RLock()
 	defer inMemoryUserRepository.rwMutex.RUnlock()

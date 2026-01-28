@@ -1,7 +1,12 @@
 package services
 
 import (
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
+	"fmt"
+	"io"
 	"strings"
 	"user-service/internal/models"
 	"user-service/internal/repositories"
@@ -24,9 +29,78 @@ func (service *UserService) CreateUser(user *models.User) (*models.User, error) 
 	if strings.TrimSpace(user.Username) == "" {
 		return nil, errors.New("username is required")
 	}
+	if strings.TrimSpace(user.Password) == "" {
+		return nil, errors.New("password is required")
+	}
+	if strings.TrimSpace(user.FiscalCode) == "" {
+		return nil, errors.New("fiscal code is required")
+	}
 
 	user.Username = strings.ToLower(strings.TrimSpace(user.Username))
+	user.Email = strings.ToLower(strings.TrimSpace(user.Email))
+	user.FiscalCode = strings.ToUpper(strings.TrimSpace(user.FiscalCode))
+
+	if !isValidEmail(user.Email) {
+		return nil, errors.New("invalid email")
+	}
+
+	var minimumLengthPassword = 10
+	if len(user.Password) < minimumLengthPassword {
+		return nil, errors.New("password must be at least 10 characters long")
+	}
+
+	if user.Role == "" {
+		user.Role = "user"
+	}
+
+	if user.Role != "admin" && user.Role != "user" {
+		return nil, errors.New("invalid role")
+	}
+
+	hashed, err := NewHashedPassword(user.Password)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	fmt.Println(hashed)
+
+	user.Username = strings.ToLower(strings.TrimSpace(user.Username))
+	user.Password = hashed.Hash
+	user.PasswordSalt = hashed.Salt
+
 	return service.repository.Create(user)
+}
+
+// isValidEmail validates an email address, ensuring it is non-empty, contains "@" and ".", and has proper structure.
+func isValidEmail(email string) bool {
+	email = strings.TrimSpace(strings.ToLower(email))
+	if email == "" {
+		return false
+	}
+
+	characterSeparator := "@"
+	subParts := strings.Split(email, characterSeparator)
+
+	numberOfSubParts := 2
+	if len(subParts) != numberOfSubParts {
+		return false
+	}
+
+	firstSubPartIndex := 0
+	name := subParts[firstSubPartIndex]
+
+	secondSubPartIndex := 1
+	domain := subParts[secondSubPartIndex]
+
+	if name == "" || domain == "" {
+		return false
+	}
+
+	if !strings.Contains(domain, ".") {
+		return false
+	}
+
+	return true
 }
 
 // GetAllUsers retrieves all users
@@ -39,9 +113,61 @@ func (service *UserService) GetAllUsers() ([]*models.User, error) {
 
 // DeleteUserByID deletes a user by their ID
 func (service *UserService) DeleteUserByID(id int64) error {
+	if id <= 0 {
+		return errors.New("id must be greater than 0")
+	}
 	return service.repository.DeleteByID(id)
 }
 
+// GetUser retrieves a user by their ID
 func (service *UserService) GetUser(id int64) (*models.User, error) {
 	return service.repository.GetByID(id)
+}
+
+type HashedPassword struct {
+	Hash string
+	Salt string
+}
+
+// generateSalt generates a random salt of the specified number of bytes
+// example generateSalt(16) => "a1b2c3d4e5f6g7h8"
+func generateSalt(numberOfBytes int) (string, error) {
+	bytes := make([]byte, numberOfBytes)
+	if _, err := io.ReadFull(rand.Reader, bytes); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
+}
+
+// hashPasswordWithSha256 hashes a given password using the SHA-256 algorithm and returns the hex-encoded string.
+/*
+	example: hashPasswordWithSha256("SuperSegreta123!", "a1b2c3d4e5f6g7h8") =>
+	"9f3c8e0a7b1d2c4e5f6a7b8c9d0e1f2a3b4c5d67e8f90123456789abcdef0123"
+*/
+func hashPasswordWithSha256(password string, salt string) string {
+	hash := sha256.New()
+	hash.Write([]byte(password))
+	hash.Write([]byte(salt))
+	return hex.EncodeToString(hash.Sum(nil))
+}
+
+// verifyPasswordSHA256 verifies if the provided password matches the expected hash with the given salt
+func verifyPasswordSHA256(password string, salt string, expectedHash string) bool {
+	computed := hashPasswordWithSha256(password, salt)
+	return computed == expectedHash
+}
+
+func NewHashedPassword(password string) (*HashedPassword, error) {
+	var numberOfBytes = 16
+	salt, err := generateSalt(numberOfBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	hash := hashPasswordWithSha256(password, salt)
+
+	return &HashedPassword{
+		Hash: hash,
+		Salt: salt,
+	}, nil
 }
