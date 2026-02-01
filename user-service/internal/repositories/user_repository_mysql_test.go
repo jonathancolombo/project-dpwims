@@ -359,3 +359,84 @@ func TestDeleteByID_RowsAffectedError(testing *testing.T) {
 	require.Error(testing, err)
 	assert.Contains(testing, err.Error(), "rows affected")
 }
+
+func TestUpdateByID_Success(testing *testing.T) {
+	databaseMock, sqlMock, err := sqlmock.New()
+	require.NoError(testing, err)
+	defer func(databaseMock *sql.DB) {
+		err := databaseMock.Close()
+		if err != nil {
+
+		}
+	}(databaseMock)
+
+	repository := &MySQLUserRepository{database: databaseMock}
+	user := &models.User{
+		ID:           int64(1),
+		Username:     "john",
+		Password:     "abcefghijklmn",
+		Email:        "john@mail.it",
+		FiscalCode:   "MCJDBNFVKCVSDÈG",
+		Telephone:    "25645456",
+		Role:         "user",
+		PasswordSalt: "16",
+	}
+
+	sqlMock.ExpectExec(`UPDATE users`).
+		WithArgs(
+			user.Username,
+			user.Email,
+			user.Telephone,
+			user.FiscalCode,
+			user.Role,
+			user.Password,
+			user.PasswordSalt,
+			user.ID,
+		).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	err = repository.Update(context.Background(), user)
+	require.NoError(testing, err)
+	require.NoError(testing, sqlMock.ExpectationsWereMet())
+}
+
+func TestUpdateByID_NotFound(testing *testing.T) {
+	databaseMock, sqlMock, err := sqlmock.New()
+	require.NoError(testing, err)
+	defer func(databaseMock *sql.DB) {
+		err := databaseMock.Close()
+		if err != nil {
+
+		}
+	}(databaseMock)
+
+	repository := &MySQLUserRepository{database: databaseMock}
+	user := &models.User{
+		ID:           int64(1),
+		Username:     "john",
+		Password:     "abcefghijklmn",
+		Email:        "john@mail.it",
+		FiscalCode:   "MCJDBNFVKCVSDÈG",
+		Telephone:    "25645456",
+		Role:         "user",
+		PasswordSalt: "16",
+	}
+
+	sqlMock.ExpectExec(`UPDATE users`).
+		WithArgs(
+			user.Username,
+			user.Email,
+			user.Telephone,
+			user.FiscalCode,
+			user.Role,
+			user.Password,
+			user.PasswordSalt,
+			user.ID,
+		).
+		WillReturnError(errors.New("db error"))
+
+	err = repository.Update(context.Background(), user)
+	require.Error(testing, err)
+	assert.Contains(testing, err.Error(), "db error")
+	require.NoError(testing, sqlMock.ExpectationsWereMet())
+}
