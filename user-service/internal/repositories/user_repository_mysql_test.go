@@ -97,7 +97,7 @@ func TestFindByIDSuccessfully(testing *testing.T) {
 
 	rows := sqlMock.NewRows([]string{"id", "username", "password", "email", "fiscal_code", "telephone"}).AddRow(expectedUser.ID, expectedUser.Username, expectedUser.Password, expectedUser.Email, expectedUser.FiscalCode, expectedUser.Telephone)
 	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone FROM users WHERE id = ?").WithArgs(expectedID).WillReturnRows(rows)
-	user, err := repository.FindByID(context.Background(), expectedID)
+	user, err := repository.GetByID(context.Background(), expectedID)
 	require.NoError(testing, err)
 	require.NotNil(testing, user)
 	assert.Equal(testing, expectedUser, *user)
@@ -119,7 +119,7 @@ func TestFindByID_NotFound(testing *testing.T) {
 		WithArgs(int64(99)).
 		WillReturnError(sql.ErrNoRows)
 
-	user, err := repository.FindByID(context.Background(), 99)
+	user, err := repository.GetByID(context.Background(), 99)
 
 	require.Error(testing, err)
 	assert.Nil(testing, user)
@@ -153,7 +153,7 @@ func TestFindByID_ScanError(testing *testing.T) {
 			),
 		)
 
-	user, err := repository.FindByID(context.Background(), 1)
+	user, err := repository.GetByID(context.Background(), 1)
 
 	require.Error(testing, err)
 	assert.Nil(testing, user)

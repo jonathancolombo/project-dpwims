@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
@@ -22,7 +23,7 @@ func NewUserService(repository repositories.IUserRepository) *UserService {
 }
 
 // CreateUser creates a new user
-func (userService *UserService) CreateUser(user *models.User) (*models.User, error) {
+func (userService *UserService) CreateUser(context context.Context, user *models.User) (*models.User, error) {
 	if user == nil {
 		return nil, errors.New("user is nil")
 	}
@@ -68,7 +69,7 @@ func (userService *UserService) CreateUser(user *models.User) (*models.User, err
 	user.Password = hashed.Hash
 	user.PasswordSalt = hashed.Salt
 
-	return userService.repository.Create(user)
+	return userService.repository.Create(context, user)
 }
 
 // isValidEmail validates an email address, ensuring it is non-empty, contains "@" and ".", and has proper structure.
@@ -104,24 +105,24 @@ func isValidEmail(email string) bool {
 }
 
 // GetAllUsers retrieves all users
-func (userService *UserService) GetAllUsers() ([]*models.User, error) {
+func (userService *UserService) GetAllUsers(context context.Context) ([]*models.User, error) {
 	if userService.repository == nil {
 		return nil, errors.New("repository is nil")
 	}
-	return userService.repository.GetAll()
+	return userService.repository.GetAll(context)
 }
 
 // DeleteUserByID deletes a user by their ID
-func (userService *UserService) DeleteUserByID(id int64) error {
+func (userService *UserService) DeleteUserByID(context context.Context, id int64) error {
 	if id <= 0 {
 		return errors.New("id must be greater than 0")
 	}
-	return userService.repository.DeleteByID(id)
+	return userService.repository.DeleteByID(context, id)
 }
 
 // GetUser retrieves a user by their ID
-func (userService *UserService) GetUser(id int64) (*models.User, error) {
-	return userService.repository.GetByID(id)
+func (userService *UserService) GetUser(context context.Context, id int64) (*models.User, error) {
+	return userService.repository.GetByID(context, id)
 }
 
 type HashedPassword struct {
@@ -174,8 +175,8 @@ func NewHashedPassword(password string) (*HashedPassword, error) {
 }
 
 // UpdateUser
-func (userService *UserService) UpdateUser(id int64, request models.UpdateUserRequest) (*models.User, error) {
-	user, err := userService.repository.GetByID(id)
+func (userService *UserService) UpdateUser(context context.Context, id int64, request models.UpdateUserRequest) (*models.User, error) {
+	user, err := userService.repository.GetByID(context, id)
 
 	if err != nil {
 		return nil, err
@@ -211,7 +212,7 @@ func (userService *UserService) UpdateUser(id int64, request models.UpdateUserRe
 		user.PasswordSalt = salt
 	}
 
-	if err := userService.repository.Update(user); err != nil {
+	if err := userService.repository.Update(context, user); err != nil {
 		return nil, err
 	}
 	return user, nil

@@ -34,7 +34,7 @@ func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *
 		return
 	}
 
-	created, err := userHandler.service.CreateUser(&user)
+	created, err := userHandler.service.CreateUser(request.Context(), &user)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
@@ -48,7 +48,7 @@ func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *
 func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
-	user, err := userHandler.service.GetUser(id)
+	user, err := userHandler.service.GetUser(request.Context(), id)
 
 	if err != nil || user == nil {
 		http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)
@@ -60,8 +60,8 @@ func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *htt
 }
 
 // GetAllUsers a handler method to get all users into repository memory
-func (userHandler *UserHandler) GetAllUsers(writer http.ResponseWriter, _ *http.Request) {
-	users, err := userHandler.service.GetAllUsers()
+func (userHandler *UserHandler) GetAllUsers(writer http.ResponseWriter, request *http.Request) {
+	users, err := userHandler.service.GetAllUsers(request.Context())
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
@@ -78,7 +78,7 @@ func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *
 		http.Error(writer, "invalid id", http.StatusBadRequest)
 		return
 	}
-	err = userHandler.service.DeleteUserByID(id)
+	err = userHandler.service.DeleteUserByID(request.Context(), id)
 	if err != nil {
 		http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)
 		return
@@ -94,13 +94,13 @@ func (userHandler *UserHandler) UpdateUser(writer http.ResponseWriter, request *
 		return
 	}
 
-	var req models.UpdateUserRequest
-	if err := json.NewDecoder(request.Body).Decode(&req); err != nil {
+	var updateUserRequest models.UpdateUserRequest
+	if err := json.NewDecoder(request.Body).Decode(&updateUserRequest); err != nil {
 		http.Error(writer, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	updatedUser, err := userHandler.service.UpdateUser(id, req)
+	updatedUser, err := userHandler.service.UpdateUser(request.Context(), id, updateUserRequest)
 	if err != nil {
 		if errors.Is(err, repositories.ErrUserNotFound) {
 			http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)

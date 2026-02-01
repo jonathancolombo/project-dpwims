@@ -15,18 +15,15 @@ import (
 const pattern = "/users/{id}"
 
 func main() {
-	repository := repositories.NewInMemoryUserRepository()
-	service := services.NewUserService(repository)
-	handler := handlers.NewUserHandler(service)
-
 	var dsn = "root:root@tcp(localhost:3306)/identity_users"
 	db, errorConnection := database.NewMySQLConnection(dsn)
 	if errorConnection != nil {
 		log.Fatal(errorConnection)
 	}
-
 	database.RunInitScripts(db)
-
+	repository := repositories.NewMySQLRepositoryUsers(db)
+	service := services.NewUserService(repository)
+	handler := handlers.NewUserHandler(service)
 	router := chi.NewRouter()
 
 	router.Post("/users", handler.CreateUser)

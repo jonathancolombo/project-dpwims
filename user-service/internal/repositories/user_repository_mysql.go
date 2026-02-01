@@ -55,8 +55,8 @@ func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, 
 	return user, nil
 }
 
-// FindByID is a method to find the right user using id field
-func (mySqlUserRepository *MySQLUserRepository) FindByID(context context.Context, id int64) (*models.User, error) {
+// GetByID is a method to find the right user using id field
+func (mySqlUserRepository *MySQLUserRepository) GetByID(context context.Context, id int64) (*models.User, error) {
 	query := `
         SELECT id, username, password, email, fiscal_code, telephone
         FROM users
@@ -108,10 +108,10 @@ func (mySqlUserRepository *MySQLUserRepository) GetAll(context context.Context) 
 }
 
 // DeleteByID delete a user by his id
-func (mySqlUserRepository *MySQLUserRepository) DeleteByID(ctx context.Context, id int64) error {
+func (mySqlUserRepository *MySQLUserRepository) DeleteByID(context context.Context, id int64) error {
 	query := `DELETE FROM users WHERE id = ?`
 
-	result, err := mySqlUserRepository.database.ExecContext(ctx, query, id)
+	result, err := mySqlUserRepository.database.ExecContext(context, query, id)
 	if err != nil {
 		return fmt.Errorf("delete user: %w", err)
 	}
@@ -129,13 +129,13 @@ func (mySqlUserRepository *MySQLUserRepository) DeleteByID(ctx context.Context, 
 }
 
 // Update a method that's update a current user into db
-func (mySqlUserRepository *MySQLUserRepository) Update(ctx context.Context, user *models.User) error {
+func (mySqlUserRepository *MySQLUserRepository) Update(context context.Context, user *models.User) error {
 	query := `
         UPDATE users
         SET username = ?, email = ?, telephone = ?, fiscal_code = ?, role = ?, password = ?, password_salt = ?
         WHERE id = ?
     `
-	_, err := mySqlUserRepository.database.ExecContext(ctx, query,
+	_, err := mySqlUserRepository.database.ExecContext(context, query,
 		user.Username,
 		user.Email,
 		user.Telephone,
