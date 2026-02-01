@@ -14,6 +14,8 @@ func RunInitScripts(database *sql.DB) {
 	runSQLFile(database, initDbPath)
 	runSQLFile(database, testDbPath)
 }
+
+// runSQLFile read a file .sql into a path and execute it
 func runSQLFile(db *sql.DB, path string) {
 	content, errorPath := os.ReadFile(path)
 	if errorPath != nil {

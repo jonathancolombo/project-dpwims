@@ -3,8 +3,8 @@
 --  This script creates the "users" table with all constraints
 --  needed for a production‑ready user service.
 -- ============================================================
-DROP DATABASE IF EXISTS dbusers;
-CREATE DATABASE IF NOT EXISTS dbusers;
+DROP DATABASE IF EXISTS identity_users;
+CREATE DATABASE IF NOT EXISTS identity_users;
 DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users
 (

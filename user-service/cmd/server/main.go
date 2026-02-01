@@ -19,11 +19,12 @@ func main() {
 	service := services.NewUserService(repository)
 	handler := handlers.NewUserHandler(service)
 
-	var dsn = "root:root@tcp(localhost:3306)/usersdb"
+	var dsn = "root:root@tcp(localhost:3306)/identity_users"
 	db, errorConnection := database.NewMySQLConnection(dsn)
 	if errorConnection != nil {
 		log.Fatal(errorConnection)
 	}
+
 	database.RunInitScripts(db)
 
 	router := chi.NewRouter()

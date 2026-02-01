@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -133,6 +134,10 @@ func TestGetAllUser(testing *testing.T) {
 
 type FailingUserRepository struct{}
 
+func (r *FailingUserRepository) Update(user *models.User) error {
+	return errors.New("forced error")
+}
+
 func (r *FailingUserRepository) Create(user *models.User) (*models.User, error) {
 	return nil, errors.New("forced error")
 }
@@ -200,8 +205,170 @@ func TestDeleteUserWithInvalidId(testing *testing.T) {
 	assert.Equal(testing, http.StatusBadRequest, responseRecorder.Code)
 }
 
-func setupUserTest() (*repositories.InMemoryUserRepository, *UserHandler) {
-	repository := repositories.NewInMemoryUserRepository()
+func TestUpdateUser_InvalidID(t *testing.T) {
+	_, handler := setupUserTest()
+
+	router := chi.NewRouter()
+	router.Patch("/users/{id}", handler.UpdateUser)
+
+	req := httptest.NewRequest("PATCH", "/users/abc", nil)
+	rr := httptest.NewRecorder()
+
+	router.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
+}
+
+func TestUpdateUser_InvalidBody(t *testing.T) {
+	_, handler := setupUserTest()
+
+	router := chi.NewRouter()
+	router.Patch("/users/{id}", handler.UpdateUser)
+
+	body := `{"email": "missing_quote}`
+	req := httptest.NewRequest("PATCH", "/users/1", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
+}
+
+func TestUpdateUser_NotFound(t *testing.T) {
+	_, handler := setupUserTest()
+
+	router := chi.NewRouter()
+	router.Patch("/users/{id}", handler.UpdateUser)
+
+	body := `{"email": "new@mail.com"}`
+	req := httptest.NewRequest("PATCH", "/users/999", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusNotFound, rr.Code)
+}
+
+type FailingUpdateRepository struct {
+	FakeUserRepository
+}
+
+func (r *FailingUpdateRepository) Update(user *models.User) error {
+	return errors.New("forced update error")
+}
+
+func TestUpdateUser_RepositoryError(t *testing.T) {
+	repo := &FailingUpdateRepository{FakeUserRepository: *NewFakeUserRepository()}
+	service := services.NewUserService(repo)
+	handler := NewUserHandler(service)
+
+	// Inseriamo un utente per evitare ErrUserNotFound
+	repo.Create(&models.User{ID: 1, Username: "old"})
+
+	router := chi.NewRouter()
+	router.Patch("/users/{id}", handler.UpdateUser)
+
+	body := `{"username": "newname"}`
+	req := httptest.NewRequest("PATCH", "/users/1", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
+}
+
+func TestUpdateUser_Success(t *testing.T) {
+	repo, handler := setupUserTest()
+
+	// Inseriamo un utente iniziale
+	repo.Create(&models.User{
+		ID:         1,
+		Username:   "oldname",
+		Email:      "old@mail.com",
+		FiscalCode: "RSSMRA80A01H501U",
+	})
+
+	router := chi.NewRouter()
+	router.Patch("/users/{id}", handler.UpdateUser)
+
+	body := `{"username": "newname", "email": "new@mail.com"}`
+	req := httptest.NewRequest("PATCH", "/users/1", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+	var updated models.User
+	json.NewDecoder(rr.Body).Decode(&updated)
+
+	assert.Equal(t, "newname", updated.Username)
+	assert.Equal(t, "new@mail.com", updated.Email)
+}
+
+type FakeUserRepository struct {
+	users  map[int64]*models.User
+	nextID int64
+}
+
+func NewFakeUserRepository() *FakeUserRepository {
+	return &FakeUserRepository{
+		users:  make(map[int64]*models.User),
+		nextID: 1,
+	}
+}
+
+func (r *FakeUserRepository) Create(user *models.User) (*models.User, error) {
+	if user.ID == 0 {
+		user.ID = r.nextID
+		r.nextID++
+	}
+	r.users[user.ID] = user
+	return user, nil
+}
+
+func (r *FakeUserRepository) GetByID(id int64) (*models.User, error) {
+	user, ok := r.users[id]
+	if !ok {
+		return nil, repositories.ErrUserNotFound
+	}
+	return user, nil
+}
+
+func (r *FakeUserRepository) GetAll() ([]*models.User, error) {
+	if len(r.users) == 0 {
+		return nil, errors.New("no users found")
+	}
+
+	list := make([]*models.User, 0, len(r.users))
+	for _, u := range r.users {
+		list = append(list, u)
+	}
+	return list, nil
+}
+
+func (r *FakeUserRepository) DeleteByID(id int64) error {
+	if _, ok := r.users[id]; !ok {
+		return repositories.ErrUserNotFound
+	}
+	delete(r.users, id)
+	return nil
+}
+
+func (r *FakeUserRepository) Update(user *models.User) error {
+	if _, ok := r.users[user.ID]; !ok {
+		return repositories.ErrUserNotFound
+	}
+	r.users[user.ID] = user
+	return nil
+}
+
+func setupUserTest() (*FakeUserRepository, *UserHandler) {
+	repository := NewFakeUserRepository()
 	service := services.NewUserService(repository)
 	handler := NewUserHandler(service)
 	return repository, handler

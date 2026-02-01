@@ -19,7 +19,12 @@ func NewMySQLRepositoryUsers(db *sql.DB) *MySQLUserRepository {
 	return &MySQLUserRepository{database: db}
 }
 
+// Create a method to create a user and save into a db
 func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, user *models.User) (*models.User, error) {
+	if user == nil {
+		return nil, errors.New("user is nil")
+	}
+
 	query := `INSERT INTO users 
     			(username, password, password_salt, email, fiscal_code, telephone) 
 					VALUES (?, ?, ?, ?, ?, ?)`
@@ -50,6 +55,7 @@ func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, 
 	return user, nil
 }
 
+// FindByID is a method to find the right user using id field
 func (mySqlUserRepository *MySQLUserRepository) FindByID(context context.Context, id int64) (*models.User, error) {
 	query := `
         SELECT id, username, password, email, fiscal_code, telephone
@@ -71,6 +77,7 @@ func (mySqlUserRepository *MySQLUserRepository) FindByID(context context.Context
 	return &user, nil
 }
 
+// GetAll retrieves all users into a slice
 func (mySqlUserRepository *MySQLUserRepository) GetAll(context context.Context) ([]*models.User, error) {
 	query := `
         SELECT id, username, password, email, fiscal_code, telephone
@@ -100,6 +107,7 @@ func (mySqlUserRepository *MySQLUserRepository) GetAll(context context.Context) 
 	return users, nil
 }
 
+// DeleteByID delete a user by his id
 func (mySqlUserRepository *MySQLUserRepository) DeleteByID(ctx context.Context, id int64) error {
 	query := `DELETE FROM users WHERE id = ?`
 
@@ -115,6 +123,30 @@ func (mySqlUserRepository *MySQLUserRepository) DeleteByID(ctx context.Context, 
 
 	if rows == 0 {
 		return ErrUserNotFound
+	}
+
+	return nil
+}
+
+// Update a method that's update a current user into db
+func (mySqlUserRepository *MySQLUserRepository) Update(ctx context.Context, user *models.User) error {
+	query := `
+        UPDATE users
+        SET username = ?, email = ?, telephone = ?, fiscal_code = ?, role = ?, password = ?, password_salt = ?
+        WHERE id = ?
+    `
+	_, err := mySqlUserRepository.database.ExecContext(ctx, query,
+		user.Username,
+		user.Email,
+		user.Telephone,
+		user.FiscalCode,
+		user.Role,
+		user.Password,
+		user.PasswordSalt,
+		user.ID,
+	)
+	if err != nil {
+		return fmt.Errorf("update user: %w", err)
 	}
 
 	return nil

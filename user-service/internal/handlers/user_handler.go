@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"user-service/internal/models"
+	"user-service/internal/repositories"
 	"user-service/internal/services"
 
 	"github.com/go-chi/chi/v5"
@@ -14,6 +16,7 @@ const KeyContentType = "Content-Type"
 const ValueAppJson = "application/json"
 const baseNumber = 10
 const bitSize = 64
+const errorMessageUserNotFound = "user not found"
 
 type UserHandler struct {
 	service *services.UserService
@@ -48,7 +51,7 @@ func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *htt
 	user, err := userHandler.service.GetUser(id)
 
 	if err != nil || user == nil {
-		http.Error(writer, "user not found", http.StatusNotFound)
+		http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)
 		return
 	}
 
@@ -77,8 +80,41 @@ func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *
 	}
 	err = userHandler.service.DeleteUserByID(id)
 	if err != nil {
-		http.Error(writer, "user not found", http.StatusNotFound)
+		http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)
 		return
 	}
 	writer.WriteHeader(http.StatusNoContent)
+}
+
+func (userHandler *UserHandler) UpdateUser(writer http.ResponseWriter, request *http.Request) {
+	idString := chi.URLParam(request, "id")
+	id, err := strconv.ParseInt(idString, 10, 64)
+	if err != nil || id <= 0 {
+		http.Error(writer, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	var req models.UpdateUserRequest
+	if err := json.NewDecoder(request.Body).Decode(&req); err != nil {
+		http.Error(writer, "invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	updatedUser, err := userHandler.service.UpdateUser(id, req)
+	if err != nil {
+		if errors.Is(err, repositories.ErrUserNotFound) {
+			http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)
+			return
+		}
+
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(writer).Encode(updatedUser)
+	if err != nil {
+		return
+	}
 }

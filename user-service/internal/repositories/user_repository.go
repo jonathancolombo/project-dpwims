@@ -13,6 +13,7 @@ type IUserRepository interface {
 	DeleteByID(id int64) error
 	GetByID(id int64) (*models.User, error)
 	GetAll() ([]*models.User, error)
+	Update(user *models.User) error
 }
 
 // InMemoryRepositoryUsers is an in-memory implementation of the IUserRepository interface
@@ -76,6 +77,7 @@ func (repository *InMemoryRepositoryUsers) GetByID(id int64) (*models.User, erro
 	return nil, nil
 }
 
+// checkIdIntoUsersList a method to check the id input
 func checkIdIntoUsersList(id int64) (*models.User, error) {
 	if id <= 0 {
 		return nil, errors.New("id must be greater than 0")
