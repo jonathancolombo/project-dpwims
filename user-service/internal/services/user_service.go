@@ -205,7 +205,13 @@ func (userService *UserService) UpdateUser(context context.Context, id int64, re
 		user.Role = *request.Role
 	}
 	var numberOfBytes = 16
-	if request.Password != nil {
+
+	if request.Password != nil && *request.Password != "" {
+
+		if looksLikeSHA256(*request.Password) {
+
+			return nil, errors.New("password must be provided in plain text, not hashed")
+		}
 		salt, _ := generateSalt(numberOfBytes)
 		hashed := hashPasswordWithSha256(*request.Password, salt)
 		user.Password = hashed
@@ -217,4 +223,16 @@ func (userService *UserService) UpdateUser(context context.Context, id int64, re
 	}
 	return user, nil
 
+}
+
+func looksLikeSHA256(password string) bool {
+	if len(password) != 64 {
+		return false
+	}
+	for _, c := range password {
+		if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')) {
+			return false
+		}
+	}
+	return true
 }

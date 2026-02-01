@@ -93,7 +93,7 @@ func (userHandler *UserHandler) UpdateUser(writer http.ResponseWriter, request *
 		http.Error(writer, "invalid id", http.StatusBadRequest)
 		return
 	}
-
+	
 	var updateUserRequest models.UpdateUserRequest
 	if err := json.NewDecoder(request.Body).Decode(&updateUserRequest); err != nil {
 		http.Error(writer, "invalid request body", http.StatusBadRequest)

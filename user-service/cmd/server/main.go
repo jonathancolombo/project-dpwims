@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"user-service/internal/database"
 	"user-service/internal/handlers"
 	"user-service/internal/repositories"
@@ -12,10 +14,15 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-const pattern = "/users/{id}"
-
+// main, runs with this command in terminal: docker compose --env-file ./env/develop.env up --build
 func main() {
-	var dsn = "root:root@tcp(localhost:3306)/identity_users"
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	name := os.Getenv("DB_NAME")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, name)
+
 	db, errorConnection := database.NewMySQLConnection(dsn)
 	if errorConnection != nil {
 		log.Fatal(errorConnection)
@@ -28,8 +35,9 @@ func main() {
 
 	router.Post("/users", handler.CreateUser)
 	router.Get("/users", handler.GetAllUsers)
-	router.Get(pattern, handler.GetUser)
-	router.Delete(pattern, handler.DeleteUser)
+	router.Get("/users/{id}", handler.GetUser)
+	router.Delete("/users/{id}", handler.DeleteUser)
+	router.Patch("/users/{id}", handler.UpdateUser)
 
 	log.Println("User Service running on port 8081 with url http://localhost:8081")
 	errorHttp := http.ListenAndServe(":8081", router)
