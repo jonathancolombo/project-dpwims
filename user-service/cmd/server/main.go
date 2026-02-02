@@ -14,6 +14,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+const urlUsers = "/users"
+const urlUsersID = "/users/{id}"
+
 // main, runs with this command in terminal: docker compose --env-file ./env/develop.env up --build
 func main() {
 	host := os.Getenv("DB_HOST")
@@ -33,11 +36,11 @@ func main() {
 	handler := handlers.NewUserHandler(service)
 	router := chi.NewRouter()
 
-	router.Post("/users", handler.CreateUser)
-	router.Get("/users", handler.GetAllUsers)
-	router.Get("/users/{id}", handler.GetUser)
-	router.Delete("/users/{id}", handler.DeleteUser)
-	router.Patch("/users/{id}", handler.UpdateUser)
+	router.Post(urlUsers, handler.CreateUser)
+	router.Get(urlUsers, handler.GetAllUsers)
+	router.Get(urlUsersID, handler.GetUser)
+	router.Delete(urlUsersID, handler.DeleteUser)
+	router.Patch(urlUsersID, handler.UpdateUser)
 
 	log.Println("User Service running on port 8081 with url http://localhost:8081")
 	errorHttp := http.ListenAndServe(":8081", router)

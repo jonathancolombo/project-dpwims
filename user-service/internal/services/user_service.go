@@ -158,7 +158,7 @@ func verifyPasswordSHA256(password string, salt string, expectedHash string) boo
 	return computed == expectedHash
 }
 
-// NewHashedPassword take a password and computes an hash with a specified salt
+// NewHashedPassword take a password and computes a hash with a specified salt
 func NewHashedPassword(password string) (*HashedPassword, error) {
 	var numberOfBytes = 16
 	salt, err := generateSalt(numberOfBytes)
@@ -174,7 +174,7 @@ func NewHashedPassword(password string) (*HashedPassword, error) {
 	}, nil
 }
 
-// UpdateUser
+// UpdateUser a function service to updating a user
 func (userService *UserService) UpdateUser(context context.Context, id int64, request models.UpdateUserRequest) (*models.User, error) {
 	user, err := userService.repository.GetByID(context, id)
 
@@ -229,8 +229,8 @@ func looksLikeSHA256(password string) bool {
 	if len(password) != 64 {
 		return false
 	}
-	for _, c := range password {
-		if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')) {
+	for _, character := range password {
+		if !((character >= '0' && character <= '9') || (character >= 'a' && character <= 'f')) {
 			return false
 		}
 	}

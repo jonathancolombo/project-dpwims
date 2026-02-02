@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users
     id          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     username    VARCHAR(255)    NOT NULL,
     password    VARCHAR(255)    NOT NULL,
-    password_salt VARCHAR(255) NOT NULL,
+    password_salt VARCHAR(255),
     email       VARCHAR(255)    NOT NULL,
     fiscal_code VARCHAR(16)     NOT NULL,
     telephone   VARCHAR(20),

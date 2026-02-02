@@ -17,6 +17,7 @@ const ValueAppJson = "application/json"
 const baseNumber = 10
 const bitSize = 64
 const errorMessageUserNotFound = "user not found"
+const errorMessageInvalidID = "invalid id"
 
 type UserHandler struct {
 	service *services.UserService
@@ -75,7 +76,7 @@ func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
 	if err != nil {
-		http.Error(writer, "invalid id", http.StatusBadRequest)
+		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
 		return
 	}
 	err = userHandler.service.DeleteUserByID(request.Context(), id)
@@ -88,12 +89,12 @@ func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *
 
 func (userHandler *UserHandler) UpdateUser(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
-	id, err := strconv.ParseInt(idString, 10, 64)
+	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
 	if err != nil || id <= 0 {
-		http.Error(writer, "invalid id", http.StatusBadRequest)
+		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
 		return
 	}
-	
+
 	var updateUserRequest models.UpdateUserRequest
 	if err := json.NewDecoder(request.Body).Decode(&updateUserRequest); err != nil {
 		http.Error(writer, "invalid request body", http.StatusBadRequest)
@@ -111,7 +112,7 @@ func (userHandler *UserHandler) UpdateUser(writer http.ResponseWriter, request *
 		return
 	}
 
-	writer.Header().Set("Content-Type", "application/json")
+	writer.Header().Set(KeyContentType, ValueAppJson)
 	writer.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(writer).Encode(updatedUser)
 	if err != nil {
