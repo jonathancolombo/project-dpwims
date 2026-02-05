@@ -1,8 +1,3 @@
--- ============================================================
---  USERS TABLE INITIALIZATION SCRIPT
---  This script creates the "users" table with all constraints
---  needed for a production‑ready user service.
--- ============================================================
 DROP DATABASE IF EXISTS identity_users;
 CREATE DATABASE IF NOT EXISTS identity_users;
 USE identity_users;
