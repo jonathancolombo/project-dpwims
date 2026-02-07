@@ -1,22 +1,26 @@
 {
   "name": "Go devcontainer",
-  "dockerFile": "Dockerfile",
-  "context": "..",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true,
+      "installDockerBuildx": true
+    },
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.25"
+    }
+  },
   "customizations": {
     "jetbrains": {
       "backend": "IntelliJ",
-      "settings": {},
-      "plugins": []
+      "plugins": ["org.jetbrains.plugins.go", "com.intellij.database"]
     }
   },
-  "features": {
-    "ghcr.io/devcontainers/features/git": {},
-    "ghcr.io/devcontainers/features/go": {
-      "version": "1.25"
-    },
-    "ghcr.io/devcontainers/features/node": {
-      "version": "20"
-    }
-  },
-  "remoteUser": "ubuntu"
+  "remoteUser": "vscode",
+  "postCreateCommand": "sudo chown ubuntu /var/run/docker.sock || true"
 }

@@ -1,7 +1,41 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
-	fmt.Println("Train service...")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	name := os.Getenv("DB_NAME")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, name)
+
+	fmt.Println(dsn)
+	/*
+		db, errorConnection := database.NewMySQLConnection(dsn)
+		if errorConnection != nil {
+			log.Fatal(errorConnection)
+		}
+		database.RunInitScripts(db)
+
+		repository := repositories.NewMySQLRepositoryUsers(db)
+		service := services.NewUserService(repository)
+		handler := handlers.NewUserHandler(service)
+		router := chi.NewRouter()
+
+		router.Post(urlUsers, handler.CreateUser)
+		router.Get(urlUsers, handler.GetAllUsers)
+		router.Get(urlUsersID, handler.GetUser)
+		router.Delete(urlUsersID, handler.DeleteUser)
+		router.Patch(urlUsersID, handler.UpdateUser)
+
+		log.Println("User Service running on port 8081 with url http://localhost:8081")
+		errorHttp := http.ListenAndServe(":8081", router)
+		if errorHttp != nil {
+			return
+		}
+	*/
 }
