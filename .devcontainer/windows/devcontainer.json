@@ -1,8 +1,8 @@
 {
   "name": "Go devcontainer",
   "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
+    "dockerfile": "../Dockerfile",
+    "context": "../.."
   },
   "runArgs": [
     "--privileged",
