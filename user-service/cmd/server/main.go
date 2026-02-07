@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"user-service/internal/database"
+	"shared/database"
 	"user-service/internal/handlers"
 	"user-service/internal/repositories"
 	"user-service/internal/services"

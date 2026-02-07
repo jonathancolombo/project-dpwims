@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -31,9 +32,10 @@ func main() {
 		router.Get(urlUsersID, handler.GetUser)
 		router.Delete(urlUsersID, handler.DeleteUser)
 		router.Patch(urlUsersID, handler.UpdateUser)
-
-		log.Println("User Service running on port 8081 with url http://localhost:8081")
-		errorHttp := http.ListenAndServe(":8081", router)
+	*/
+	log.Println("Trains Service running on port 8082 with url http://localhost:8082")
+	/*
+		errorHttp := http.ListenAndServe(":8082", router)
 		if errorHttp != nil {
 			return
 		}

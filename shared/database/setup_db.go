@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-const initDbPath = "internal/database/scripts/init.sql"
-const testDbPath = "internal/database/scripts/test.sql"
+const initDbPath = "./shared/database/scripts/init_users.sql"
+const testDbPath = "./shared/database/scripts/test_users.sql"
 
 func RunInitScripts(database *sql.DB) {
 	runSQLFile(database, initDbPath)

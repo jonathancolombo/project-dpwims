@@ -1,6 +1,8 @@
 module user-service
 
-go 1.25.6
+replace shared => ../shared
+
+go 1.25
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2

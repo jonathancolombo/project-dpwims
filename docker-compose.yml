@@ -1,0 +1,70 @@
+services:
+  user-service:
+    build:
+      context: .
+      dockerfile: users-service/Dockerfile
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_HOST=users-db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=secret
+      - DB_NAME=identity_users
+    depends_on:
+      users-db:
+        condition: service_healthy
+
+  users-db:
+    image: mysql:8.0
+    container_name: users-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: identity_users
+    ports:
+      - "3307:3306"
+    volumes:
+      - users_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-psecret" ]
+      timeout: 20s
+      retries: 10
+
+  trains-service:
+    build:
+      context: .
+      dockerfile: trains-service/Dockerfile
+    container_name: trains-service
+    ports:
+      - "8082:8082"
+    environment:
+      - DB_HOST=trains-db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=secret
+      - DB_NAME=trains_db
+    depends_on:
+      trains-db:
+        condition: service_healthy
+
+  trains-db:
+    image: mysql:8.0
+    container_name: trains-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: trains_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - trains_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-psecret" ]
+      timeout: 20s
+      retries: 10
+
+volumes:
+  users_data:
+  trains_data:
