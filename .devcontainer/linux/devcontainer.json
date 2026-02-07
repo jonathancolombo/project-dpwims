@@ -25,5 +25,5 @@
     }
   },
   "remoteUser": "ubuntu",
-  "postCreateCommand": "sudo chown vscode /var/run/docker.sock || true"
+  "postCreateCommand": "sudo chown ubuntu /var/run/docker.sock || true"
 }
