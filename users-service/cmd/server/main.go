@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"shared/database"
+	"project-dpwims/database"
 	"user-service/internal/handlers"
 	"user-service/internal/repositories"
 	"user-service/internal/services"
@@ -17,7 +17,7 @@ import (
 const urlUsers = "/users"
 const urlUsersID = "/users/{id}"
 
-// main, runs with this command in terminal: docker compose --env-file ./env/develop.env up --build
+// main, runs with this command in the terminal: docker compose --env-file ./env/develop.env up --build
 func main() {
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
@@ -30,7 +30,6 @@ func main() {
 	if errorConnection != nil {
 		log.Fatal(errorConnection)
 	}
-	database.RunInitScripts(db)
 	repository := repositories.NewMySQLRepositoryUsers(db)
 	service := services.NewUserService(repository)
 	handler := handlers.NewUserHandler(service)

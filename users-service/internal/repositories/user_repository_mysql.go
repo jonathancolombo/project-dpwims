@@ -11,10 +11,12 @@ import (
 
 var ErrUserNotFound = errors.New("user not found")
 
+// MySQLUserRepository provides methods for CRUD operations on the 'users' table in a MySQL database.
 type MySQLUserRepository struct {
 	database *sql.DB
 }
 
+// NewMySQLRepositoryUsers initializes a new MySQLUserRepository with the provided database connection.
 func NewMySQLRepositoryUsers(db *sql.DB) *MySQLUserRepository {
 	return &MySQLUserRepository{database: db}
 }

@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS users
     email       VARCHAR(255)    NOT NULL,
     fiscal_code VARCHAR(16)     NOT NULL,
     telephone   VARCHAR(20),
-
     role VARCHAR(50) NOT NULL DEFAULT ( 'user'),
 
     created_at  TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,

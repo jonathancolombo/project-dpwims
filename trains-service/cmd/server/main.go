@@ -28,7 +28,7 @@ func main() {
 		router := chi.NewRouter()
 
 		router.Post(urlUsers, handler.CreateUser)
-		router.Get(urlUsers, handler.GetAllUsers)
+		router.Get(urlUsers, handler.GetAllTrains)
 		router.Get(urlUsersID, handler.GetUser)
 		router.Delete(urlUsersID, handler.DeleteUser)
 		router.Patch(urlUsersID, handler.UpdateUser)
