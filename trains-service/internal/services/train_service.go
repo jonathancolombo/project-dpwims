@@ -2,8 +2,12 @@ package services
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"trains-service/internal/models"
 	"trains-service/internal/repositories"
+
+	"github.com/google/uuid"
 )
 
 // TrainService defines the interface for managing Train entities.
@@ -20,26 +24,67 @@ func NewTrainService(repository repositories.ITrainRepository) *TrainService {
 
 // CreateTrain creates a new train
 func (trainService *TrainService) CreateTrain(context context.Context, train *models.Train) (*models.Train, error) {
+	if train == nil {
+		return nil, errors.New("train is nil")
+	}
 
+	if train.Number == "" {
+		return nil, errors.New("train number is empty")
+	}
+
+	if train.Capacity <= 0 {
+		fmt.Println("train capacity is less than or equal to 0, setting default capacity to 500")
+		train.Capacity = 500
+	}
+
+	if train.Type == "" {
+		train.Type = models.TrainTypeRegional
+	}
+
+	train.UUID = uuid.NewString()
 	return trainService.repository.Create(context, train)
 }
 
-// GetTrain retrieves a train by their ID
+// GetTrain retrieves a train by their UUID
 func (trainService *TrainService) GetTrain(context context.Context, id int64) (*models.Train, error) {
 	return trainService.repository.GetByID(context, id)
 }
 
 // GetAllTrains retrieves all trains
 func (trainService *TrainService) GetAllTrains(context context.Context) ([]*models.Train, error) {
+	if trainService.repository == nil {
+		return nil, errors.New("repository is nil")
+	}
 	return trainService.repository.GetAll(context)
 }
 
-// DeleteTrainByID deletes a train by their ID
+// DeleteTrainByID deletes a train by their UUID
 func (trainService *TrainService) DeleteTrainByID(context context.Context, id int64) error {
+	if id <= 0 {
+		return errors.New("id must be greater than 0")
+	}
 	return trainService.repository.DeleteByID(context, id)
 }
 
-// UpdateTrain updates a train by their ID
-func (trainService *TrainService) UpdateTrain(context context.Context, id int64, train *models.Train) (*models.Train, error) {
+// UpdateTrain updates a train by their UUID
+func (trainService *TrainService) UpdateTrain(context context.Context, id int64, updateTrain *models.Train) (*models.Train, error) {
+	train, err := trainService.repository.GetByID(context, id)
+	if err != nil {
+		return nil, fmt.Errorf("get train by id: %w", err)
+	}
+	switch updateTrain.Type {
+	case models.TrainTypeRegional, models.TrainTypeIntercity, models.TrainTypeHighSpeed:
+		train.Type = updateTrain.Type
+	default:
+		return nil, fmt.Errorf("unknown train type: %s", updateTrain.Type)
+	}
+
+	switch updateTrain.Status {
+	case models.StatusActive, models.StatusInactive:
+		train.Status = updateTrain.Status
+	default:
+		return nil, fmt.Errorf("unknown train status: %s", updateTrain.Status)
+	}
+
 	return train, nil
 }

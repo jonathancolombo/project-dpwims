@@ -13,6 +13,7 @@ import (
 	"user-service/internal/repositories"
 )
 
+// UserService defines the interface for managing User entities.
 type UserService struct {
 	repository repositories.IUserRepository
 }
@@ -175,45 +176,45 @@ func NewHashedPassword(password string) (*HashedPassword, error) {
 }
 
 // UpdateUser a function service to updating a user
-func (userService *UserService) UpdateUser(context context.Context, id int64, request models.UpdateUserRequest) (*models.User, error) {
+func (userService *UserService) UpdateUser(context context.Context, id int64, updateUserRequest models.UpdateUserRequest) (*models.User, error) {
 	user, err := userService.repository.GetByID(context, id)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if request.Username != nil {
-		user.Username = *request.Username
+	if updateUserRequest.Username != nil {
+		user.Username = *updateUserRequest.Username
 	}
 
-	if request.Email != nil {
-		if !isValidEmail(*request.Email) {
+	if updateUserRequest.Email != nil {
+		if !isValidEmail(*updateUserRequest.Email) {
 			return nil, errors.New("invalid email")
 		}
-		user.Email = *request.Email
+		user.Email = *updateUserRequest.Email
 	}
 
-	if request.Telephone != nil {
-		user.Telephone = *request.Telephone
+	if updateUserRequest.Telephone != nil {
+		user.Telephone = *updateUserRequest.Telephone
 	}
 
-	if request.FiscalCode != nil {
-		user.FiscalCode = *request.FiscalCode
+	if updateUserRequest.FiscalCode != nil {
+		user.FiscalCode = *updateUserRequest.FiscalCode
 	}
 
-	if request.Role != nil {
-		user.Role = *request.Role
+	if updateUserRequest.Role != nil {
+		user.Role = *updateUserRequest.Role
 	}
 	var numberOfBytes = 16
 
-	if request.Password != nil && *request.Password != "" {
+	if updateUserRequest.Password != nil && *updateUserRequest.Password != "" {
 
-		if looksLikeSHA256(*request.Password) {
+		if looksLikeSHA256(*updateUserRequest.Password) {
 
 			return nil, errors.New("password must be provided in plain text, not hashed")
 		}
 		salt, _ := generateSalt(numberOfBytes)
-		hashed := hashPasswordWithSha256(*request.Password, salt)
+		hashed := hashPasswordWithSha256(*updateUserRequest.Password, salt)
 		user.Password = hashed
 		user.PasswordSalt = salt
 	}
@@ -225,6 +226,7 @@ func (userService *UserService) UpdateUser(context context.Context, id int64, re
 
 }
 
+// looksLikeSHA256 checks if the provided password string appears to be a valid SHA-256 hash by verifying its length and character composition.
 func looksLikeSHA256(password string) bool {
 	if len(password) != 64 {
 		return false

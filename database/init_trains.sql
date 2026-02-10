@@ -4,22 +4,22 @@ USE trains_service;
 DROP TABLE IF EXISTS trains;
 CREATE TABLE IF NOT EXISTS trains
 (
-    id           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    train_number VARCHAR(50) NOT NULL,
+    uuid         VARCHAR(36),
+    train_number VARCHAR(50) NOT NULL UNIQUE,
     type         VARCHAR(50) NOT NULL,
-    capacity     INT         NOT NULL,
+    capacity     INT         NOT NULL DEFAULT 500,
     status       VARCHAR(50) NOT NULL DEFAULT 'active',
     created_at   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    PRIMARY KEY (id),
-    UNIQUE KEY train_number (train_number)
+    PRIMARY KEY (uuid)
 );
+
 DROP TABLE IF EXISTS routes;
 CREATE TABLE IF NOT EXISTS routes
 (
     id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    train_id       BIGINT UNSIGNED NOT NULL,
+    train_id       VARCHAR(36)  NOT NULL,
     departure      VARCHAR(100) NOT NULL,
     arrival        VARCHAR(100) NOT NULL,
     departure_time DATETIME     NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS routes
     updated_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (train_id) REFERENCES trains (id) ON DELETE CASCADE
+    FOREIGN KEY (train_id) REFERENCES trains (uuid) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS stations;
@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS schedules;
 CREATE TABLE IF NOT EXISTS schedules
 (
     id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    train_id   BIGINT UNSIGNED NOT NULL,
+    train_id   VARCHAR(36) NOT NULL,
     station_id BIGINT UNSIGNED NOT NULL,
     departure  VARCHAR(100) NOT NULL,
     arrival    VARCHAR(100) NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS schedules
     created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    FOREIGN KEY (train_id) REFERENCES trains (id) ON DELETE CASCADE,
+    FOREIGN KEY (train_id) REFERENCES trains (uuid) ON DELETE CASCADE,
     FOREIGN KEY (station_id) REFERENCES stations (id) ON DELETE CASCADE
 );
 

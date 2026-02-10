@@ -27,9 +27,9 @@ func main() {
 		handler := handlers.NewUserHandler(service)
 		router := chi.NewRouter()
 
-		router.Post(urlUsers, handler.CreateUser)
+		router.Post(urlUsers, handler.CreateTrain)
 		router.Get(urlUsers, handler.GetAllTrains)
-		router.Get(urlUsersID, handler.GetUser)
+		router.Get(urlUsersID, handler.GetTrain)
 		router.Delete(urlUsersID, handler.DeleteUser)
 		router.Patch(urlUsersID, handler.UpdateUser)
 	*/

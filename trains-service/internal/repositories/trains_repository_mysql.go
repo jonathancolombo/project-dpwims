@@ -34,18 +34,18 @@ func (mySqlTrainRepository *MySQLTrainRepository) Create(context context.Context
 		return nil, err
 	}
 
-	defer statement.Close()
+	defer func(statement *sql.Stmt) {
+		err := statement.Close()
+		if err != nil {
+			return
+		}
+	}(statement)
 
-	result, err := statement.Exec(train.Number, strings.ToLower(train.Type), train.Capacity, strings.ToLower(train.Status))
+	_, err = statement.Exec(train.Number, strings.ToLower(string(train.Type)), train.Capacity, strings.ToLower(string(train.Status)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert train: %w", err)
 	}
 
-	id, err := result.LastInsertId()
-	if err != nil {
-		return nil, fmt.Errorf("failed to insert id: %w", err)
-	}
-	train.ID = id
 	return train, nil
 }
 
@@ -60,7 +60,12 @@ func (mySqlTrainRepository *MySQLTrainRepository) GetByID(context context.Contex
 		return nil, fmt.Errorf("query train by id: %w", err)
 	}
 
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			return
+		}
+	}(rows)
 	var train models.Train
 	errorScan := rows.Scan(&train.Number, &train.Type, &train.Capacity, &train.Status)
 	if errors.Is(errorScan, sql.ErrNoRows) {
@@ -94,7 +99,7 @@ func (mySqlTrainRepository *MySQLTrainRepository) GetAll(context context.Context
 	var trains []*models.Train
 	for rows.Next() {
 		var train models.Train
-		if err := rows.Scan(&train.ID, &train.Number, &train.Type, &train.Capacity, &train.Status); err != nil {
+		if err := rows.Scan(&train.UUID, &train.Number, &train.Type, &train.Capacity, &train.Status); err != nil {
 			return nil, fmt.Errorf("scan train: %w", err)
 		}
 		trains = append(trains, &train)
@@ -140,7 +145,7 @@ func (mySqlTrainRepository *MySQLTrainRepository) Update(context context.Context
 		train.Type,
 		train.Capacity,
 		train.Status,
-		train.ID,
+		train.UUID,
 	)
 
 	if err != nil {
