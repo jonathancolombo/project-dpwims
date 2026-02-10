@@ -11,7 +11,6 @@ FROM alpine:3.19
 WORKDIR /app
 
 COPY --from=builder /app/users-service .
-#COPY --from=builder /app/shared/database/scripts ./shared/database/scripts
 
 EXPOSE 8081
 CMD ["./users-service"]

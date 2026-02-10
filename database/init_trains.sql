@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS trains_service;
-CREATE DATABASE IF NOT EXISTS trains_service;
-USE trains_service;
+DROP DATABASE IF EXISTS trains_db;
+CREATE DATABASE IF NOT EXISTS trains_db;
+USE trains_db;
 DROP TABLE IF EXISTS trains;
 CREATE TABLE IF NOT EXISTS trains
 (

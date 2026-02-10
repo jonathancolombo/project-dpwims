@@ -12,7 +12,6 @@ services:
       - DB_USER=root
       - DB_PASSWORD=secret
       - DB_NAME=identity_users
-      - CONTEXT_KEY=users
     depends_on:
       database:
         condition: service_healthy
@@ -50,6 +49,4 @@ services:
       retries: 10
 
 volumes:
-  users_data:
-  trains_data:
   db_data:

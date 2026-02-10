@@ -19,14 +19,17 @@ const bitSize = 64
 const errorMessageUserNotFound = "user not found"
 const errorMessageInvalidID = "invalid id"
 
+// UserHandler struct to handle the user related HTTP requests
 type UserHandler struct {
 	service *services.UserService
 }
 
+// NewUserHandler to create an instance of UserHandler
 func NewUserHandler(userService *services.UserService) *UserHandler {
 	return &UserHandler{service: userService}
 }
 
+// CreateUser a handler method to create a new user into repository memory
 func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *http.Request) {
 	var user models.User
 	err := json.NewDecoder(request.Body).Decode(&user)
@@ -46,6 +49,7 @@ func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *
 	err = json.NewEncoder(writer).Encode(created)
 }
 
+// GetUser a handler method to get a user by id from repository memory
 func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
@@ -72,6 +76,7 @@ func (userHandler *UserHandler) GetAllUsers(writer http.ResponseWriter, request 
 	err = json.NewEncoder(writer).Encode(users)
 }
 
+// DeleteUser a handler method to delete a user by id from repository memory
 func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
@@ -87,6 +92,7 @@ func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *
 	writer.WriteHeader(http.StatusNoContent)
 }
 
+// UpdateUser a handler method to update a user by id from repository memory
 func (userHandler *UserHandler) UpdateUser(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)

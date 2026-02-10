@@ -4,13 +4,13 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build -o trains-service ./trains-service/cmd/server
+WORKDIR /app/trains-service
+RUN go build -o trains-service ./cmd/server
 
 FROM alpine:3.19
 WORKDIR /app
 
 COPY --from=builder /app/trains-service .
-COPY --from=builder /app/shared/database/scripts ./shared/database/scripts
 
 EXPOSE 8082
 CMD ["./trains-service"]

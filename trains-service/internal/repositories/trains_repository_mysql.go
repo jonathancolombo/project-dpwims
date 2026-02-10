@@ -9,6 +9,8 @@ import (
 	"trains-service/internal/models"
 )
 
+var ErrTrainNotFound = errors.New("train not found")
+
 // MySQLTrainRepository provides methods for CRUD operations on the 'trains' table in a MySQL database.
 type MySQLTrainRepository struct {
 	database *sql.DB
@@ -50,14 +52,14 @@ func (mySqlTrainRepository *MySQLTrainRepository) Create(context context.Context
 }
 
 // GetByID is a method to find the right train using id field
-func (mySqlTrainRepository *MySQLTrainRepository) GetByID(context context.Context, id int64) (*models.Train, error) {
-	if id <= 0 {
-		return nil, errors.New("id must be greater than 0")
+func (mySqlTrainRepository *MySQLTrainRepository) GetByID(context context.Context, uuid string) (*models.Train, error) {
+	if uuid == "" {
+		return nil, errors.New("uuid must be greater than 0")
 	}
-	query := `SELECT train_number, type, capacity, status FROM trains WHERE id = ?`
-	rows, err := mySqlTrainRepository.database.QueryContext(context, query, id)
+	query := `SELECT train_number, type, capacity, status FROM trains WHERE uuid = ?`
+	rows, err := mySqlTrainRepository.database.QueryContext(context, query, uuid)
 	if err != nil {
-		return nil, fmt.Errorf("query train by id: %w", err)
+		return nil, fmt.Errorf("query train by uuid: %w", err)
 	}
 
 	defer func(rows *sql.Rows) {
@@ -81,7 +83,7 @@ func (mySqlTrainRepository *MySQLTrainRepository) GetByID(context context.Contex
 // GetAll retrieves all trains into a slice
 func (mySqlTrainRepository *MySQLTrainRepository) GetAll(context context.Context) ([]*models.Train, error) {
 	query := `
-        SELECT id, train_number, type, capacity, status
+        SELECT uuid, train_number, type, capacity, status
         FROM trains
     `
 
@@ -109,14 +111,14 @@ func (mySqlTrainRepository *MySQLTrainRepository) GetAll(context context.Context
 }
 
 // DeleteByID delete a train by his id
-func (mySqlTrainRepository *MySQLTrainRepository) DeleteByID(context context.Context, id int64) error {
-	if id <= 0 {
-		return errors.New("id must be greater than 0")
+func (mySqlTrainRepository *MySQLTrainRepository) DeleteByID(context context.Context, uuid string) error {
+	if uuid == "" {
+		return errors.New("uuid must be greater than 0")
 	}
 
-	query := `DELETE FROM trains WHERE id = ?`
+	query := `DELETE FROM trains WHERE uuid = ?`
 
-	result, err := mySqlTrainRepository.database.ExecContext(context, query, id)
+	result, err := mySqlTrainRepository.database.ExecContext(context, query, uuid)
 	if err != nil {
 		return fmt.Errorf("delete train: %w", err)
 	}
@@ -138,7 +140,7 @@ func (mySqlTrainRepository *MySQLTrainRepository) Update(context context.Context
 	query := `
         UPDATE trains
         SET train_number = ?, type = ?, capacity = ?, status = ? 
-        WHERE id = ?
+        WHERE uuid = ?
     `
 	_, err := mySqlTrainRepository.database.ExecContext(context, query,
 		train.Number,

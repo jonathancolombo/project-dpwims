@@ -46,8 +46,8 @@ func (trainService *TrainService) CreateTrain(context context.Context, train *mo
 }
 
 // GetTrain retrieves a train by their UUID
-func (trainService *TrainService) GetTrain(context context.Context, id int64) (*models.Train, error) {
-	return trainService.repository.GetByID(context, id)
+func (trainService *TrainService) GetTrain(context context.Context, uuid string) (*models.Train, error) {
+	return trainService.repository.GetByID(context, uuid)
 }
 
 // GetAllTrains retrieves all trains
@@ -59,16 +59,16 @@ func (trainService *TrainService) GetAllTrains(context context.Context) ([]*mode
 }
 
 // DeleteTrainByID deletes a train by their UUID
-func (trainService *TrainService) DeleteTrainByID(context context.Context, id int64) error {
-	if id <= 0 {
-		return errors.New("id must be greater than 0")
+func (trainService *TrainService) DeleteTrainByID(context context.Context, uuid string) error {
+	if uuid == "" {
+		return errors.New("uuid must be greater than 0")
 	}
-	return trainService.repository.DeleteByID(context, id)
+	return trainService.repository.DeleteByID(context, uuid)
 }
 
 // UpdateTrain updates a train by their UUID
-func (trainService *TrainService) UpdateTrain(context context.Context, id int64, updateTrain *models.Train) (*models.Train, error) {
-	train, err := trainService.repository.GetByID(context, id)
+func (trainService *TrainService) UpdateTrain(context context.Context, uuid string, updateTrain *models.UpdateTrain) (*models.Train, error) {
+	train, err := trainService.repository.GetByID(context, uuid)
 	if err != nil {
 		return nil, fmt.Errorf("get train by id: %w", err)
 	}

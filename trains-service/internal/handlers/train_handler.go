@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
-	"strconv"
 	"trains-service/internal/models"
+	"trains-service/internal/repositories"
 	"trains-service/internal/services"
 
 	"github.com/go-chi/chi/v5"
@@ -12,9 +13,7 @@ import (
 
 const KeyContentType = "Content-TrainType"
 const ValueAppJson = "application/json"
-const baseNumber = 10
-const bitSize = 64
-const errorMessageUserNotFound = "user not found"
+const errorMessageTrainNotFound = "train not found"
 const errorMessageInvalidID = "invalid id"
 
 type TrainHandler struct {
@@ -49,11 +48,11 @@ func (trainHandler *TrainHandler) CreateTrain(writer http.ResponseWriter, reques
 // GetTrain a handler method to get a train by id from repository memory
 func (trainHandler *TrainHandler) GetTrain(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "id")
-	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
-	user, err := trainHandler.service.GetTrain(request.Context(), id)
+
+	user, err := trainHandler.service.GetTrain(request.Context(), idStr)
 
 	if err != nil || user == nil {
-		http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)
+		http.Error(writer, errorMessageTrainNotFound, http.StatusNotFound)
 		return
 	}
 
@@ -76,38 +75,38 @@ func (trainHandler *TrainHandler) GetAllTrains(writer http.ResponseWriter, reque
 // DeleteTrain a handler method to delete a train by id from repository memory
 func (trainHandler *TrainHandler) DeleteTrain(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
-	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
-	if err != nil {
+	if idString == "" {
 		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
 		return
 	}
-	err = trainHandler.service.DeleteTrainByID(request.Context(), id)
+
+	err := trainHandler.service.DeleteTrainByID(request.Context(), idString)
 	if err != nil {
-		http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)
+		http.Error(writer, errorMessageTrainNotFound, http.StatusNotFound)
 		return
 	}
 	writer.WriteHeader(http.StatusNoContent)
 }
 
-/*
-func (trainHandler *TrainHandler) UpdateUser(writer http.ResponseWriter, request *http.Request) {
+// UpdateTrain a handler method to update a user by id from repository memory
+func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
-	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
-	if err != nil || id <= 0 {
+
+	if idString == "" {
 		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
 		return
 	}
 
-	var updateUserRequest models.UpdateUserRequest
+	var updateUserRequest models.UpdateTrain
 	if err := json.NewDecoder(request.Body).Decode(&updateUserRequest); err != nil {
 		http.Error(writer, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	updatedUser, err := trainHandler.service.UpdateTrain(request.Context(), id, updateUserRequest)
+	updatedUser, err := trainHandler.service.UpdateTrain(request.Context(), idString, &updateUserRequest)
 	if err != nil {
-		if errors.Is(err, repositories.ErrUserNotFound) {
-			http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)
+		if errors.Is(err, repositories.ErrTrainNotFound) {
+			http.Error(writer, errorMessageTrainNotFound, http.StatusNotFound)
 			return
 		}
 
@@ -122,4 +121,3 @@ func (trainHandler *TrainHandler) UpdateUser(writer http.ResponseWriter, request
 		return
 	}
 }
-*/

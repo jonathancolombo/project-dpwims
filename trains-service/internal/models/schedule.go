@@ -1,5 +1,6 @@
 package models
 
+// Schedule represents a schedule entity with its attributes.
 type Schedule struct {
 	ID        int    `json:"id"`
 	TrainID   int    `json:"train_id"`
@@ -10,6 +11,7 @@ type Schedule struct {
 	Price     int    `json:"price"`
 }
 
+// ScheduleStop represents a schedule stop entity with its attributes.
 type ScheduleStop struct {
 	ID         int    `json:"id"`
 	ScheduleID int    `json:"schedule_id"`
