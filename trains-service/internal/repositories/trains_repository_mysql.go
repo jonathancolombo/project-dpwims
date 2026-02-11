@@ -57,17 +57,8 @@ func (mySqlTrainRepository *MySQLTrainRepository) GetByID(context context.Contex
 		return nil, errors.New("uuid must be greater than 0")
 	}
 	query := `SELECT train_number, type, capacity, status FROM trains WHERE uuid = ?`
-	rows, err := mySqlTrainRepository.database.QueryContext(context, query, uuid)
-	if err != nil {
-		return nil, fmt.Errorf("query train by uuid: %w", err)
-	}
+	rows := mySqlTrainRepository.database.QueryRowContext(context, query, uuid)
 
-	defer func(rows *sql.Rows) {
-		err := rows.Close()
-		if err != nil {
-			return
-		}
-	}(rows)
 	var train models.Train
 	errorScan := rows.Scan(&train.Number, &train.Type, &train.Capacity, &train.Status)
 	if errors.Is(errorScan, sql.ErrNoRows) {

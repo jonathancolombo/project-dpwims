@@ -14,7 +14,7 @@ import (
 const KeyContentType = "Content-TrainType"
 const ValueAppJson = "application/json"
 const errorMessageTrainNotFound = "train not found"
-const errorMessageInvalidID = "invalid id"
+const errorMessageInvalidID = "invalid uuid"
 
 // TrainHandler is responsible for handling HTTP requests related to Train entities.
 type TrainHandler struct {
@@ -48,7 +48,7 @@ func (trainHandler *TrainHandler) CreateTrain(writer http.ResponseWriter, reques
 
 // GetTrain a handler method to get a train by id from repository memory
 func (trainHandler *TrainHandler) GetTrain(writer http.ResponseWriter, request *http.Request) {
-	idStr := chi.URLParam(request, "id")
+	idStr := chi.URLParam(request, "uuid")
 
 	user, err := trainHandler.service.GetTrain(request.Context(), idStr)
 
@@ -75,7 +75,7 @@ func (trainHandler *TrainHandler) GetAllTrains(writer http.ResponseWriter, reque
 
 // DeleteTrain a handler method to delete a train by id from repository memory
 func (trainHandler *TrainHandler) DeleteTrain(writer http.ResponseWriter, request *http.Request) {
-	idString := chi.URLParam(request, "id")
+	idString := chi.URLParam(request, "uuid")
 	if idString == "" {
 		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
 		return
@@ -91,7 +91,7 @@ func (trainHandler *TrainHandler) DeleteTrain(writer http.ResponseWriter, reques
 
 // UpdateTrain a handler method to update a user by id from repository memory
 func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, request *http.Request) {
-	idString := chi.URLParam(request, "id")
+	idString := chi.URLParam(request, "uuid")
 
 	if idString == "" {
 		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)

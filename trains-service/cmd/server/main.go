@@ -15,7 +15,7 @@ import (
 )
 
 const urlTrains = "/trains"
-const urlTrainsId = "/trains/{id}"
+const urlTrainsId = "/trains/{uuid}"
 
 // main, runs with this command in the terminal: docker compose --env-file ./env/develop.env up --build
 func main() {
