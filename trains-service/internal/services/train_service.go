@@ -38,7 +38,13 @@ func (trainService *TrainService) CreateTrain(context context.Context, train *mo
 	}
 
 	if train.Type == "" {
+		fmt.Println("train type is empty, setting default type to regional")
 		train.Type = models.TrainTypeRegional
+	}
+
+	if train.Status == "" {
+		fmt.Println("train status is empty, setting default status to active")
+		train.Status = models.StatusActive
 	}
 
 	train.UUID = uuid.NewString()
@@ -47,6 +53,9 @@ func (trainService *TrainService) CreateTrain(context context.Context, train *mo
 
 // GetTrain retrieves a train by their UUID
 func (trainService *TrainService) GetTrain(context context.Context, uuid string) (*models.Train, error) {
+	if uuid == "" {
+		return nil, errors.New("uuid must be different than empty")
+	}
 	return trainService.repository.GetByID(context, uuid)
 }
 
@@ -61,7 +70,7 @@ func (trainService *TrainService) GetAllTrains(context context.Context) ([]*mode
 // DeleteTrainByID deletes a train by their UUID
 func (trainService *TrainService) DeleteTrainByID(context context.Context, uuid string) error {
 	if uuid == "" {
-		return errors.New("uuid must be greater than 0")
+		return errors.New("uuid must be different than empty")
 	}
 	return trainService.repository.DeleteByID(context, uuid)
 }
@@ -84,6 +93,14 @@ func (trainService *TrainService) UpdateTrain(context context.Context, uuid stri
 		train.Status = updateTrain.Status
 	default:
 		return nil, fmt.Errorf("unknown train status: %s", updateTrain.Status)
+	}
+
+	if updateTrain.Number != "" {
+		train.Number = updateTrain.Number
+	}
+
+	if updateTrain.Capacity > 0 {
+		train.Capacity = updateTrain.Capacity
 	}
 
 	return train, nil

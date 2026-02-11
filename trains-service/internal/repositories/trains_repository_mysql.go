@@ -151,7 +151,7 @@ func (mySqlTrainRepository *MySQLTrainRepository) Update(context context.Context
 	)
 
 	if err != nil {
-		return fmt.Errorf("update user: %w", err)
+		return fmt.Errorf("update train: %w", err)
 	}
 
 	return nil

@@ -16,6 +16,7 @@ const ValueAppJson = "application/json"
 const errorMessageTrainNotFound = "train not found"
 const errorMessageInvalidID = "invalid id"
 
+// TrainHandler is responsible for handling HTTP requests related to Train entities.
 type TrainHandler struct {
 	service *services.TrainService
 }

@@ -11,5 +11,5 @@ type ITrainRepository interface {
 	DeleteByID(context context.Context, uuid string) error
 	GetByID(context context.Context, uuid string) (*models.Train, error)
 	GetAll(context context.Context) ([]*models.Train, error)
-	Update(context context.Context, user *models.Train) error
+	Update(context context.Context, train *models.Train) error
 }
