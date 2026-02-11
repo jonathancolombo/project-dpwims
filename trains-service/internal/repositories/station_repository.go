@@ -11,5 +11,5 @@ type IStationRepository interface {
 	DeleteByID(context context.Context, id int64) error
 	GetByID(context context.Context, id int64) (*models.Station, error)
 	GetAll(context context.Context) ([]*models.Station, error)
-	Update(context context.Context, station *models.Station) (*models.Station, error)
+	Update(context context.Context, station *models.Station) error
 }

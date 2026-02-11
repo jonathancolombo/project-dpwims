@@ -55,7 +55,7 @@ func main() {
 	router.Get(urlStationsId, stationHandler.GetStation)
 	router.Delete(urlStationsId, stationHandler.DeleteStation)
 	router.Patch(urlStationsId, stationHandler.UpdateStation)
-	
+
 	log.Println("Trains Service running on port 8082 with url http://localhost:8082")
 
 	errorHttp := http.ListenAndServe(":8082", router)
