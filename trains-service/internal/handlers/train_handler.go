@@ -98,13 +98,13 @@ func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, reques
 		return
 	}
 
-	var updateUserRequest models.UpdateTrain
-	if err := json.NewDecoder(request.Body).Decode(&updateUserRequest); err != nil {
+	var updateTrainRequest models.UpdateTrain
+	if err := json.NewDecoder(request.Body).Decode(&updateTrainRequest); err != nil {
 		http.Error(writer, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	updatedUser, err := trainHandler.service.UpdateTrain(request.Context(), idString, &updateUserRequest)
+	updateTrain, err := trainHandler.service.UpdateTrain(request.Context(), idString, &updateTrainRequest)
 	if err != nil {
 		if errors.Is(err, repositories.ErrTrainNotFound) {
 			http.Error(writer, errorMessageTrainNotFound, http.StatusNotFound)
@@ -117,7 +117,7 @@ func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, reques
 
 	writer.Header().Set(KeyContentType, ValueAppJson)
 	writer.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(writer).Encode(updatedUser)
+	err = json.NewEncoder(writer).Encode(updateTrain)
 	if err != nil {
 		return
 	}

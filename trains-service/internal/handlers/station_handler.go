@@ -35,7 +35,7 @@ func (stationHandler *StationHandler) CreateStation(writer http.ResponseWriter, 
 		return
 	}
 
-	created, err := stationHandler.service.CreateStation(request.Context(), &station)
+	stationCreated, err := stationHandler.service.CreateStation(request.Context(), &station)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
@@ -43,7 +43,7 @@ func (stationHandler *StationHandler) CreateStation(writer http.ResponseWriter, 
 
 	writer.Header().Set(KeyContentType, ValueAppJson)
 	writer.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(writer).Encode(created)
+	err = json.NewEncoder(writer).Encode(stationCreated)
 }
 
 // GetStation a handler method to get a station by id from repository memory
@@ -63,14 +63,14 @@ func (stationHandler *StationHandler) GetStation(writer http.ResponseWriter, req
 
 // GetAllStations a handler method to get all stations into repository memory
 func (stationHandler *StationHandler) GetAllStations(writer http.ResponseWriter, request *http.Request) {
-	users, err := stationHandler.service.GetAllStations(request.Context())
+	stations, err := stationHandler.service.GetAllStations(request.Context())
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	writer.Header().Set(KeyContentType, ValueAppJson)
-	err = json.NewEncoder(writer).Encode(users)
+	err = json.NewEncoder(writer).Encode(stations)
 }
 
 // DeleteStation a handler method to delete a station by id from repository memory
@@ -98,13 +98,13 @@ func (stationHandler *StationHandler) UpdateStation(writer http.ResponseWriter, 
 		return
 	}
 
-	var updateStation models.UpdateStation
-	if err := json.NewDecoder(request.Body).Decode(&updateStation); err != nil {
+	var updateStationRequest models.UpdateStation
+	if err := json.NewDecoder(request.Body).Decode(&updateStationRequest); err != nil {
 		http.Error(writer, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	updatedUser, err := stationHandler.service.UpdateStation(request.Context(), id, &updateStation)
+	updateStation, err := stationHandler.service.UpdateStation(request.Context(), id, &updateStationRequest)
 	if err != nil {
 		if errors.Is(err, repositories.ErrStationNotFound) {
 			http.Error(writer, errorMessageStationNotFound, http.StatusNotFound)
@@ -117,7 +117,7 @@ func (stationHandler *StationHandler) UpdateStation(writer http.ResponseWriter, 
 
 	writer.Header().Set(KeyContentType, ValueAppJson)
 	writer.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(writer).Encode(updatedUser)
+	err = json.NewEncoder(writer).Encode(updateStation)
 	if err != nil {
 		return
 	}

@@ -17,6 +17,9 @@ import (
 const urlTrains = "/trains"
 const urlTrainsId = "/trains/{uuid}"
 
+const urlStations = "/stations"
+const urlStationsId = "/stations/{id}"
+
 // main, runs with this command in the terminal: docker compose --env-file ./env/develop.env up --build
 func main() {
 	host := os.Getenv("DB_HOST")
@@ -31,17 +34,28 @@ func main() {
 		log.Fatal(errorConnection)
 	}
 
-	repository := repositories.NewMySQLRepositoryTrains(db)
-	service := services.NewTrainService(repository)
-	handler := handlers.NewTrainHandler(service)
+	repositoryTrains := repositories.NewMySQLRepositoryTrains(db)
+	trainService := services.NewTrainService(repositoryTrains)
+	trainHandler := handlers.NewTrainHandler(trainService)
+
+	repositoryStation := repositories.NewMySQLRepositoryStation(db)
+	stationService := services.NewStationService(repositoryStation)
+	stationHandler := handlers.NewStationHandler(stationService)
+
 	router := chi.NewRouter()
 
-	router.Post(urlTrains, handler.CreateTrain)
-	router.Get(urlTrains, handler.GetAllTrains)
-	router.Get(urlTrainsId, handler.GetTrain)
-	router.Delete(urlTrainsId, handler.DeleteTrain)
-	router.Patch(urlTrainsId, handler.UpdateTrain)
+	router.Post(urlTrains, trainHandler.CreateTrain)
+	router.Get(urlTrains, trainHandler.GetAllTrains)
+	router.Get(urlTrainsId, trainHandler.GetTrain)
+	router.Delete(urlTrainsId, trainHandler.DeleteTrain)
+	router.Patch(urlTrainsId, trainHandler.UpdateTrain)
 
+	router.Post(urlStations, stationHandler.CreateStation)
+	router.Get(urlStations, stationHandler.GetAllStations)
+	router.Get(urlStationsId, stationHandler.GetStation)
+	router.Delete(urlStationsId, stationHandler.DeleteStation)
+	router.Patch(urlStationsId, stationHandler.UpdateStation)
+	
 	log.Println("Trains Service running on port 8082 with url http://localhost:8082")
 
 	errorHttp := http.ListenAndServe(":8082", router)
