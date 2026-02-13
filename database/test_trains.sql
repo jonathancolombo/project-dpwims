@@ -26,13 +26,13 @@ ON DUPLICATE KEY UPDATE
   train_number = VALUES(train_number), type = VALUES(type), capacity = VALUES(capacity), status = VALUES(status);
 
 -- 3) Routes (imposto id espliciti per chiarezza)
-INSERT INTO routes (id, train_id, departure, arrival, departure_time, arrival_time, distance)
+INSERT INTO routes (id, train_id, departure_station, arrival_station, departure_time, arrival_time, distance)
 VALUES
   (1, '11111111-1111-1111-1111-111111111111', 'Roma Termini', 'Milano Centrale', '2026-02-11 07:00:00', '2026-02-11 11:30:00', 570),
   (2, '22222222-2222-2222-2222-222222222222', 'Milano Centrale', 'Napoli Centrale', '2026-02-11 08:00:00', '2026-02-11 14:00:00', 760),
   (3, '33333333-3333-3333-3333-333333333333', 'Bologna Centrale', 'Firenze Santa Maria Novella', '2026-02-11 09:00:00', '2026-02-11 10:15:00', 120)
 ON DUPLICATE KEY UPDATE
-  train_id = VALUES(train_id), departure = VALUES(departure), arrival = VALUES(arrival), departure_time = VALUES(departure_time), arrival_time = VALUES(arrival_time), distance = VALUES(distance);
+  train_id = VALUES(train_id), departure_station = VALUES(departure_station), arrival_station = VALUES(arrival_station), departure_time = VALUES(departure_time), arrival_time = VALUES(arrival_time), distance = VALUES(distance);
 
 -- 4) Schedules (id espliciti per poterli usare in schedules_stops)
 INSERT INTO schedules (id, train_id, station_id, departure, arrival, status, price)

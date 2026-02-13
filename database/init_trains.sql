@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS routes
 (
     id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     train_id       VARCHAR(36)  NOT NULL,
-    departure      VARCHAR(100) NOT NULL,
-    arrival        VARCHAR(100) NOT NULL,
+    departure_station      VARCHAR(100) NOT NULL,
+    arrival_station        VARCHAR(100) NOT NULL,
     departure_time DATETIME     NOT NULL,
     arrival_time   DATETIME     NOT NULL,
     distance       INT          NOT NULL,

@@ -103,5 +103,10 @@ func (trainService *TrainService) UpdateTrain(context context.Context, uuid stri
 		train.Capacity = updateTrain.Capacity
 	}
 
+	errorUpdating := trainService.repository.Update(context, train)
+	if errorUpdating != nil {
+		return nil, fmt.Errorf("update train: %w", errorUpdating)
+	}
+
 	return train, nil
 }

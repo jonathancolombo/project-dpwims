@@ -85,6 +85,10 @@ func (stationService *StationService) UpdateStation(context context.Context, id 
 	default:
 		return nil, fmt.Errorf("unknown station status: %s", updateStation.Status)
 	}
+	errorUpdating := stationService.repository.Update(context, station)
+	if errorUpdating != nil {
+		return nil, fmt.Errorf("update station: %w", errorUpdating)
+	}
 
 	return station, nil
 }

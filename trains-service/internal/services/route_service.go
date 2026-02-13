@@ -67,22 +67,18 @@ func (routeService *RouteService) DeleteRoute(context context.Context, id int64)
 }
 
 // UpdateRoute updates a route by their id
-func (routeService *RouteService) UpdateRoute(context context.Context, id int64, updateRoute *models.UpdateRoute) error {
+func (routeService *RouteService) UpdateRoute(context context.Context, id int64, updateRoute *models.UpdateRoute) (*models.Route, error) {
 	if id <= 0 {
-		return fmt.Errorf(formatMessageIdError)
-	}
-
-	if updateRoute == nil {
-		return fmt.Errorf("update object route must not be nil")
+		return nil, fmt.Errorf(formatMessageIdError)
 	}
 
 	route, err := routeService.repository.GetByID(context, id)
 	if err != nil {
-		return fmt.Errorf("get route by id: %w", err)
+		return nil, fmt.Errorf("get route by id: %w", err)
 	}
 
 	if route == nil {
-		return fmt.Errorf("route must not be nil")
+		return nil, fmt.Errorf("route must not be nil")
 	}
 
 	if updateRoute.TrainId != "" {
@@ -100,6 +96,10 @@ func (routeService *RouteService) UpdateRoute(context context.Context, id int64,
 	if updateRoute.Distance > 0 {
 		route.Distance = updateRoute.Distance
 	}
+	errorUpdating := routeService.repository.Update(context, route)
+	if errorUpdating != nil {
+		return nil, fmt.Errorf("update route: %w", errorUpdating)
+	}
 
-	return routeService.repository.Update(context, route)
+	return route, nil
 }
