@@ -14,7 +14,7 @@ type MySQLRouteRepository struct {
 	database *sql.DB
 }
 
-// NewMySQLRepositoryRoute initializes a new MySQLRouteRepository with the provided database connection.
+// NewMySQLRepositoryRoute initializes a new MySQLScheduleRepository with the provided database connection.
 func NewMySQLRepositoryRoute(db *sql.DB) *MySQLRouteRepository {
 	return &MySQLRouteRepository{database: db}
 }
