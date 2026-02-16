@@ -10,3 +10,13 @@ type User struct {
 	Role         string `json:"role"`
 	PasswordSalt string `json:"-"`
 }
+
+// UpdateUserRequest a dto model to updating fields
+type UpdateUserRequest struct {
+	Username   *string `json:"username"`
+	Email      *string `json:"email"`
+	Telephone  *string `json:"telephone"`
+	FiscalCode *string `json:"fiscal_code"`
+	Role       *string `json:"role"`
+	Password   *string `json:"password"`
+}
