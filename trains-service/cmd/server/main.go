@@ -23,6 +23,9 @@ const urlStationsId = "/stations/{id}"
 const urlRoutes = "/routes"
 const urlRoutesId = "/routes/{id}"
 
+const urlSchedules = "/schedules"
+const urlRSchedulesId = "/schedules/{id}"
+
 // main, runs with this command in the terminal: docker compose --env-file ./env/develop.env up --build
 func main() {
 	host := os.Getenv("DB_HOST")
@@ -48,6 +51,11 @@ func main() {
 	repositoryRoute := repositories.NewMySQLRepositoryRoute(db)
 	routeService := services.NewRouteService(repositoryRoute)
 	routeHandler := handlers.NewRouteHandler(routeService)
+
+	repositorySchedule := repositories.NewMySQLScheduleRepository(db)
+	scheduleService := services.NewScheduleService(repositorySchedule)
+	scheduleHandler := handlers.NewScheduleHandler(scheduleService)
+
 	router := chi.NewRouter()
 
 	router.Post(urlTrains, trainHandler.CreateTrain)
@@ -67,6 +75,12 @@ func main() {
 	router.Get(urlRoutesId, routeHandler.GetRoute)
 	router.Delete(urlRoutesId, routeHandler.DeleteRoute)
 	router.Patch(urlRoutesId, routeHandler.UpdateRoute)
+
+	router.Post(urlSchedules, scheduleHandler.CreateSchedule)
+	router.Get(urlSchedules, scheduleHandler.GetAllSchedules)
+	router.Get(urlRSchedulesId, scheduleHandler.GetSchedule)
+	router.Delete(urlRSchedulesId, scheduleHandler.DeleteSchedule)
+	router.Patch(urlRSchedulesId, scheduleHandler.UpdateSchedule)
 
 	log.Println("Trains Service running on port 8082 with url http://localhost:8082")
 
