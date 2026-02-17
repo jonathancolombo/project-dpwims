@@ -24,7 +24,10 @@ const urlRoutes = "/routes"
 const urlRoutesId = "/routes/{id}"
 
 const urlSchedules = "/schedules"
-const urlRSchedulesId = "/schedules/{id}"
+const urlSchedulesId = "/schedules/{id}"
+
+const urlStopSchedules = "/stopschedules"
+const urlStopSchedulesId = "/stopschedules/{id}"
 
 // main, runs with this command in the terminal: docker compose --env-file ./env/develop.env up --build
 func main() {
@@ -56,6 +59,10 @@ func main() {
 	scheduleService := services.NewScheduleService(repositorySchedule)
 	scheduleHandler := handlers.NewScheduleHandler(scheduleService)
 
+	repositoryStopSchedule := repositories.NewMySQLStopScheduleRepository(db)
+	stopScheduleService := services.NewStopScheduleService(repositoryStopSchedule)
+	stopScheduleHandler := handlers.NewStopScheduleHandler(stopScheduleService)
+
 	router := chi.NewRouter()
 
 	router.Post(urlTrains, trainHandler.CreateTrain)
@@ -78,9 +85,15 @@ func main() {
 
 	router.Post(urlSchedules, scheduleHandler.CreateSchedule)
 	router.Get(urlSchedules, scheduleHandler.GetAllSchedules)
-	router.Get(urlRSchedulesId, scheduleHandler.GetSchedule)
-	router.Delete(urlRSchedulesId, scheduleHandler.DeleteSchedule)
-	router.Patch(urlRSchedulesId, scheduleHandler.UpdateSchedule)
+	router.Get(urlSchedulesId, scheduleHandler.GetSchedule)
+	router.Delete(urlSchedulesId, scheduleHandler.DeleteSchedule)
+	router.Patch(urlSchedulesId, scheduleHandler.UpdateSchedule)
+
+	router.Post(urlStopSchedules, stopScheduleHandler.CreateStopSchedule)
+	router.Get(urlStopSchedules, stopScheduleHandler.GetAllStopSchedules)
+	router.Get(urlStopSchedulesId, stopScheduleHandler.GetStopSchedule)
+	router.Delete(urlStopSchedulesId, stopScheduleHandler.DeleteStopSchedule)
+	router.Patch(urlStopSchedulesId, stopScheduleHandler.UpdateStopSchedule)
 
 	log.Println("Trains Service running on port 8082 with url http://localhost:8082")
 

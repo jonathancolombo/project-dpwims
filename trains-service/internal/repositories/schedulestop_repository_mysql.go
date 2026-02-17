@@ -14,7 +14,7 @@ type MySqlScheduleStopRepository struct {
 }
 
 // NewMySqlScheduleStopRepository initializes a new MySqlScheduleStopRepository with the provided database connection.
-func NewMySqlScheduleStopRepository(db *sql.DB) *MySqlScheduleStopRepository {
+func NewMySQLStopScheduleRepository(db *sql.DB) *MySqlScheduleStopRepository {
 	return &MySqlScheduleStopRepository{database: db}
 }
 

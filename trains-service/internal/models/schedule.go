@@ -2,9 +2,9 @@ package models
 
 // Schedule represents a schedule entity with its attributes.
 type Schedule struct {
-	ID        int     `json:"id"`
+	ID        int64   `json:"id"`
 	TrainID   string  `json:"train_id:omitempty"`
-	StationID int     `json:"station_id:omitempty"`
+	StationID int64   `json:"station_id:omitempty"`
 	Departure string  `json:"departure"`
 	Arrival   string  `json:"arrival"`
 	Status    Status  `json:"status"`
@@ -14,7 +14,7 @@ type Schedule struct {
 // UpdateSchedule represents the data structure for updating a schedule.
 type UpdateSchedule struct {
 	TrainID   string  `json:"train_id:omitempty"`
-	StationID int     `json:"station_id:omitempty"`
+	StationID int64   `json:"station_id:omitempty"`
 	Departure string  `json:"departure"`
 	Arrival   string  `json:"arrival"`
 	Status    Status  `json:"status"`
@@ -23,9 +23,9 @@ type UpdateSchedule struct {
 
 // ScheduleStop represents a schedule stop entity with its attributes.
 type ScheduleStop struct {
-	ID            int    `json:"id"`
-	ScheduleID    int    `json:"schedule_id:omitempty"`
-	StationID     int    `json:"station_id:omitempty"`
+	ID            int64  `json:"id"`
+	ScheduleID    int64  `json:"schedule_id:omitempty"`
+	StationID     int64  `json:"station_id:omitempty"`
 	StationName   string `json:"station_name"`
 	StopOrder     int    `json:"stop_order:omitempty"`
 	ArrivalTime   string `json:"arrival_time"`
@@ -34,8 +34,8 @@ type ScheduleStop struct {
 
 // UpdateScheduleStop represents the data structure for updating a schedule stop.
 type UpdateScheduleStop struct {
-	ScheduleID    int    `json:"schedule_id:omitempty"`
-	StationID     int    `json:"station_id:omitempty"`
+	ScheduleID    int64  `json:"schedule_id:omitempty"`
+	StationID     int64  `json:"station_id:omitempty"`
 	StationName   string `json:"station_name"`
 	StopOrder     int    `json:"stop_order:omitempty"`
 	ArrivalTime   string `json:"arrival_time"`
