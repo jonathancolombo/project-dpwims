@@ -26,7 +26,7 @@ func NewStationHandler(stationService *services.StationService) *StationHandler 
 	return &StationHandler{service: stationService}
 }
 
-// CreateStation a handler method to create a new station into repository memory
+// CreateStation a handler method to create a new station into repositories memory
 func (stationHandler *StationHandler) CreateStation(writer http.ResponseWriter, request *http.Request) {
 	var station models.Station
 	err := json.NewDecoder(request.Body).Decode(&station)
@@ -46,7 +46,7 @@ func (stationHandler *StationHandler) CreateStation(writer http.ResponseWriter, 
 	err = json.NewEncoder(writer).Encode(stationCreated)
 }
 
-// GetStation a handler method to get a station by id from repository memory
+// GetStation a handler method to get a station by id from repositories memory
 func (stationHandler *StationHandler) GetStation(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
@@ -61,7 +61,7 @@ func (stationHandler *StationHandler) GetStation(writer http.ResponseWriter, req
 	err = json.NewEncoder(writer).Encode(user)
 }
 
-// GetAllStations a handler method to get all stations into repository memory
+// GetAllStations a handler method to get all stations into repositories memory
 func (stationHandler *StationHandler) GetAllStations(writer http.ResponseWriter, request *http.Request) {
 	stations, err := stationHandler.service.GetAllStations(request.Context())
 	if err != nil {
@@ -73,7 +73,7 @@ func (stationHandler *StationHandler) GetAllStations(writer http.ResponseWriter,
 	err = json.NewEncoder(writer).Encode(stations)
 }
 
-// DeleteStation a handler method to delete a station by id from repository memory
+// DeleteStation a handler method to delete a station by id from repositories memory
 func (stationHandler *StationHandler) DeleteStation(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
@@ -89,7 +89,7 @@ func (stationHandler *StationHandler) DeleteStation(writer http.ResponseWriter, 
 	writer.WriteHeader(http.StatusNoContent)
 }
 
-// UpdateStation a handler method to update a station by id from repository memory
+// UpdateStation a handler method to update a station by id from repositories memory
 func (stationHandler *StationHandler) UpdateStation(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)

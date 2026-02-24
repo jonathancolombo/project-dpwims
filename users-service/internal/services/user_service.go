@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"user-service/internal/models"
-	"user-service/internal/repositories"
+	"users-service/internal/models"
+	"users-service/internal/repositories"
 )
 
 // UserService defines the interface for managing User entities.
@@ -108,7 +108,7 @@ func isValidEmail(email string) bool {
 // GetAllUsers retrieves all users
 func (userService *UserService) GetAllUsers(context context.Context) ([]*models.User, error) {
 	if userService.repository == nil {
-		return nil, errors.New("repository is nil")
+		return nil, errors.New("repositories is nil")
 	}
 	return userService.repository.GetAll(context)
 }

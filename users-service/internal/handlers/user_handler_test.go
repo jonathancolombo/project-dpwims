@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"user-service/internal/models"
-	"user-service/internal/repositories"
-	"user-service/internal/services"
+	"users-service/internal/models"
+	"users-service/internal/repositories"
+	"users-service/internal/services"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"

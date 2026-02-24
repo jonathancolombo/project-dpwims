@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS tickets
 (
     uuid         VARCHAR(36),
     user_id      BIGINT UNSIGNED NOT NULL,
-    train_id      VARCHAR(36) NOT NULL,
+    train_uuid      VARCHAR(36) NOT NULL,
     schedule_id   BIGINT UNSIGNED NOT NULL,
     seat_number   VARCHAR(10) NOT NULL,
     price         DOUBLE NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS tickets
 
     PRIMARY KEY (uuid),
     FOREIGN KEY (user_id) REFERENCES identity_users.users (id) ON DELETE CASCADE,
-    FOREIGN KEY (train_id) REFERENCES trains_db.trains (uuid) ON DELETE CASCADE,
+    FOREIGN KEY (train_uuid) REFERENCES trains_db.trains (uuid) ON DELETE CASCADE,
     FOREIGN KEY (schedule_id) REFERENCES trains_db.schedules (id) ON DELETE CASCADE
 );
 

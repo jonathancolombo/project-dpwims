@@ -121,7 +121,7 @@ func (mySqlScheduleRepository *MySQLScheduleRepository) GetAll(context context.C
 	return schedules, nil
 }
 
-// Update a method to update a schedule by id from repository memory
+// Update a method to update a schedule by id from repositories memory
 func (mySqlScheduleRepository *MySQLScheduleRepository) Update(context context.Context, schedule *models.Schedule) error {
 	query := `
         UPDATE schedules

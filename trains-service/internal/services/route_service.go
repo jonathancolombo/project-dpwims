@@ -53,7 +53,7 @@ func (routeService *RouteService) GetRoute(context context.Context, id int64) (*
 // GetAllRoutes retrieves all routes
 func (routeService *RouteService) GetAllRoutes(context context.Context) ([]*models.Route, error) {
 	if routeService.repository == nil {
-		return nil, fmt.Errorf("repository must not be nil")
+		return nil, fmt.Errorf("repositories must not be nil")
 	}
 	return routeService.repository.GetAll(context)
 }

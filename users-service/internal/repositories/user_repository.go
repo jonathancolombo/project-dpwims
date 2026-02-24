@@ -2,10 +2,10 @@ package repositories
 
 import (
 	"context"
-	"user-service/internal/models"
+	"users-service/internal/models"
 )
 
-// IUserRepository defines the interface for a user repository.
+// IUserRepository defines the interface for a user repositories.
 // All methods accept a context because the underlying implementation
 // may involve I/O operations (SQL, network, etc.).
 type IUserRepository interface {

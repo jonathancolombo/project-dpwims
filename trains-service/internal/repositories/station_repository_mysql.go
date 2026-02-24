@@ -122,7 +122,7 @@ func (mySqlStationRepository *MySQLStationRepository) GetAll(context context.Con
 	return stations, nil
 }
 
-// Update a method to update a station by id from repository memory
+// Update a method to update a station by id from repositories memory
 func (mySqlStationRepository *MySQLStationRepository) Update(context context.Context, station *models.Station) error {
 	query := `
         UPDATE stations

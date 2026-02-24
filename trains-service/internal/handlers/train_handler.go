@@ -26,7 +26,7 @@ func NewTrainHandler(trainService *services.TrainService) *TrainHandler {
 	return &TrainHandler{service: trainService}
 }
 
-// CreateTrain a handler method to create a new train into repository memory
+// CreateTrain a handler method to create a new train into repositories memory
 func (trainHandler *TrainHandler) CreateTrain(writer http.ResponseWriter, request *http.Request) {
 	var train models.Train
 	err := json.NewDecoder(request.Body).Decode(&train)
@@ -46,22 +46,22 @@ func (trainHandler *TrainHandler) CreateTrain(writer http.ResponseWriter, reques
 	err = json.NewEncoder(writer).Encode(created)
 }
 
-// GetTrain a handler method to get a train by id from repository memory
+// GetTrain a handler method to get a train by id from repositories memory
 func (trainHandler *TrainHandler) GetTrain(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "uuid")
 
-	user, err := trainHandler.service.GetTrain(request.Context(), idStr)
+	train, err := trainHandler.service.GetTrain(request.Context(), idStr)
 
-	if err != nil || user == nil {
+	if err != nil || train == nil {
 		http.Error(writer, errorMessageTrainNotFound, http.StatusNotFound)
 		return
 	}
 
 	writer.Header().Set(KeyContentType, ValueAppJson)
-	err = json.NewEncoder(writer).Encode(user)
+	err = json.NewEncoder(writer).Encode(train)
 }
 
-// GetAllTrains a handler method to get all trains into repository memory
+// GetAllTrains a handler method to get all trains into repositories memory
 func (trainHandler *TrainHandler) GetAllTrains(writer http.ResponseWriter, request *http.Request) {
 	trains, err := trainHandler.service.GetAllTrains(request.Context())
 	if err != nil {
@@ -73,7 +73,7 @@ func (trainHandler *TrainHandler) GetAllTrains(writer http.ResponseWriter, reque
 	err = json.NewEncoder(writer).Encode(trains)
 }
 
-// DeleteTrain a handler method to delete a train by id from repository memory
+// DeleteTrain a handler method to delete a train by id from repositories memory
 func (trainHandler *TrainHandler) DeleteTrain(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "uuid")
 	if idString == "" {
@@ -89,7 +89,7 @@ func (trainHandler *TrainHandler) DeleteTrain(writer http.ResponseWriter, reques
 	writer.WriteHeader(http.StatusNoContent)
 }
 
-// UpdateTrain a handler method to update a user by id from repository memory
+// UpdateTrain a handler method to update a train by id from repositories memory
 func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "uuid")
 

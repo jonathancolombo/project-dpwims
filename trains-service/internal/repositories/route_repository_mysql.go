@@ -120,7 +120,7 @@ func (mySqlRouteRepository *MySQLRouteRepository) GetAll(context context.Context
 	return routes, nil
 }
 
-// Update a method to update a route by id from repository memory
+// Update a method to update a route by id from repositories memory
 func (mySqlRouteRepository *MySQLRouteRepository) Update(context context.Context, route *models.Route) error {
 	query := `
         UPDATE routes
