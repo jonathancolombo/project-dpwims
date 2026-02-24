@@ -3,8 +3,8 @@ package services_test
 import (
 	"context"
 	"testing"
-	"user-service/internal/models"
-	"user-service/internal/services"
+	"users-service/internal/models"
+	"users-service/internal/services"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

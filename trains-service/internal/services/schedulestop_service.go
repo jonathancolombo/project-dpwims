@@ -63,7 +63,7 @@ func (scheduleStopService *ScheduleStopService) GetStopSchedule(context context.
 // GetAllStopSchedules retrieves all stop schedules
 func (scheduleStopService *ScheduleStopService) GetAllStopSchedules(context context.Context) ([]*models.ScheduleStop, error) {
 	if scheduleStopService.repository == nil {
-		return nil, fmt.Errorf("repository must not be nil")
+		return nil, fmt.Errorf("repositories must not be nil")
 	}
 	return scheduleStopService.repository.GetAll(context)
 }

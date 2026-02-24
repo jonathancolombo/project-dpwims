@@ -1,5 +1,5 @@
--- File di test: test_trains.sql
--- Scopo: inserire dati di esempio coerenti con le tabelle definite in init_trains.sql
+-- File di test: test_2_trains.sql
+-- Scopo: inserire dati di esempio coerenti con le tabelle definite in init_2_trains.sql
 -- Ordine degli insert: stations -> trains -> routes -> schedules -> schedules_stops
 -- Gli INSERT sono scritti in modo idempotente (ON DUPLICATE KEY UPDATE) per poter essere rieseguiti senza errori.
 USE trains_db;

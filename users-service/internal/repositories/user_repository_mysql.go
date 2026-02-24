@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"user-service/internal/models"
+	"users-service/internal/models"
 )
 
 var ErrUserNotFound = errors.New("user not found")

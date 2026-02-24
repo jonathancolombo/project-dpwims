@@ -119,7 +119,7 @@ func (mySqlScheduleStopRepository *MySqlScheduleStopRepository) GetAll(context c
 	return schedules, nil
 }
 
-// Update a method to update a stop schedule by id from repository memory
+// Update a method to update a stop schedule by id from repositories memory
 func (mySqlScheduleStopRepository *MySqlScheduleStopRepository) Update(context context.Context, schedule *models.ScheduleStop) error {
 	query := `
         UPDATE schedules_stops

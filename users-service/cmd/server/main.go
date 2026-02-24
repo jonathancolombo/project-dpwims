@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 	"project-dpwims/database"
-	"user-service/internal/handlers"
-	"user-service/internal/repositories"
-	"user-service/internal/services"
+	"users-service/internal/handlers"
+	"users-service/internal/repositories"
+	"users-service/internal/services"
 
 	"github.com/go-chi/chi/v5"
 	_ "github.com/go-sql-driver/mysql"

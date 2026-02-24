@@ -67,7 +67,7 @@ func (scheduleService *ScheduleService) GetSchedule(context context.Context, id 
 // GetAllSchedules retrieves all schedules
 func (scheduleService *ScheduleService) GetAllSchedules(context context.Context) ([]*models.Schedule, error) {
 	if scheduleService.repository == nil {
-		return nil, fmt.Errorf("repository must not be nil")
+		return nil, fmt.Errorf("repositories must not be nil")
 	}
 	return scheduleService.repository.GetAll(context)
 }

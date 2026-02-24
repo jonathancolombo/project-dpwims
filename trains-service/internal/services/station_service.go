@@ -58,7 +58,7 @@ func (stationService *StationService) GetStation(context context.Context, id int
 // GetAllStations retrieves all stations
 func (stationService *StationService) GetAllStations(context context.Context) ([]*models.Station, error) {
 	if stationService.repository == nil {
-		return nil, errors.New("repository is nil")
+		return nil, errors.New("repositories is nil")
 	}
 
 	return stationService.repository.GetAll(context)

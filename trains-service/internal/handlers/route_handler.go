@@ -44,7 +44,7 @@ func (routeHandler *RouteHandler) CreateRoute(writer http.ResponseWriter, reques
 	err = json.NewEncoder(writer).Encode(created)
 }
 
-// GetRoute a handler method to get a route by id from repository memory
+// GetRoute a handler method to get a route by id from repositories memory
 func (routeHandler *RouteHandler) GetRoute(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
@@ -59,7 +59,7 @@ func (routeHandler *RouteHandler) GetRoute(writer http.ResponseWriter, request *
 	err = json.NewEncoder(writer).Encode(route)
 }
 
-// GetAllRoutes a handler method to get all routes into repository memory
+// GetAllRoutes a handler method to get all routes into repositories memory
 func (routeHandler *RouteHandler) GetAllRoutes(writer http.ResponseWriter, request *http.Request) {
 	routes, err := routeHandler.service.GetAllRoutes(request.Context())
 	if err != nil {
@@ -71,7 +71,7 @@ func (routeHandler *RouteHandler) GetAllRoutes(writer http.ResponseWriter, reque
 	err = json.NewEncoder(writer).Encode(routes)
 }
 
-// DeleteRoute a handler method to delete a route by id from repository memory
+// DeleteRoute a handler method to delete a route by id from repositories memory
 func (routeHandler *RouteHandler) DeleteRoute(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
@@ -87,7 +87,7 @@ func (routeHandler *RouteHandler) DeleteRoute(writer http.ResponseWriter, reques
 	writer.WriteHeader(http.StatusNoContent)
 }
 
-// UpdateRoute a handler method to update a route by id from repository memory
+// UpdateRoute a handler method to update a route by id from repositories memory
 func (routeHandler *RouteHandler) UpdateRoute(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
