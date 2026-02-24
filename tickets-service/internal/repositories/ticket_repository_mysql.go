@@ -88,7 +88,7 @@ func (mySqlTicketRepository *MySQLTicketRepository) GetAll(context context.Conte
 	var tickets []*models.Ticket
 	for rows.Next() {
 		var ticket models.Ticket
-		err := rows.Scan(&ticket.TrainUUID, &ticket.ScheduleID, &ticket.SeatNumber, &ticket.Price, &ticket.Status)
+		err := rows.Scan(&ticket.UserId, &ticket.TrainUUID, &ticket.ScheduleID, &ticket.SeatNumber, &ticket.Price, &ticket.Status)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan ticket: %w", err)
 		}

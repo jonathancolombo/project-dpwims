@@ -21,6 +21,9 @@ import (
 const urlTickets = "/tickets"
 const urlTicketsID = "/tickets/{id}"
 
+const urlPayments = "/payments"
+const urlPaymentsID = "/payments/{id}"
+
 // main, runs with this command in the terminal: docker compose --env-file ./env/develop.env up --build
 func main() {
 	host := os.Getenv("DB_HOST")
@@ -34,16 +37,27 @@ func main() {
 	if errorConnection != nil {
 		log.Fatal(errorConnection)
 	}
-	repository := repositories.NewMySQLRepositoryTickets(db)
-	service := services.NewTicketService(repository)
-	handler := handlers.NewTicketHandler(service)
+	repositoryTickets := repositories.NewMySQLRepositoryTickets(db)
+	ticketService := services.NewTicketService(repositoryTickets)
+	ticketHandler := handlers.NewTicketHandler(ticketService)
+
+	repositoryPayments := repositories.NewMySQLRepositoryPayments(db)
+	paymentService := services.NewPaymentService(repositoryPayments)
+	paymentHandler := handlers.NewPaymentHandler(paymentService)
+
 	router := chi.NewRouter()
 
-	router.Post(urlTickets, handler.CreateTicket)
-	router.Get(urlTickets, handler.GetAllTickets)
-	router.Get(urlTicketsID, handler.GetTicket)
-	router.Delete(urlTicketsID, handler.DeleteTicket)
-	router.Patch(urlTicketsID, handler.UpdateTicket)
+	router.Post(urlTickets, ticketHandler.CreateTicket)
+	router.Get(urlTickets, ticketHandler.GetAllTickets)
+	router.Get(urlTicketsID, ticketHandler.GetTicket)
+	router.Delete(urlTicketsID, ticketHandler.DeleteTicket)
+	router.Patch(urlTicketsID, ticketHandler.UpdateTicket)
+
+	router.Post(urlPayments, paymentHandler.CreatePayment)
+	router.Get(urlPayments, paymentHandler.GetAllPayments)
+	router.Get(urlPaymentsID, paymentHandler.GetPayment)
+	router.Delete(urlPaymentsID, paymentHandler.DeletePayment)
+	router.Patch(urlPaymentsID, paymentHandler.UpdatePayment)
 
 	log.Println("Ticket Service running on port 8083 with url http://localhost:8083")
 	errorHttp := http.ListenAndServe(":8083", router)
