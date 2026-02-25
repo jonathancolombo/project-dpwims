@@ -22,7 +22,7 @@ func NewScheduleHandler(service *services.ScheduleService) *ScheduleHandler {
 	return &ScheduleHandler{service: service}
 }
 
-// CreateSchedule to manage http request to create a schedule
+// CreateSchedule to manage api request to create a schedule
 func (scheduleHandler *ScheduleHandler) CreateSchedule(writer http.ResponseWriter, request *http.Request) {
 	var schedule models.Schedule
 	err := json.NewDecoder(request.Body).Decode(&schedule)

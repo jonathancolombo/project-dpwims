@@ -23,7 +23,7 @@ func NewPaymentHandler(paymentService *services.PaymentService) *PaymentHandler 
 	return &PaymentHandler{service: paymentService}
 }
 
-// CreatePayment to manage http request to create a payment and save it into repositories memory
+// CreatePayment to manage api request to create a payment and save it into repositories memory
 func (paymentHandler *PaymentHandler) CreatePayment(writer http.ResponseWriter, request *http.Request) {
 	var payment models.Payment
 	err := json.NewDecoder(request.Body).Decode(&payment)

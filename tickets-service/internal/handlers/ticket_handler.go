@@ -26,7 +26,7 @@ func NewTicketHandler(ticketService *services.TicketService) *TicketHandler {
 	return &TicketHandler{service: ticketService}
 }
 
-// CreateTicket to manage http request to create a ticket
+// CreateTicket to manage api request to create a ticket
 func (ticketHandler *TicketHandler) CreateTicket(writer http.ResponseWriter, request *http.Request) {
 	var ticket models.Ticket
 	err := json.NewDecoder(request.Body).Decode(&ticket)

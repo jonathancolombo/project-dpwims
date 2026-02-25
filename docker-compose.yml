@@ -62,10 +62,13 @@ services:
       - DB_PORT=3306
       - DB_USER=root
       - DB_PASSWORD=secret
-      - DB_NAME=notifications_db
+      - DB_NAME=identity_subscriptions
+      - MQTT_BROKER_URL=tcp://mosquitto:1884
     depends_on:
       database:
         condition: service_healthy
+      server_mosquitto:
+        condition: service_started
 
   database:
     build: ./database
@@ -81,6 +84,13 @@ services:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-psecret" ]
       timeout: 20s
       retries: 10
+
+  server_mosquitto:
+    image: eclipse-mosquitto
+    container_name: server_mosquitto
+    ports:
+      - "1884:1884"
+    restart: unless-stopped
 
 volumes:
   db_data:

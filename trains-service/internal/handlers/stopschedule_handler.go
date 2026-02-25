@@ -22,7 +22,7 @@ func NewStopScheduleHandler(service *services.ScheduleStopService) *StopSchedule
 	return &StopScheduleHandler{service: service}
 }
 
-// CreateStopSchedule to manage http request to create a stop schedule
+// CreateStopSchedule to manage api request to create a stop schedule
 func (stopScheduleHandler *StopScheduleHandler) CreateStopSchedule(writer http.ResponseWriter, request *http.Request) {
 	var stopSchedule models.ScheduleStop
 	err := json.NewDecoder(request.Body).Decode(&stopSchedule)

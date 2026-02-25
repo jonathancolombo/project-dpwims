@@ -2,24 +2,52 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
+	"notifications-service/internal/api"
+	"notifications-service/internal/mqtt"
+	"notifications-service/internal/repository"
+	"notifications-service/internal/service"
+	"project-dpwims/database"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	name := os.Getenv("DB_NAME")
 
-	/*
-		options := mqtt.NewClientOptions().AddBroker("tcp://localhost:1884").SetClientID("go_mqtt_client")
-		options.SetClientID("golang-publisher")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, name)
 
-		connection := mqtt.NewClient(options)
-		if token := connection.Connect(); token.Wait() && token.Error() != nil {
-			log.Fatal(token.Error().Error())
-		}
+	db, err := database.NewMySQLConnection(dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		for i := 0; i < 5; i++ {
-			payload := fmt.Sprintf("Message %d", i)
-			token := connection.Publish("test/topic", 0, false, payload)
-			token.Wait()
-		}
-	*/
-	fmt.Println("Hello World")
+	repo := repository.NewMySQLSubscriptionRepository(db)
+	dispatcher := service.NewDispatcher(repo)
+
+	mqttClient := mqtt.NewClient()
+	if err := mqttClient.Connect(); err != nil {
+		log.Fatal(err)
+	}
+
+	mqttClient.Subscribe(mqtt.TrainEventsTopic, 0, mqtt.TrainEventHandler(dispatcher))
+	mqttClient.Subscribe(mqtt.TrainStopsTopic, 0, mqtt.TrainEventHandler(dispatcher))
+	mqttClient.Subscribe(mqtt.TrainDelayTopic, 0, mqtt.TrainEventHandler(dispatcher))
+
+	httpHandler := api.NewHandler(repo)
+	router := api.NewRouter(httpHandler)
+
+	log.Println("Notification Service running on port 8084 with url http://localhost:8084")
+	errorHttp := http.ListenAndServe(":8084", router)
+	if errorHttp != nil {
+		return
+	}
+
 }

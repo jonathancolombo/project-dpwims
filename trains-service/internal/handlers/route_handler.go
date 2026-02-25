@@ -25,7 +25,7 @@ func NewRouteHandler(routeService *services.RouteService) *RouteHandler {
 	return &RouteHandler{service: routeService}
 }
 
-// CreateRoute to manage http request to create a route
+// CreateRoute to manage api request to create a route
 func (routeHandler *RouteHandler) CreateRoute(writer http.ResponseWriter, request *http.Request) {
 	var route models.Route
 	err := json.NewDecoder(request.Body).Decode(&route)

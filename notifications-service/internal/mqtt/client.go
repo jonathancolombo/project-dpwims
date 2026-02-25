@@ -3,6 +3,7 @@ package mqtt
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -22,6 +23,7 @@ const quiesce = 250
 // NewClient initializes and returns a new MQTT client with the specified options.
 func NewClient() *Client {
 	options := mqtt.NewClientOptions()
+	brokerURL := os.Getenv("MQTT_BROKER_URL")
 	options.AddBroker(brokerURL)
 	options.SetClientID(clientID)
 	options.SetCleanSession(true)
