@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . .
 
 WORKDIR /app/tickets-service
-RUN go build -o tickets-services ./cmd/server
+RUN go build -o tickets-service ./cmd/server
 
 FROM alpine:3.19
 WORKDIR /app

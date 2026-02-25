@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 WORKDIR /app/trains-service
-RUN go build -o trains-services ./cmd/server
+RUN go build -o trains-service ./cmd/server
 
 FROM alpine:3.19
 WORKDIR /app
