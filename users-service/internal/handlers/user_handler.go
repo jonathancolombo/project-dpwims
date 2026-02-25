@@ -29,7 +29,7 @@ func NewUserHandler(userService *services.UserService) *UserHandler {
 	return &UserHandler{service: userService}
 }
 
-// CreateUser a handler method to create a new user into repositories memory
+// CreateUser a handlers method to create a new user into repositories memory
 func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *http.Request) {
 	var user models.User
 	err := json.NewDecoder(request.Body).Decode(&user)
@@ -49,7 +49,7 @@ func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *
 	err = json.NewEncoder(writer).Encode(created)
 }
 
-// GetUser a handler method to get a user by id from repositories memory
+// GetUser a handlers method to get a user by id from repositories memory
 func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
@@ -64,7 +64,7 @@ func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *htt
 	err = json.NewEncoder(writer).Encode(user)
 }
 
-// GetAllUsers a handler method to get all users into repositories memory
+// GetAllUsers a handlers method to get all users into repositories memory
 func (userHandler *UserHandler) GetAllUsers(writer http.ResponseWriter, request *http.Request) {
 	users, err := userHandler.service.GetAllUsers(request.Context())
 	if err != nil {
@@ -76,7 +76,7 @@ func (userHandler *UserHandler) GetAllUsers(writer http.ResponseWriter, request 
 	err = json.NewEncoder(writer).Encode(users)
 }
 
-// DeleteUser a handler method to delete a user by id from repositories memory
+// DeleteUser a handlers method to delete a user by id from repositories memory
 func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
@@ -92,7 +92,7 @@ func (userHandler *UserHandler) DeleteUser(writer http.ResponseWriter, request *
 	writer.WriteHeader(http.StatusNoContent)
 }
 
-// UpdateUser a handler method to update a user by id from repositories memory
+// UpdateUser a handlers method to update a user by id from repositories memory
 func (userHandler *UserHandler) UpdateUser(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)

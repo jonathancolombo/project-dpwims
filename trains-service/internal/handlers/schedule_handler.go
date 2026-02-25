@@ -43,7 +43,7 @@ func (scheduleHandler *ScheduleHandler) CreateSchedule(writer http.ResponseWrite
 
 }
 
-// GetSchedule a handler method to get a schedule by id from repositories memory
+// GetSchedule a handlers method to get a schedule by id from repositories memory
 func (scheduleHandler *ScheduleHandler) GetSchedule(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
@@ -58,7 +58,7 @@ func (scheduleHandler *ScheduleHandler) GetSchedule(writer http.ResponseWriter, 
 	err = json.NewEncoder(writer).Encode(schedule)
 }
 
-// GetAllSchedules a handler method to get all schedules from repositories memory
+// GetAllSchedules a handlers method to get all schedules from repositories memory
 func (scheduleHandler *ScheduleHandler) GetAllSchedules(writer http.ResponseWriter, request *http.Request) {
 	schedules, err := scheduleHandler.service.GetAllSchedules(request.Context())
 	if err != nil {
@@ -70,7 +70,7 @@ func (scheduleHandler *ScheduleHandler) GetAllSchedules(writer http.ResponseWrit
 	err = json.NewEncoder(writer).Encode(schedules)
 }
 
-// DeleteSchedule a handler method to delete a schedule by id from repositories memory
+// DeleteSchedule a handlers method to delete a schedule by id from repositories memory
 func (scheduleHandler *ScheduleHandler) DeleteSchedule(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
@@ -87,7 +87,7 @@ func (scheduleHandler *ScheduleHandler) DeleteSchedule(writer http.ResponseWrite
 	writer.WriteHeader(http.StatusNoContent)
 }
 
-// UpdateSchedule a handler method to update a schedule by id from repositories memory
+// UpdateSchedule a handlers method to update a schedule by id from repositories memory
 func (scheduleHandler *ScheduleHandler) UpdateSchedule(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)

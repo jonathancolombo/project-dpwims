@@ -175,7 +175,7 @@ func NewHashedPassword(password string) (*HashedPassword, error) {
 	}, nil
 }
 
-// UpdateUser a function service to updating a user
+// UpdateUser a function services to updating a user
 func (userService *UserService) UpdateUser(context context.Context, id int64, updateUserRequest models.UpdateUserRequest) (*models.User, error) {
 	user, err := userService.repository.GetByID(context, id)
 

@@ -40,7 +40,7 @@ func (stopScheduleHandler *StopScheduleHandler) CreateStopSchedule(writer http.R
 	err = json.NewEncoder(writer).Encode(created)
 }
 
-// GetStopSchedule a handler method to get a stop schedule by id from repositories memory
+// GetStopSchedule a handlers method to get a stop schedule by id from repositories memory
 func (stopScheduleHandler *StopScheduleHandler) GetStopSchedule(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
@@ -55,7 +55,7 @@ func (stopScheduleHandler *StopScheduleHandler) GetStopSchedule(writer http.Resp
 	err = json.NewEncoder(writer).Encode(stopSchedule)
 }
 
-// GetAllStopSchedules a handler method to get all stop schedules from repositories memory
+// GetAllStopSchedules a handlers method to get all stop schedules from repositories memory
 func (stopScheduleHandler *StopScheduleHandler) GetAllStopSchedules(writer http.ResponseWriter, request *http.Request) {
 	stopSchedules, err := stopScheduleHandler.service.GetAllStopSchedules(request.Context())
 	if err != nil {
@@ -72,7 +72,7 @@ func (stopScheduleHandler *StopScheduleHandler) GetAllStopSchedules(writer http.
 	err = json.NewEncoder(writer).Encode(stopSchedules)
 }
 
-// DeleteStopSchedule a handler method to delete a stop schedule by id from repositories memory
+// DeleteStopSchedule a handlers method to delete a stop schedule by id from repositories memory
 func (stopScheduleHandler *StopScheduleHandler) DeleteStopSchedule(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
@@ -89,7 +89,7 @@ func (stopScheduleHandler *StopScheduleHandler) DeleteStopSchedule(writer http.R
 	writer.WriteHeader(http.StatusNoContent)
 }
 
-// UpdateStopSchedule a handler method to update a schedule by id from repositories memory
+// UpdateStopSchedule a handlers method to update a schedule by id from repositories memory
 func (stopScheduleHandler *StopScheduleHandler) UpdateStopSchedule(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)

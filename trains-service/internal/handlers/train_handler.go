@@ -26,7 +26,7 @@ func NewTrainHandler(trainService *services.TrainService) *TrainHandler {
 	return &TrainHandler{service: trainService}
 }
 
-// CreateTrain a handler method to create a new train into repositories memory
+// CreateTrain a handlers method to create a new train into repositories memory
 func (trainHandler *TrainHandler) CreateTrain(writer http.ResponseWriter, request *http.Request) {
 	var train models.Train
 	err := json.NewDecoder(request.Body).Decode(&train)
@@ -46,7 +46,7 @@ func (trainHandler *TrainHandler) CreateTrain(writer http.ResponseWriter, reques
 	err = json.NewEncoder(writer).Encode(created)
 }
 
-// GetTrain a handler method to get a train by id from repositories memory
+// GetTrain a handlers method to get a train by id from repositories memory
 func (trainHandler *TrainHandler) GetTrain(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "uuid")
 
@@ -61,7 +61,7 @@ func (trainHandler *TrainHandler) GetTrain(writer http.ResponseWriter, request *
 	err = json.NewEncoder(writer).Encode(train)
 }
 
-// GetAllTrains a handler method to get all trains into repositories memory
+// GetAllTrains a handlers method to get all trains into repositories memory
 func (trainHandler *TrainHandler) GetAllTrains(writer http.ResponseWriter, request *http.Request) {
 	trains, err := trainHandler.service.GetAllTrains(request.Context())
 	if err != nil {
@@ -73,7 +73,7 @@ func (trainHandler *TrainHandler) GetAllTrains(writer http.ResponseWriter, reque
 	err = json.NewEncoder(writer).Encode(trains)
 }
 
-// DeleteTrain a handler method to delete a train by id from repositories memory
+// DeleteTrain a handlers method to delete a train by id from repositories memory
 func (trainHandler *TrainHandler) DeleteTrain(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "uuid")
 	if idString == "" {
@@ -89,7 +89,7 @@ func (trainHandler *TrainHandler) DeleteTrain(writer http.ResponseWriter, reques
 	writer.WriteHeader(http.StatusNoContent)
 }
 
-// UpdateTrain a handler method to update a train by id from repositories memory
+// UpdateTrain a handlers method to update a train by id from repositories memory
 func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "uuid")
 

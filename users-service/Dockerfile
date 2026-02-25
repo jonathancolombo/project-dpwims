@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 WORKDIR /app/users-service
-RUN go build -o users-service ./cmd/server
+RUN go build -o users-services ./cmd/server
 
 FROM alpine:3.19
 WORKDIR /app

@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: users-service/Dockerfile
-    container_name: users-service
+    container_name: users-services
     ports:
       - "8081:8081"
     environment:
@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: trains-service/Dockerfile
-    container_name: trains-service
+    container_name: trains-services
     ports:
       - "8082:8082"
     environment:
@@ -37,7 +37,7 @@ services:
     build:
       context: .
       dockerfile: tickets-service/Dockerfile
-    container_name: tickets-service
+    container_name: tickets-services
     ports:
       - "8083:8083"
     environment:

@@ -45,7 +45,7 @@ func (ticketHandler *TicketHandler) CreateTicket(writer http.ResponseWriter, req
 	err = json.NewEncoder(writer).Encode(created)
 }
 
-// GetTicket a handler method to get a ticket by id from repositories memory
+// GetTicket a handlers method to get a ticket by id from repositories memory
 func (ticketHandler *TicketHandler) GetTicket(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "uuid")
 
@@ -60,7 +60,7 @@ func (ticketHandler *TicketHandler) GetTicket(writer http.ResponseWriter, reques
 	err = json.NewEncoder(writer).Encode(ticket)
 }
 
-// GetAllTickets a handler method to get all tickets into repositories memory
+// GetAllTickets a handlers method to get all tickets into repositories memory
 func (ticketHandler *TicketHandler) GetAllTickets(writer http.ResponseWriter, request *http.Request) {
 	tickets, err := ticketHandler.service.GetAllTickets(request.Context())
 	if err != nil {
@@ -72,7 +72,7 @@ func (ticketHandler *TicketHandler) GetAllTickets(writer http.ResponseWriter, re
 	err = json.NewEncoder(writer).Encode(tickets)
 }
 
-// DeleteTicket a handler method to delete a ticket by id from repositories memory
+// DeleteTicket a handlers method to delete a ticket by id from repositories memory
 func (ticketHandler *TicketHandler) DeleteTicket(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "uuid")
 	if idString == "" {
@@ -89,7 +89,7 @@ func (ticketHandler *TicketHandler) DeleteTicket(writer http.ResponseWriter, req
 	writer.WriteHeader(http.StatusNoContent)
 }
 
-// UpdateTicket a handler method to update a ticket by id from repositories memory
+// UpdateTicket a handlers method to update a ticket by id from repositories memory
 func (ticketHandler *TicketHandler) UpdateTicket(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "uuid")
 
