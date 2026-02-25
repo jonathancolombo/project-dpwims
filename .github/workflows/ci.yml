@@ -25,19 +25,19 @@ jobs:
           path: |
             user-service/.cache/go-build
             user-service/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('users-services/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('users-service/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
 
       - name: Install dependencies
-        working-directory: ./users-services
+        working-directory: ./users-service
         run: go mod tidy
 
       - name: Build
-        working-directory: ./users-services
+        working-directory: ./users-service
         run: go build ./...
 
       - name: Run tests
-        working-directory: ./users-services
+        working-directory: ./users-service
         run: go test ./... -v
 
   trains-service:
@@ -58,19 +58,19 @@ jobs:
           path: |
             trains-service/.cache/go-build
             trains-service/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('trains-services/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('trains-service/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
 
       - name: Install dependencies
-        working-directory: ./trains-services
+        working-directory: ./trains-service
         run: go mod tidy
 
       - name: Build
-        working-directory: ./trains-services
+        working-directory: ./trains-service
         run: go build ./...
 
       - name: Run tests
-        working-directory: ./trains-services
+        working-directory: ./trains-service
         run: go test ./... -v
 
   tickets-service:
@@ -91,19 +91,19 @@ jobs:
           path: |
             tickets-service/.cache/go-build
             tickets-service/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('tickets-services/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('tickets-service/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
 
       - name: Install dependencies
-        working-directory: ./tickets-services
+        working-directory: ./tickets-service
         run: go mod tidy
 
       - name: Build
-        working-directory: ./tickets-services
+        working-directory: ./tickets-service
         run: go build ./...
 
       - name: Run tests
-        working-directory: ./tickets-services
+        working-directory: ./tickets-service
         run: go test ./... -v
 
   notifications-service:
@@ -124,17 +124,17 @@ jobs:
           path: |
             notifications-service/.cache/go-build
             notifications-service/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('notifications-services/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('notifications-service/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
 
       - name: Install dependencies
-        working-directory: ./notifications-services
+        working-directory: ./notifications-service
         run: go mod tidy
 
       - name: Build
-        working-directory: ./notifications-services
+        working-directory: ./notifications-service
         run: go build ./...
 
       - name: Run tests
-        working-directory: ./notifications-services
+        working-directory: ./notifications-service
         run: go test ./... -v
