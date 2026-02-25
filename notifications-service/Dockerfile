@@ -1,5 +1,4 @@
 FROM golang:1.25-alpine AS builder
-LABEL authors="jonathancolombo"
 
 WORKDIR /app
 

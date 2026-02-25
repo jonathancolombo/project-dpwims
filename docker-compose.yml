@@ -53,8 +53,8 @@ services:
   notifications-service:
     build:
       context: .
-      dockerfile: notifications_service/Dockerfile
-    container_name: notifications_service-services
+      dockerfile: notifications-service/Dockerfile
+    container_name: notifications-service
     ports:
       - "8084:8084"
     environment:
