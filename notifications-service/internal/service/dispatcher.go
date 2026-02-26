@@ -2,30 +2,33 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"notifications-service/internal/repository"
 )
 
+// Dispatcher is responsible for handling train events and notifying subscribed users.
 type Dispatcher struct {
-	repo repository.SubscriptionRepository
+	repository repository.SubscriptionRepository
 }
 
-func NewDispatcher(repo repository.SubscriptionRepository) *Dispatcher {
-	return &Dispatcher{repo: repo}
+// NewDispatcher creates a new Dispatcher instance with the provided SubscriptionRepository.
+func NewDispatcher(subscriptionRepository repository.SubscriptionRepository) *Dispatcher {
+	return &Dispatcher{repository: subscriptionRepository}
 }
 
-func (d *Dispatcher) HandleTrainEvent(trainUUID string, payload []byte) {
+// HandleTrainEvent processes a train event by fetching the list of subscribed users and notifying them.
+func (dispatcher *Dispatcher) HandleTrainEvent(trainUUID string, payload []byte) {
 	ctx := context.Background()
-
-	users, err := d.repo.GetUsersByTrainUUID(ctx, trainUUID)
+	log.Println("Handling train event", trainUUID)
+	users, err := dispatcher.repository.GetUsersByTrainUUID(ctx, trainUUID)
 	if err != nil {
 		log.Println("Error fetching subscribers:", err)
 		return
 	}
-
+	log.Println("Got subscribers", len(users))
 	for _, userID := range users {
-		fmt.Printf("Notify user %d about train %s: %s\n",
+		log.Println("Adding user", userID)
+		log.Printf("Notify user %dispatcher about train %s: %s\n",
 			userID, trainUUID, string(payload))
 	}
 }

@@ -15,6 +15,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// Main function to start the notification service
 func main() {
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
@@ -36,10 +37,11 @@ func main() {
 	if err := mqttClient.Connect(); err != nil {
 		log.Fatal(err)
 	}
-
+	log.Println("Connected to MQTT Broker at ", os.Getenv("MQTT_BROKER_URL"))
 	mqttClient.Subscribe(mqtt.TrainEventsTopic, 0, mqtt.TrainEventHandler(dispatcher))
 	mqttClient.Subscribe(mqtt.TrainStopsTopic, 0, mqtt.TrainEventHandler(dispatcher))
 	mqttClient.Subscribe(mqtt.TrainDelayTopic, 0, mqtt.TrainEventHandler(dispatcher))
+	log.Println("Mqtt client subscribed to topics")
 
 	httpHandler := api.NewHandler(repo)
 	router := api.NewRouter(httpHandler)

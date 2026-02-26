@@ -1,7 +1,6 @@
 package mqtt
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -14,7 +13,6 @@ type Client struct {
 	client mqtt.Client
 }
 
-const brokerURL = "tcp://localhost:1884"
 const clientID = "golang-publisher"
 const keepAlive = 3 * time.Second
 const connectRetryInterval = 3 * time.Second
@@ -22,8 +20,9 @@ const quiesce = 250
 
 // NewClient initializes and returns a new MQTT client with the specified options.
 func NewClient() *Client {
-	options := mqtt.NewClientOptions()
 	brokerURL := os.Getenv("MQTT_BROKER_URL")
+	options := mqtt.NewClientOptions()
+	log.Println(brokerURL)
 	options.AddBroker(brokerURL)
 	options.SetClientID(clientID)
 	options.SetCleanSession(true)
@@ -33,11 +32,11 @@ func NewClient() *Client {
 	options.SetKeepAlive(connectRetryInterval)
 
 	options.OnConnectionLost = func(client mqtt.Client, err error) {
-		fmt.Println("Connection lost:", err.Error())
+		log.Println("Connection lost:", err.Error())
 	}
 
 	options.OnConnect = func(client mqtt.Client) {
-		fmt.Println("Connected to MQTT broker")
+		log.Println("Connected to MQTT broker")
 	}
 
 	client := mqtt.NewClient(options)

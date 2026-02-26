@@ -63,7 +63,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=secret
       - DB_NAME=identity_subscriptions
-      - MQTT_BROKER_URL=tcp://mosquitto:1884
+      - MQTT_BROKER_URL=tcp://server_mosquitto:1883
     depends_on:
       database:
         condition: service_healthy
@@ -89,7 +89,7 @@ services:
     image: eclipse-mosquitto
     container_name: server_mosquitto
     ports:
-      - "1884:1884"
+      - "1884:1883"
     restart: unless-stopped
 
 volumes:
