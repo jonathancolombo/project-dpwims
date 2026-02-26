@@ -2,6 +2,10 @@ module notifications-service
 
 go 1.25.0
 
+require project-dpwims/database v0.0.0
+
+replace project-dpwims/database => ../database
+
 require (
 	github.com/eclipse/paho.mqtt.golang v1.5.1
 	github.com/go-chi/chi/v5 v5.2.5
