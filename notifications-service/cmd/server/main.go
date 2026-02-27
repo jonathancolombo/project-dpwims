@@ -30,8 +30,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repo := repository.NewMySQLSubscriptionRepository(db)
-	dispatcher := service.NewDispatcher(repo)
+	subscriptionRepository := repository.NewMySQLSubscriptionRepository(db)
+	dispatcher := service.NewDispatcher(subscriptionRepository)
 
 	mqttClient := mqtt.NewClient()
 	if err := mqttClient.Connect(); err != nil {
@@ -43,7 +43,7 @@ func main() {
 	mqttClient.Subscribe(mqtt.TrainDelayTopic, 0, mqtt.TrainEventHandler(dispatcher))
 	log.Println("Mqtt client subscribed to topics")
 
-	httpHandler := api.NewHandler(repo)
+	httpHandler := api.NewHandler(subscriptionRepository)
 	router := api.NewRouter(httpHandler)
 
 	log.Println("Notification Service running on port 8084 with url http://localhost:8084")
