@@ -2,23 +2,30 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	topics "project-dpwims/shared/mqtt"
+	"time"
+	"trains-service/internal/events"
 	"trains-service/internal/models"
 	"trains-service/internal/repositories"
 
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/google/uuid"
 )
 
 // TrainService defines the interface for managing Train entities.
 type TrainService struct {
 	repository repositories.ITrainRepository
+	mqttClient mqtt.Client
 }
 
 // NewTrainService creates a new TrainService instance
-func NewTrainService(repository repositories.ITrainRepository) *TrainService {
+func NewTrainService(repository repositories.ITrainRepository, client mqtt.Client) *TrainService {
 	return &TrainService{
 		repository: repository,
+		mqttClient: client,
 	}
 }
 
@@ -109,4 +116,17 @@ func (trainService *TrainService) UpdateTrain(context context.Context, uuid stri
 	}
 
 	return train, nil
+}
+
+// PublishArrival a function for publishing a message for status of the train
+func (trainService *TrainService) PublishArrival(trainUUID string) error {
+	event := events.TrainEvent{
+		Event: "arrived",
+		Time:  time.Now().Format(time.RFC3339),
+	}
+	payload, _ := json.Marshal(event)
+	topic := topics.TrainEventsTopicFor(trainUUID)
+	token := trainService.mqttClient.Publish(topic, 0, false, payload)
+	token.Wait()
+	return token.Error()
 }

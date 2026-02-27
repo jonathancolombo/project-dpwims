@@ -1,10 +1,22 @@
 module trains-service
 
-go 1.25
+go 1.25.0
 
 require project-dpwims/database v0.0.0
 
+require project-dpwims/shared v0.0.0
+
 replace project-dpwims/database => ../database
+
+replace project-dpwims/shared => ../shared
+
+require github.com/eclipse/paho.mqtt.golang v1.5.1
+
+require (
+	github.com/gorilla/websocket v1.5.3 // indirect
+	golang.org/x/net v0.51.0 // indirect
+	golang.org/x/sync v0.19.0 // indirect
+)
 
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect

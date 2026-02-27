@@ -122,3 +122,19 @@ func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, reques
 		return
 	}
 }
+
+// MarkTrainArrived manages the request to publish a right status for the specific train
+func (trainHandler *TrainHandler) MarkTrainArrived(writer http.ResponseWriter, request *http.Request) {
+	trainUUID := chi.URLParam(request, "trainUUID")
+	if trainUUID == "" {
+		http.Error(writer, errorMessageInvalidUUID, http.StatusBadRequest)
+		return
+	}
+	err := trainHandler.service.PublishArrival(trainUUID)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writer.WriteHeader(http.StatusOK)
+}

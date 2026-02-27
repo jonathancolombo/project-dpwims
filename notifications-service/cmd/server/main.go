@@ -5,12 +5,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"project-dpwims/database"
 
 	"notifications-service/internal/api"
 	"notifications-service/internal/mqtt"
 	"notifications-service/internal/repository"
 	"notifications-service/internal/service"
-	"project-dpwims/database"
+	topics "project-dpwims/shared/mqtt"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -38,9 +39,9 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Println("Connected to MQTT Broker at ", os.Getenv("MQTT_BROKER_URL"))
-	mqttClient.Subscribe(mqtt.TrainEventsTopic, 0, mqtt.TrainEventHandler(dispatcher))
-	mqttClient.Subscribe(mqtt.TrainStopsTopic, 0, mqtt.TrainEventHandler(dispatcher))
-	mqttClient.Subscribe(mqtt.TrainDelayTopic, 0, mqtt.TrainEventHandler(dispatcher))
+	mqttClient.Subscribe(topics.TrainEventsTopic, 0, mqtt.TrainEventHandler(dispatcher))
+	mqttClient.Subscribe(topics.TrainStopsTopic, 0, mqtt.TrainEventHandler(dispatcher))
+	mqttClient.Subscribe(topics.TrainDelayTopic, 0, mqtt.TrainEventHandler(dispatcher))
 	log.Println("Mqtt client subscribed to topics")
 
 	httpHandler := api.NewHandler(subscriptionRepository)

@@ -29,9 +29,12 @@ services:
       - DB_USER=root
       - DB_PASSWORD=secret
       - DB_NAME=trains_db
+      - MQTT_BROKER=tcp://server_mosquitto:1883
     depends_on:
       database:
         condition: service_healthy
+      server_mosquitto:
+        condition: service_started
 
   tickets-service:
     build:

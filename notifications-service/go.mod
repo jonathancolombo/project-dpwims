@@ -4,7 +4,11 @@ go 1.25.0
 
 require project-dpwims/database v0.0.0
 
+require project-dpwims/shared v0.0.0
+
 replace project-dpwims/database => ../database
+
+replace project-dpwims/shared => ../shared
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.5.1
