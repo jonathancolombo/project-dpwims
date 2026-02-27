@@ -6,10 +6,12 @@ import (
 	"net/http"
 	"os"
 	"project-dpwims/database"
+	"time"
 	"trains-service/internal/handlers"
 	"trains-service/internal/repositories"
 	"trains-service/internal/services"
 
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-chi/chi/v5"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -29,6 +31,10 @@ const urlSchedulesId = "/schedules/{id}"
 const urlStopSchedules = "/stopschedules"
 const urlStopSchedulesId = "/stopschedules/{id}"
 
+const clientID = "train-service"
+const keepAlive = 3 * time.Second
+const connectRetryInterval = 3 * time.Second
+
 // main, runs with this command in the terminal: docker compose --env-file ./env/develop.env up --build
 func main() {
 	host := os.Getenv("DB_HOST")
@@ -37,14 +43,29 @@ func main() {
 	password := os.Getenv("DB_PASSWORD")
 	name := os.Getenv("DB_NAME")
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, name)
+	brokerURL := os.Getenv("MQTT_BROKER")
 
 	db, errorConnection := database.NewMySQLConnection(dsn)
 	if errorConnection != nil {
 		log.Fatal(errorConnection)
 	}
 
+	options := mqtt.NewClientOptions()
+	options.AddBroker(brokerURL)
+	options.SetClientID(clientID)
+	options.SetCleanSession(true)
+	options.SetAutoReconnect(true)
+	options.SetConnectRetry(true)
+	options.SetConnectRetryInterval(keepAlive)
+	options.SetKeepAlive(connectRetryInterval)
+	mqttClient := mqtt.NewClient(options)
+	if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
+		log.Fatalf("Mqtt connection failed %v", token.Error())
+	}
+	log.Printf("Connected to MQTT broker %s", brokerURL)
+
 	repositoryTrains := repositories.NewMySQLRepositoryTrains(db)
-	trainService := services.NewTrainService(repositoryTrains)
+	trainService := services.NewTrainService(repositoryTrains, mqttClient)
 	trainHandler := handlers.NewTrainHandler(trainService)
 
 	repositoryStation := repositories.NewMySQLRepositoryStation(db)
@@ -70,6 +91,8 @@ func main() {
 	router.Get(urlTrainsId, trainHandler.GetTrain)
 	router.Delete(urlTrainsId, trainHandler.DeleteTrain)
 	router.Patch(urlTrainsId, trainHandler.UpdateTrain)
+
+	router.Post("/trains/{trainUUID}/arrived", trainHandler.MarkTrainArrived)
 
 	router.Post(urlStations, stationHandler.CreateStation)
 	router.Get(urlStations, stationHandler.GetAllStations)

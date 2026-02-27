@@ -23,7 +23,7 @@ func NewPaymentHandler(paymentService *services.PaymentService) *PaymentHandler 
 	return &PaymentHandler{service: paymentService}
 }
 
-// CreatePayment to manage http request to create a payment and save it into repositories memory
+// CreatePayment to manage api request to create a payment and save it into repositories memory
 func (paymentHandler *PaymentHandler) CreatePayment(writer http.ResponseWriter, request *http.Request) {
 	var payment models.Payment
 	err := json.NewDecoder(request.Body).Decode(&payment)
@@ -42,7 +42,7 @@ func (paymentHandler *PaymentHandler) CreatePayment(writer http.ResponseWriter, 
 	err = json.NewEncoder(writer).Encode(created)
 }
 
-// GetPayment a handler method to get a payment by id from repository memory
+// GetPayment a handlers method to get a payment by id from repository memory
 func (paymentHandler *PaymentHandler) GetPayment(writer http.ResponseWriter, request *http.Request) {
 	idStr := chi.URLParam(request, "uuid")
 
@@ -57,7 +57,7 @@ func (paymentHandler *PaymentHandler) GetPayment(writer http.ResponseWriter, req
 	err = json.NewEncoder(writer).Encode(payment)
 }
 
-// GetAllPayments a handler method to get all payments into repositories memory
+// GetAllPayments a handlers method to get all payments into repositories memory
 func (paymentHandler *PaymentHandler) GetAllPayments(writer http.ResponseWriter, request *http.Request) {
 	tickets, err := paymentHandler.service.GetAllPayments(request.Context())
 	if err != nil {
@@ -69,7 +69,7 @@ func (paymentHandler *PaymentHandler) GetAllPayments(writer http.ResponseWriter,
 	err = json.NewEncoder(writer).Encode(tickets)
 }
 
-// DeletePayment a handler method to delete a ticket by id from repositories memory
+// DeletePayment a handlers method to delete a ticket by id from repositories memory
 func (paymentHandler *PaymentHandler) DeletePayment(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "uuid")
 	if idString == "" {
@@ -86,7 +86,7 @@ func (paymentHandler *PaymentHandler) DeletePayment(writer http.ResponseWriter, 
 	writer.WriteHeader(http.StatusNoContent)
 }
 
-// UpdatePayment a handler method to update a payment by id from repository memory
+// UpdatePayment a handlers method to update a payment by id from repository memory
 func (paymentHandler *PaymentHandler) UpdatePayment(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "uuid")
 

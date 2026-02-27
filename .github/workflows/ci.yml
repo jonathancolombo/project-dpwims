@@ -105,3 +105,36 @@ jobs:
       - name: Run tests
         working-directory: ./tickets-service
         run: go test ./... -v
+
+  notifications-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositories
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            notifications-service/.cache/go-build
+            notifications-service/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('notifications-service/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        working-directory: ./notifications-service
+        run: go mod tidy
+
+      - name: Build
+        working-directory: ./notifications-service
+        run: go build ./...
+
+      - name: Run tests
+        working-directory: ./notifications-service
+        run: go test ./... -v

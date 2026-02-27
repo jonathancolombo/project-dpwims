@@ -29,9 +29,12 @@ services:
       - DB_USER=root
       - DB_PASSWORD=secret
       - DB_NAME=trains_db
+      - MQTT_BROKER=tcp://server_mosquitto:1883
     depends_on:
       database:
         condition: service_healthy
+      server_mosquitto:
+        condition: service_started
 
   tickets-service:
     build:
@@ -50,6 +53,26 @@ services:
       database:
         condition: service_healthy
 
+  notifications-service:
+    build:
+      context: .
+      dockerfile: notifications-service/Dockerfile
+    container_name: notifications-service
+    ports:
+      - "8084:8084"
+    environment:
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=secret
+      - DB_NAME=identity_subscriptions
+      - MQTT_BROKER_URL=tcp://server_mosquitto:1883
+    depends_on:
+      database:
+        condition: service_healthy
+      server_mosquitto:
+        condition: service_started
+
   database:
     build: ./database
     container_name: database
@@ -64,6 +87,13 @@ services:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-psecret" ]
       timeout: 20s
       retries: 10
+
+  server_mosquitto:
+    image: eclipse-mosquitto
+    container_name: server_mosquitto
+    ports:
+      - "1884:1883"
+    restart: unless-stopped
 
 volumes:
   db_data:
