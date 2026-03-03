@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"strings"
 	"users-service/internal/models"
 	"users-service/internal/repositories"
@@ -51,11 +52,7 @@ func (userService *UserService) CreateUser(context context.Context, user *models
 		return nil, errors.New("password must be at least 10 characters long")
 	}
 
-	if user.Role == "" {
-		user.Role = "user"
-	}
-
-	if user.Role != "admin" && user.Role != "user" {
+	if user.Role != models.RoleAdmin && user.Role != models.RoleCustomer {
 		return nil, errors.New("invalid role")
 	}
 
@@ -205,6 +202,7 @@ func (userService *UserService) UpdateUser(context context.Context, id int64, up
 	if updateUserRequest.Role != nil {
 		user.Role = *updateUserRequest.Role
 	}
+	log.Println("Role charged: %w", user.Role)
 	var numberOfBytes = 16
 
 	if updateUserRequest.Password != nil && *updateUserRequest.Password != "" {

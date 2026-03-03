@@ -1,0 +1,136 @@
+import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import MainLayout from "../../../core/layout/MainLayout";
+import {getTrains, patchTrain} from "../api/trainsApi";
+import type {Train} from "../types/Train";
+
+export default function TrainDetailPage() {
+    const { uuid } = useParams();
+    const navigate = useNavigate();
+
+    const [train, setTrain] = useState<Train | null>(null);
+
+    const [trainNumber, setTrainNumber] = useState("");
+    const [type, setType] = useState("");
+    const [capacity, setCapacity] = useState(0);
+    const [status, setStatus] = useState("");
+
+    const [saving, setSaving] = useState(false);
+    const [message, setMessage] = useState("");
+
+    useEffect(() => {
+        getTrains().then((res) => {
+            const found = res.data.find((t) => t.uuid === uuid);
+            if (found) {
+                setTrain(found);
+                setTrainNumber(found.train_number);
+                setType(found.type);
+                setCapacity(found.capacity);
+                setStatus(found.status);
+            }
+        });
+    }, [uuid]);
+
+    const handleSave = async () => {
+        if (!train) return;
+
+        setSaving(true);
+        setMessage("");
+
+        try {
+            await patchTrain(train.uuid, {
+                train_number: trainNumber,
+                type,
+                capacity,
+                status,
+            });
+
+            setMessage("Modifiche salvate con successo!");
+            setSaving(false);
+
+            setTimeout(() => navigate("/trains"), 1000);
+        } catch (err) {
+            setMessage("Errore durante il salvataggio.");
+            setSaving(false);
+        }
+    };
+
+    if (!train) {
+        return (
+            <MainLayout>
+                <div className="p-6 text-gray-700">Caricamento treno...</div>
+            </MainLayout>
+        );
+    }
+
+    return (
+        <MainLayout>
+            <div className="p-6 space-y-6">
+                <h1 className="text-3xl font-bold text-gray-900">
+                    Modifica Treno {train.train_number}
+                </h1>
+
+                {message && (
+                    <div className="p-3 bg-green-100 text-green-700 rounded-lg border border-green-300">
+                        {message}
+                    </div>
+                )}
+
+                <div className="bg-white shadow rounded-xl p-6 border border-gray-200 space-y-4">
+                    <label className="block">
+                        <span className="text-gray-700 font-medium">Numero treno</span>
+                        <input
+                            type="text"
+                            value={trainNumber}
+                            onChange={(e) => setTrainNumber(e.target.value)}
+                            className="mt-1 w-full border rounded-lg px-3 py-2"
+                        />
+                    </label>
+
+                    <label className="block">
+                        <span className="text-gray-700 font-medium">Tipo</span>
+                        <select
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
+                            className="mt-1 w-full border rounded-lg px-3 py-2"
+                        >
+                            <option value="regional">Regionale</option>
+                            <option value="intercity">Intercity</option>
+                            <option value="highspeed">Alta Velocità</option>
+                        </select>
+                    </label>
+
+                    <label className="block">
+                        <span className="text-gray-700 font-medium">Capacità</span>
+                        <input
+                            type="number"
+                            value={capacity}
+                            onChange={(e) => setCapacity(Number(e.target.value))}
+                            className="mt-1 w-full border rounded-lg px-3 py-2"
+                        />
+                    </label>
+
+                    <label className="block">
+                        <span className="text-gray-700 font-medium">Stato</span>
+                        <select
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="mt-1 w-full border rounded-lg px-3 py-2"
+                        >
+                            <option value="active">Attivo</option>
+                            <option value="inactive">Non Attivo</option>
+                        </select>
+                    </label>
+
+                    <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+                    >
+                        {saving ? "Salvataggio..." : "Salva modifiche"}
+                    </button>
+                </div>
+            </div>
+        </MainLayout>
+    );
+}

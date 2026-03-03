@@ -3,6 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"log"
 	"net/http"
 	"trains-service/internal/models"
 	"trains-service/internal/repositories"
@@ -91,7 +93,10 @@ func (trainHandler *TrainHandler) DeleteTrain(writer http.ResponseWriter, reques
 
 // UpdateTrain a handlers method to update a train by id from repositories memory
 func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, request *http.Request) {
+	fmt.Println("Request URL:", request.URL.Path)
+
 	idString := chi.URLParam(request, "uuid")
+	log.Println("PATCH UUID:", idString)
 
 	if idString == "" {
 		http.Error(writer, errorMessageInvalidUUID, http.StatusBadRequest)
@@ -103,7 +108,7 @@ func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, reques
 		http.Error(writer, "invalid request body", http.StatusBadRequest)
 		return
 	}
-
+	log.Printf("PATCH BODY: %+v\n\n", updateTrainRequest)
 	updateTrain, err := trainHandler.service.UpdateTrain(request.Context(), idString, &updateTrainRequest)
 	if err != nil {
 		if errors.Is(err, repositories.ErrTrainNotFound) {

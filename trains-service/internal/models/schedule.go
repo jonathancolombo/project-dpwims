@@ -3,8 +3,8 @@ package models
 // Schedule represents a schedule entity with its attributes.
 type Schedule struct {
 	ID        int64   `json:"id"`
-	TrainID   string  `json:"train_id:omitempty"`
-	StationID int64   `json:"station_id:omitempty"`
+	TrainID   string  `json:"train_id,omitempty"`
+	StationID int64   `json:"station_id,omitempty"`
 	Departure string  `json:"departure"`
 	Arrival   string  `json:"arrival"`
 	Status    Status  `json:"status"`
@@ -13,8 +13,8 @@ type Schedule struct {
 
 // UpdateSchedule represents the data structure for updating a schedule.
 type UpdateSchedule struct {
-	TrainID   string  `json:"train_id:omitempty"`
-	StationID int64   `json:"station_id:omitempty"`
+	TrainID   string  `json:"train_id,omitempty"`
+	StationID int64   `json:"station_id,omitempty"`
 	Departure string  `json:"departure"`
 	Arrival   string  `json:"arrival"`
 	Status    Status  `json:"status"`

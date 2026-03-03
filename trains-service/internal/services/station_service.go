@@ -74,20 +74,33 @@ func (stationService *StationService) DeleteStation(context context.Context, id 
 }
 
 // UpdateStation updates a station
-func (stationService *StationService) UpdateStation(context context.Context, id int64, updateStation *models.UpdateStation) (*models.Station, error) {
-	station, err := stationService.repository.GetByID(context, id)
+func (stationService *StationService) UpdateStation(
+	ctx context.Context,
+	id int64,
+	update *models.UpdateStation,
+) (*models.Station, error) {
+
+	station, err := stationService.repository.GetByID(ctx, id)
 	if err != nil {
-		return nil, fmt.Errorf("get status by id: %w", err)
+		return nil, fmt.Errorf("get station by id: %w", err)
 	}
-	switch updateStation.Status {
+
+	// Validazione status
+	switch update.Status {
 	case models.StatusActive, models.StatusInactive:
-		station.Status = updateStation.Status
+		station.Status = update.Status
 	default:
-		return nil, fmt.Errorf("unknown station status: %s", updateStation.Status)
+		return nil, fmt.Errorf("unknown station status: %s", update.Status)
 	}
-	errorUpdating := stationService.repository.Update(context, station)
-	if errorUpdating != nil {
-		return nil, fmt.Errorf("update station: %w", errorUpdating)
+
+	// Aggiornamento campi
+	station.Name = update.Name
+	station.City = update.City
+	station.Region = update.Region
+
+	// Salvataggio
+	if err := stationService.repository.Update(ctx, station); err != nil {
+		return nil, fmt.Errorf("update station: %w", err)
 	}
 
 	return station, nil

@@ -43,12 +43,19 @@ func (mySqlStationRepository *MySQLStationRepository) Create(context context.Con
 		}
 	}(statement)
 
-	_, err = statement.Exec(station.Name, station.City, station.Region, strings.ToLower(string(station.Status)))
+	result, err := statement.Exec(station.Name, station.City, station.Region, strings.ToLower(string(station.Status)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert station: %w", err)
 	}
 
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get last insert id: %w", err)
+	}
+
+	station.ID = id
 	return station, nil
+
 }
 
 // DeleteByID is a method to delete the right station using id field
@@ -134,7 +141,9 @@ func (mySqlStationRepository *MySQLStationRepository) Update(context context.Con
 		station.City,
 		station.Region,
 		strings.ToLower(string(station.Status)),
+		station.ID,
 	)
+
 	if err != nil {
 		return fmt.Errorf("station user: %w", err)
 	}

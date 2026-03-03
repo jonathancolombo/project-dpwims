@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"trains-service/internal/models"
 )
@@ -27,10 +28,10 @@ func (mySqlTrainRepository *MySQLTrainRepository) Create(context context.Context
 		return nil, errors.New("train is nil")
 	}
 
-	query := `INSERT INTO trains (train_number, type, capacity, status) VALUES (?, ?, ?, ?)`
+	query := ` INSERT INTO trains (uuid, train_number, type, capacity, status) VALUES (?, ?, ?, ?, ?) `
 
 	statement, err := mySqlTrainRepository.database.PrepareContext(context, query)
-
+	log.Println("statement create: %w", statement)
 	if err != nil {
 		_ = fmt.Errorf("prepare statement: %w", err)
 		return nil, err
@@ -43,7 +44,7 @@ func (mySqlTrainRepository *MySQLTrainRepository) Create(context context.Context
 		}
 	}(statement)
 
-	_, err = statement.Exec(train.Number, strings.ToLower(string(train.Type)), train.Capacity, strings.ToLower(string(train.Status)))
+	_, err = statement.Exec(train.UUID, train.Number, strings.ToLower(string(train.Type)), train.Capacity, strings.ToLower(string(train.Status)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert train: %w", err)
 	}
@@ -56,11 +57,11 @@ func (mySqlTrainRepository *MySQLTrainRepository) GetByID(context context.Contex
 	if uuid == "" {
 		return nil, errors.New("uuid must be greater than 0")
 	}
-	query := `SELECT train_number, type, capacity, status FROM trains WHERE uuid = ?`
+	query := `SELECT uuid, train_number, type, capacity, status FROM trains WHERE uuid = ?`
 	rows := mySqlTrainRepository.database.QueryRowContext(context, query, uuid)
 
 	var train models.Train
-	errorScan := rows.Scan(&train.Number, &train.Type, &train.Capacity, &train.Status)
+	errorScan := rows.Scan(&train.UUID, &train.Number, &train.Type, &train.Capacity, &train.Status)
 	if errors.Is(errorScan, sql.ErrNoRows) {
 		return nil, fmt.Errorf("scan train: %w", errorScan)
 	}
