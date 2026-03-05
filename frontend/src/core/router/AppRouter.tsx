@@ -13,6 +13,11 @@ import EditStationPage from "../../modules/trains/pages/EditStationPage.tsx";
 import RoutesPage from "../../modules/trains/pages/RoutesPage.tsx";
 import CreateRoutePage from "../../modules/trains/pages/CreateRoutePage.tsx";
 import EditRoutePage from "../../modules/trains/pages/EditRoutePage.tsx";
+import SchedulesPage from "../../modules/trains/pages/SchedulesPage.tsx";
+import CreateSchedulePage from "../../modules/trains/pages/CreateSchedulePage.tsx";
+import EditSchedulePage from "../../modules/trains/pages/EditSchedulePage.tsx";
+import ScheduleStopsPage from "../../modules/trains/pages/ScheduleStopsPage.tsx";
+import TicketsPage from "../../modules/trains/pages/TicketsPage.tsx";
 
 export default function AppRouter() {
     return (
@@ -32,6 +37,14 @@ export default function AppRouter() {
                 <Route path="/routes" element={<RoutesPage />} />
                 <Route path="/routes/create" element={<CreateRoutePage />} />
                 <Route path="/routes/:id" element={<EditRoutePage />} />
+
+                <Route path="/schedules" element={<SchedulesPage />} />
+                <Route path="/schedules/create" element={<CreateSchedulePage />} />
+                <Route path="/schedules/:id" element={<EditSchedulePage />} />
+                <Route path="/schedules/:id/stops" element={<ScheduleStopsPage />} />
+
+                <Route path="/tickets" element={<TicketsPage />} />
+
             </Routes>
         </BrowserRouter>
     );

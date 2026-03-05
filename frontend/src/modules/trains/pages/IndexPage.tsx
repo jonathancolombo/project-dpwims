@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import MainLayout from "../../../core/layout/MainLayout";
-import {BellElectric, RouteIcon, Settings, Ticket, Train, UserIcon} from "lucide-react";
+import {BellElectric, RouteIcon, Settings, StopCircle, Ticket, Train, UserIcon} from "lucide-react";
 
 export default function IndexPage() {
     const navigate = useNavigate();
@@ -64,6 +64,8 @@ export default function IndexPage() {
                         </p>
                     </div>
 
+                    {/* CARD Rotte */}
+
                     <div
                         onClick={() => navigate("/routes")}
                         className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
@@ -75,6 +77,19 @@ export default function IndexPage() {
                         <p className="text-gray-600">
                             Gestisci le rotte commerciali: crea, modifica e visualizza le rotte disponibili.
                         </p>
+                    </div>
+
+                    {/* CARD Fermate */}
+
+                    <div
+                        onClick={() => navigate("/schedules")}
+                        className="cursor-pointer p-6 bg-white shadow rounded-xl border hover:shadow-lg transition"
+                    >
+                        <div className="flex items-center gap-4 mb-4">
+                            <StopCircle className="w-10 h-10 text-blue-600" />
+                            <h2 className="text-xl font-semibold text-gray-900">Fermate</h2>
+                        </div>
+                        <p className="text-gray-600 mt-2">Gestisci gli orari dei treni e le varie fermate dei treni delle rotte.</p>
                     </div>
 
 

@@ -13,39 +13,51 @@ type MySqlScheduleStopRepository struct {
 	database *sql.DB
 }
 
-// NewMySqlScheduleStopRepository initializes a new MySqlScheduleStopRepository with the provided database connection.
+// NewMySQLStopScheduleRepository NewMySqlScheduleStopRepository initializes a new MySqlScheduleStopRepository with the provided database connection.
 func NewMySQLStopScheduleRepository(db *sql.DB) *MySqlScheduleStopRepository {
 	return &MySqlScheduleStopRepository{database: db}
 }
 
 // Create a method to create a stop schedule and save into a db
-func (mySqlScheduleStopRepository *MySqlScheduleStopRepository) Create(context context.Context, schedule *models.ScheduleStop) (*models.ScheduleStop, error) {
-	if schedule == nil {
-		return nil, errors.New("schedule is nil")
+func (mySqlScheduleStopRepository *MySqlScheduleStopRepository) Create(ctx context.Context, stop *models.ScheduleStop) (*models.ScheduleStop, error) {
+	if stop == nil {
+		return nil, errors.New("schedule stop is nil")
 	}
-	query := `INSERT INTO schedules_stops 
-    (id, schedule_id, station_id, station_name, stop_order, arrival_time, departure_time) VALUES (?, ?, ?, ?, ?, ?, ?)`
 
-	statement, err := mySqlScheduleStopRepository.database.PrepareContext(context, query)
+	query := `
+        INSERT INTO schedules_stops 
+        (schedule_id, station_id, stop_order, arrival_time, departure_time)
+        VALUES (?, ?, ?, ?, ?)
+    `
 
+	stmt, err := mySqlScheduleStopRepository.database.PrepareContext(ctx, query)
 	if err != nil {
-		_ = fmt.Errorf("prepare statement: %w", err)
-		return nil, err
+		return nil, fmt.Errorf("prepare statement: %w", err)
 	}
-
-	defer func(statement *sql.Stmt) {
-		err := statement.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
 		if err != nil {
-			return
-		}
-	}(statement)
 
-	_, err = statement.Exec(schedule.ID, schedule.ScheduleID, schedule.StationID, schedule.StationName, schedule.StopOrder, schedule.ArrivalTime, schedule.DepartureTime)
+		}
+	}(stmt)
+
+	result, err := stmt.Exec(
+		stop.ScheduleID,
+		stop.StationID,
+		stop.StopOrder,
+		stop.ArrivalTime,
+		stop.DepartureTime,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert stop schedule: %w", err)
 	}
 
-	return schedule, nil
+	id, err := result.LastInsertId()
+	if err == nil {
+		stop.ID = id
+	}
+
+	return stop, nil
 }
 
 // DeleteByID is a method to delete the right stop schedule using id field
@@ -139,4 +151,48 @@ func (mySqlScheduleStopRepository *MySqlScheduleStopRepository) Update(context c
 	}
 
 	return nil
+}
+
+func (mySqlScheduleStopRepository *MySqlScheduleStopRepository) GetStopsBySchedule(ctx context.Context, scheduleId int64) ([]*models.ScheduleStop, error) {
+	query := `
+        SELECT 
+            ss.id,
+            ss.schedule_id,
+            ss.station_id,
+            s.name AS station_name,
+            ss.stop_order,
+            ss.arrival_time,
+            ss.departure_time
+        FROM schedules_stops ss
+        JOIN stations s ON ss.station_id = s.id
+        WHERE ss.schedule_id = ?
+        ORDER BY ss.stop_order ASC
+    `
+
+	rows, err := mySqlScheduleStopRepository.database.QueryContext(ctx, query, scheduleId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var stops []*models.ScheduleStop
+
+	for rows.Next() {
+		var stop models.ScheduleStop
+		if err := rows.Scan(
+			&stop.ID,
+			&stop.ScheduleID,
+			&stop.StationID,
+			&stop.StationName,
+			&stop.StopOrder,
+			&stop.ArrivalTime,
+			&stop.DepartureTime,
+		); err != nil {
+			return nil, err
+		}
+
+		stops = append(stops, &stop)
+	}
+
+	return stops, nil
 }

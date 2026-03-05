@@ -122,3 +122,24 @@ func (stopScheduleHandler *StopScheduleHandler) UpdateStopSchedule(writer http.R
 		return
 	}
 }
+
+func (stopScheduleHandler *StopScheduleHandler) GetStopsBySchedule(w http.ResponseWriter, r *http.Request) {
+	scheduleIdStr := chi.URLParam(r, "scheduleId")
+	scheduleId, err := strconv.ParseInt(scheduleIdStr, 10, 64)
+	if err != nil {
+		http.Error(w, "invalid schedule id", http.StatusBadRequest)
+		return
+	}
+
+	stops, err := stopScheduleHandler.service.GetStopsBySchedule(r.Context(), scheduleId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set(KeyContentType, ValueAppJson)
+	err = json.NewEncoder(w).Encode(stops)
+	if err != nil {
+		return
+	}
+}

@@ -117,6 +117,7 @@ func main() {
 	router.Get(urlStopSchedulesId, stopScheduleHandler.GetStopSchedule)
 	router.Delete(urlStopSchedulesId, stopScheduleHandler.DeleteStopSchedule)
 	router.Patch(urlStopSchedulesId, stopScheduleHandler.UpdateStopSchedule)
+	router.Get("/stopschedules/schedule/{scheduleId}", stopScheduleHandler.GetStopsBySchedule)
 
 	log.Println("Trains Service running on port 8082 with url http://localhost:8082")
 

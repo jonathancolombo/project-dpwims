@@ -24,20 +24,20 @@ type UpdateSchedule struct {
 // ScheduleStop represents a schedule stop entity with its attributes.
 type ScheduleStop struct {
 	ID            int64  `json:"id"`
-	ScheduleID    int64  `json:"schedule_id:omitempty"`
-	StationID     int64  `json:"station_id:omitempty"`
+	ScheduleID    int64  `json:"schedule_id,omitempty"`
+	StationID     int64  `json:"station_id,omitempty"`
 	StationName   string `json:"station_name"`
-	StopOrder     int    `json:"stop_order:omitempty"`
+	StopOrder     int    `json:"stop_order,omitempty"`
 	ArrivalTime   string `json:"arrival_time"`
 	DepartureTime string `json:"departure_time"`
 }
 
 // UpdateScheduleStop represents the data structure for updating a schedule stop.
 type UpdateScheduleStop struct {
-	ScheduleID    int64  `json:"schedule_id:omitempty"`
-	StationID     int64  `json:"station_id:omitempty"`
+	ScheduleID    int64  `json:"schedule_id,omitempty"`
+	StationID     int64  `json:"station_id,omitempty"`
 	StationName   string `json:"station_name"`
-	StopOrder     int    `json:"stop_order:omitempty"`
+	StopOrder     int    `json:"stop_order,omitempty"`
 	ArrivalTime   string `json:"arrival_time"`
 	DepartureTime string `json:"departure_time"`
 }

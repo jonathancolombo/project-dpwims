@@ -20,36 +20,13 @@ func NewStopScheduleService(repository repositories.IScheduleStopRepository) *Sc
 }
 
 // CreateStopSchedule creates a new stop schedule
-func (scheduleStopService *ScheduleStopService) CreateStopSchedule(context context.Context, scheduleStop *models.ScheduleStop) (*models.ScheduleStop, error) {
-	if scheduleStop == nil {
-		return nil, fmt.Errorf("scheduleStop must not be nil")
-	}
+func (scheduleStopService *ScheduleStopService) CreateStopSchedule(ctx context.Context, stop *models.ScheduleStop) (*models.ScheduleStop, error) {
+	// prendi tutte le fermate esistenti
+	stops, _ := scheduleStopService.repository.GetStopsBySchedule(ctx, stop.ScheduleID)
 
-	if scheduleStop.ScheduleID <= 0 {
-		return nil, fmt.Errorf("schedule id must not be minor or equal to zero")
-	}
+	stop.StopOrder = len(stops) + 1
 
-	if scheduleStop.StationID <= 0 {
-		return nil, fmt.Errorf("station id must not be minor or equal to zero")
-	}
-
-	if scheduleStop.StationName != "" {
-		return nil, fmt.Errorf("station name must not be empty")
-	}
-
-	if scheduleStop.StopOrder <= 0 {
-		return nil, fmt.Errorf("stop order must be greater than zero")
-	}
-
-	if scheduleStop.ArrivalTime == "" {
-		return nil, fmt.Errorf("arrival time must not be empty")
-	}
-
-	if scheduleStop.DepartureTime == "" {
-		return nil, fmt.Errorf("departure time must not be empty")
-	}
-
-	return scheduleStopService.repository.Create(context, scheduleStop)
+	return scheduleStopService.repository.Create(ctx, stop)
 }
 
 // GetStopSchedule retrieves a stop schedule by their id
@@ -125,4 +102,12 @@ func (scheduleStopService *ScheduleStopService) UpdateStopSchedule(context conte
 	}
 
 	return stopSchedule, nil
+}
+
+func (scheduleStopService *ScheduleStopService) GetStopsBySchedule(ctx context.Context, scheduleId int64) ([]*models.ScheduleStop, error) {
+	stops, err := scheduleStopService.repository.GetStopsBySchedule(ctx, scheduleId)
+	if err != nil {
+		return nil, err
+	}
+	return stops, nil
 }

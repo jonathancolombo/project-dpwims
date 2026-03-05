@@ -36,8 +36,8 @@ func (ticketService *TicketService) CreateTicket(context context.Context, ticket
 		return nil, errors.New("schedule id cannot be minor or equal to zero")
 	}
 
-	if ticket.SeatNumber <= 0 {
-		return nil, errors.New("seat number cannot be minor or equal to zero")
+	if ticket.SeatNumber == "" {
+		return nil, errors.New("seat number cannot empty")
 	}
 
 	if ticket.Price <= 0 {
@@ -100,7 +100,7 @@ func (ticketService *TicketService) UpdateTicket(context context.Context, uuid s
 		ticket.ScheduleID = updatedTicket.ScheduleID
 	}
 
-	if updatedTicket.SeatNumber > 0 {
+	if updatedTicket.SeatNumber != "" {
 		ticket.SeatNumber = updatedTicket.SeatNumber
 	}
 

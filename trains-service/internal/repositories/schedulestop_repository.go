@@ -12,4 +12,5 @@ type IScheduleStopRepository interface {
 	GetByID(context context.Context, id int64) (*models.ScheduleStop, error)
 	GetAll(context context.Context) ([]*models.ScheduleStop, error)
 	Update(context context.Context, scheduleStop *models.ScheduleStop) error
+	GetStopsBySchedule(ctx context.Context, scheduleId int64) ([]*models.ScheduleStop, error)
 }
