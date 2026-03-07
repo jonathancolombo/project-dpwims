@@ -1,20 +1,21 @@
 import {useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import {createSchedule} from "../api/schedulesApi";
+import {createSchedule} from "../api/schedules_api.ts";
 import {useNavigate} from "react-router-dom";
 import StationSelect from "./StationSelect.tsx";
 import TrainSelect from "./TrainSelect.tsx";
 
 export default function CreateSchedulePage() {
+    const initialStateString = "";
+    const initialStateNumber = 0;
     const navigate = useNavigate();
-
-    const [trainId, setTrainId] = useState("");
-    const [stationId, setStationId] = useState(0);
-    const [arrival, setArrival] = useState("");
-    const [departure, setDeparture] = useState("");
+    const [trainId, setTrainId] = useState(initialStateString);
+    const [stationId, setStationId] = useState(initialStateNumber);
+    const [arrival, setArrival] = useState(initialStateString);
+    const [departure, setDeparture] = useState(initialStateString);
     const [status, setStatus] = useState<"active" | "inactive">("active");
-    const [price, setPrice] = useState(0);
-    const [message, setMessage] = useState("");
+    const [price, setPrice] = useState(initialStateNumber);
+    const [message, setMessage] = useState(initialStateString);
 
     const handleSave = async () => {
         if (!trainId || !stationId || !arrival || !departure) {

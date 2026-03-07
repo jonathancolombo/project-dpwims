@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
-import {deleteTrain, getTrains} from "../api/trainsApi";
+import {deleteTrain, getTrains} from "../api/trains_api.ts";
 import MainLayout from "../../../core/layout/MainLayout";
 import {useNavigate} from "react-router-dom";
-import type {Train} from "../types/Train";
-import {getTrainIcon} from "../../../util/trainIcons.tsx";
+import type {Train} from "../types/train.ts";
+import {getTrainIcon} from "../../../util/train_icons.tsx";
 
 export default function TrainsPage() {
     const [trains, setTrains] = useState<Train[]>([]);
@@ -21,9 +21,9 @@ export default function TrainsPage() {
 
         try {
             await deleteTrain(uuid);
-            setTrains((prev) => prev.filter((t) => t.uuid !== uuid));
-        } catch (err) {
-            console.error("Errore durante la cancellazione:", err);
+            setTrains((previousTrains) => previousTrains.filter((train) => train.uuid !== uuid));
+        } catch (error) {
+            console.error("Errore durante la cancellazione:", error);
         }
     };
 
@@ -47,7 +47,6 @@ export default function TrainsPage() {
                 </div>
 
 
-                {/* STATISTICHE VELOCI */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <div className="bg-white shadow rounded-xl p-5 border border-gray-200">
                         <p className="text-sm text-gray-500">Totale Treni</p>
@@ -65,7 +64,6 @@ export default function TrainsPage() {
                     </div>
                 </div>
 
-                {/* LISTA TRENI */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {trains.map((train) => (
                         <div
@@ -94,18 +92,11 @@ export default function TrainsPage() {
                 </span>
                             </div>
 
-                            {/* DETTAGLI TECNICI */}
                             <div className="space-y-3 text-gray-700">
                                 <p><span className="font-semibold">Tipo:</span> {train.type}</p>
                                 <p><span className="font-semibold">Capacità:</span> {train.capacity} posti</p>
-
-                                {/* DATI ADMIN AGGIUNTIVI (mock per ora) */}
-                                <p><span className="font-semibold">Ultima manutenzione:</span> 12/02/2026</p>
-                                <p><span className="font-semibold">Prossima manutenzione:</span> 30/03/2026</p>
-                                <p className="text-sm text-gray-500">Nessuna anomalia rilevata</p>
                             </div>
 
-                            {/* AZIONI */}
                             <div className="mt-5 flex gap-3">
                                 <button
                                     className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition"

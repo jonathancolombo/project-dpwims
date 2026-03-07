@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import MainLayout from "../../../core/layout/MainLayout";
-import {createStop, deleteStop, getStopsBySchedule, type ScheduleStop, updateStop,} from "../api/scheduleStopsApi";
+import {createStop, deleteStop, getStopsBySchedule, type ScheduleStop, updateStop,} from "../api/schedule_stops_api.ts";
 import StationSelect from "./StationSelect.tsx";
 
 export default function ScheduleStopsPage() {

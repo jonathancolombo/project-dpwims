@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {getTrains} from "../api/trainsApi.ts";
-import type {Train} from "../types/Train.ts";
+import {getTrains} from "../api/trains_api.ts";
+import type {Train} from "../types/train.ts";
 
 interface TrainSelectProps {
     value: string;
@@ -13,7 +13,7 @@ export default function TrainSelect({ value, onChange }: Readonly<TrainSelectPro
 
     useEffect(() => {
         getTrains()
-            .then((res) => setTrains(res.data))
+            .then((response) => setTrains(response.data))
             .finally(() => setLoading(false));
     }, []);
 
@@ -25,12 +25,12 @@ export default function TrainSelect({ value, onChange }: Readonly<TrainSelectPro
         <select
             className="w-full border p-2 rounded"
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(element) => onChange(element.target.value)}
         >
             <option value="">Seleziona un treno</option>
-            {trains.map((t) => (
-                <option key={t.uuid} value={t.uuid}>
-                    {t.train_number}
+            {trains.map((train) => (
+                <option key={train.uuid} value={train.uuid}>
+                    {train.train_number}
                 </option>
             ))}
         </select>

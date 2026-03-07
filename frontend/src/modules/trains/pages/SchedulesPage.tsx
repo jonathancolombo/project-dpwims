@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import {deleteSchedule, getSchedules, type Schedule} from "../api/schedulesApi";
+import {deleteSchedule, getSchedules, type Schedule} from "../api/schedules_api.ts";
 import {useNavigate} from "react-router-dom";
 
 export default function SchedulesPage() {
@@ -39,12 +39,12 @@ export default function SchedulesPage() {
         <MainLayout>
             <div className="p-6 max-w-5xl mx-auto space-y-6">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-3xl font-bold">Schedules</h1>
+                    <h1 className="text-3xl font-bold">Fermate</h1>
                     <button
                         onClick={() => navigate("/schedules/create")}
                         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                     >
-                        + Nuovo Schedule
+                        + Nuova Fermata
                     </button>
                 </div>
 

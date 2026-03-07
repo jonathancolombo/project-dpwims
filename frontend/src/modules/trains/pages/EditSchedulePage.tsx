@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import MainLayout from "../../../core/layout/MainLayout";
-import {getScheduleById, updateSchedule} from "../api/schedulesApi";
+import {getScheduleById, updateSchedule} from "../api/schedules_api.ts";
 import StationSelect from "./StationSelect.tsx";
 import TrainSelect from "./TrainSelect.tsx";
 

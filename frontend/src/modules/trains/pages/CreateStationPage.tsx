@@ -1,6 +1,6 @@
 import {useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import {createStation} from "../api/stationsApi";
+import {createStation} from "../api/stations_api.ts";
 import {useNavigate} from "react-router-dom";
 
 export default function CreateStationPage() {

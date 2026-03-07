@@ -19,7 +19,7 @@ import (
 )
 
 const urlTickets = "/tickets"
-const urlTicketsID = "/tickets/{id}"
+const urlTicketsID = "/tickets/{uuid}"
 
 const urlPayments = "/payments"
 const urlPaymentsID = "/payments/{id}"

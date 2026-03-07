@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import MainLayout from "../../../core/layout/MainLayout";
-import {getTrains, patchTrain} from "../api/trainsApi";
-import type {Train} from "../types/Train";
+import {getTrains, patchTrain} from "../api/trains_api.ts";
+import type {Train} from "../types/train.ts";
 
 export default function TrainDetailPage() {
     const { uuid } = useParams();
@@ -19,14 +19,14 @@ export default function TrainDetailPage() {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        getTrains().then((res) => {
-            const found = res.data.find((t) => t.uuid === uuid);
-            if (found) {
-                setTrain(found);
-                setTrainNumber(found.train_number);
-                setType(found.type);
-                setCapacity(found.capacity);
-                setStatus(found.status);
+        getTrains().then((response) => {
+            const trainFound = response.data.find((train) => train.uuid === uuid);
+            if (trainFound) {
+                setTrain(trainFound);
+                setTrainNumber(trainFound.train_number);
+                setType(trainFound.type);
+                setCapacity(trainFound.capacity);
+                setStatus(trainFound.status);
             }
         });
     }, [uuid]);
@@ -37,6 +37,7 @@ export default function TrainDetailPage() {
         setSaving(true);
         setMessage("");
 
+        const timeout = 1000;
         try {
             await patchTrain(train.uuid, {
                 train_number: trainNumber,
@@ -48,7 +49,7 @@ export default function TrainDetailPage() {
             setMessage("Modifiche salvate con successo!");
             setSaving(false);
 
-            setTimeout(() => navigate("/trains"), 1000);
+            setTimeout(() => navigate("/trains"), timeout);
         } catch (err) {
             setMessage("Errore durante il salvataggio.");
             setSaving(false);
@@ -82,7 +83,7 @@ export default function TrainDetailPage() {
                         <input
                             type="text"
                             value={trainNumber}
-                            onChange={(e) => setTrainNumber(e.target.value)}
+                            onChange={(element) => setTrainNumber(element.target.value)}
                             className="mt-1 w-full border rounded-lg px-3 py-2"
                         />
                     </label>
@@ -91,7 +92,7 @@ export default function TrainDetailPage() {
                         <span className="text-gray-700 font-medium">Tipo</span>
                         <select
                             value={type}
-                            onChange={(e) => setType(e.target.value)}
+                            onChange={(element) => setType(element.target.value)}
                             className="mt-1 w-full border rounded-lg px-3 py-2"
                         >
                             <option value="regional">Regionale</option>
@@ -105,7 +106,7 @@ export default function TrainDetailPage() {
                         <input
                             type="number"
                             value={capacity}
-                            onChange={(e) => setCapacity(Number(e.target.value))}
+                            onChange={(element) => setCapacity(Number(element.target.value))}
                             className="mt-1 w-full border rounded-lg px-3 py-2"
                         />
                     </label>
@@ -114,7 +115,7 @@ export default function TrainDetailPage() {
                         <span className="text-gray-700 font-medium">Stato</span>
                         <select
                             value={status}
-                            onChange={(e) => setStatus(e.target.value)}
+                            onChange={(element) => setStatus(element.target.value)}
                             className="mt-1 w-full border rounded-lg px-3 py-2"
                         >
                             <option value="active">Attivo</option>

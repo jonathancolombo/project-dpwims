@@ -1,6 +1,6 @@
 import {useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import {createTrain} from "../api/trainsApi";
+import {createTrain} from "../api/trains_api.ts";
 import {useNavigate} from "react-router-dom";
 
 export default function CreateTrainPage() {

@@ -1,23 +1,23 @@
 import {useEffect, useState} from "react";
-import MainLayout from "../../../core/layout/MainLayout";
-import {deleteUser, getUsers} from "../api/usersApi";
-import type {User} from "../types/User";
+import MainLayout from "../../../core/layout/MainLayout.tsx";
+import {deleteUser, getUsers} from "../api/users_api.ts";
+import type {User} from "../types/user.ts";
 import {useNavigate} from "react-router-dom";
-import {getUserRoleIcon} from "../../../util/userIcons.tsx";
+import {getUserRoleIcon} from "../../../util/user_icons.tsx";
 
 export default function UsersPage() {
     const [users, setUsers] = useState<User[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        getUsers().then((res) => setUsers(res.data));
+        getUsers().then((response) => setUsers(response.data));
     }, []);
 
     const handleDelete = async (id: number) => {
         if (!globalThis.confirm("Vuoi davvero cancellare questo utente?")) return;
 
         await deleteUser(id);
-        setUsers((prev) => prev.filter((u) => u.id !== id));
+        setUsers((previousUsers) => previousUsers.filter((user) => user.id !== id));
     };
 
     return (

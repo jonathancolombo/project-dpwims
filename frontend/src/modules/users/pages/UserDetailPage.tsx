@@ -1,10 +1,15 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import MainLayout from "../../../core/layout/MainLayout.tsx";
-import {createUser} from "../api/usersApi.ts";
-import {useNavigate} from "react-router-dom";
+import {getUserById, patchUser} from "../api/users_api.ts";
 
-export default function CreateUserPage() {
+export default function UserDetailPage() {
+    const { id } = useParams();
     const navigate = useNavigate();
+
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [message, setMessage] = useState("");
 
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -13,45 +18,68 @@ export default function CreateUserPage() {
     const [role, setRole] = useState<"admin" | "customer">("customer");
     const [password, setPassword] = useState("");
 
-    const [saving, setSaving] = useState(false);
-    const [message, setMessage] = useState("");
+    useEffect(() => {
+        if (!id) return;
+
+        getUserById(Number(id))
+            .then((res) => {
+                const u = res.data;
+                setUsername(u.username);
+                setEmail(u.email);
+                setTelephone(u.telephone);
+                setFiscalCode(u.fiscal_code);
+                setRole(u.role as "admin" | "customer");
+            })
+            .catch(() => setMessage("Errore nel caricamento dell'utente."))
+            .finally(() => setLoading(false));
+    }, [id]);
 
     const handleSave = async () => {
-        if (!username.trim() || !email.trim() || !password.trim()) {
-            setMessage("Username, email e password sono obbligatori.");
-            return;
-        }
-
         setSaving(true);
         setMessage("");
 
         try {
-            await createUser({
+            await patchUser(Number(id), {
                 username,
                 email,
                 telephone,
                 fiscal_code: fiscalCode,
                 role,
-                password,
+                password: password || undefined,
+            });
+
+            console.log("PATCH DATA:", {
+                username,
+                email,
+                telephone,
+                fiscal_code: fiscalCode,
+                role,
+                password: password || undefined,
             });
 
 
             navigate("/users");
         } catch (err) {
             console.error(err);
-            setMessage("Errore durante la creazione dell'utente.");
+            setMessage("Errore durante il salvataggio.");
         } finally {
             setSaving(false);
         }
     };
 
+    if (loading) {
+        return (
+            <MainLayout>
+                <div className="p-6 text-center text-gray-600">Caricamento...</div>
+            </MainLayout>
+        );
+    }
+
     return (
         <MainLayout>
             <div className="p-6 max-w-2xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold text-gray-900">Crea Nuovo Utente</h1>
-                <p className="text-gray-600">
-                    Inserisci i dati per aggiungere un nuovo account al sistema.
-                </p>
+                <h1 className="text-3xl font-bold text-gray-900">Modifica Utente</h1>
+                <p className="text-gray-600">Aggiorna i dati dell'utente selezionato.</p>
 
                 {message && (
                     <div className="p-3 bg-red-100 text-red-700 rounded-lg">
@@ -69,7 +97,6 @@ export default function CreateUserPage() {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             className="mt-1 w-full border rounded-lg p-2"
-                            placeholder="Es. j.rossi"
                         />
                     </div>
 
@@ -82,7 +109,6 @@ export default function CreateUserPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="mt-1 w-full border rounded-lg p-2"
-                            placeholder="esempio@mail.com"
                         />
                     </div>
 
@@ -95,7 +121,6 @@ export default function CreateUserPage() {
                             value={telephone}
                             onChange={(e) => setTelephone(e.target.value)}
                             className="mt-1 w-full border rounded-lg p-2"
-                            placeholder="Es. +39 333 1234567"
                         />
                     </div>
 
@@ -108,7 +133,6 @@ export default function CreateUserPage() {
                             value={fiscalCode}
                             onChange={(e) => setFiscalCode(e.target.value.toUpperCase())}
                             className="mt-1 w-full border rounded-lg p-2"
-                            placeholder="Es. RSSMRA80A01H501U"
                         />
                     </div>
 
@@ -118,25 +142,24 @@ export default function CreateUserPage() {
                         </label>
                         <select
                             value={role}
-                            onChange={(e) => setRole(e.target.value as "admin" | "customer")}
+                            onChange={(e) => setRole(e.target.value.toLowerCase() as "admin" | "customer")}
                             className="mt-1 w-full border rounded-lg p-2"
                         >
                             <option value="admin">Admin</option>
                             <option value="customer">Cliente</option>
                         </select>
-
-
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
-                            Password
+                            Nuova Password (opzionale)
                         </label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="mt-1 w-full border rounded-lg p-2"
+                            placeholder="Lascia vuoto per non cambiarla"
                         />
                     </div>
                 </div>
@@ -147,7 +170,7 @@ export default function CreateUserPage() {
                         disabled={saving}
                         className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition disabled:opacity-50"
                     >
-                        {saving ? "Salvataggio..." : "Crea Utente"}
+                        {saving ? "Salvataggio..." : "Salva Modifiche"}
                     </button>
 
                     <button

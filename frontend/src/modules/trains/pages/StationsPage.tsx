@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import {deleteStation, getStations, type Station} from "../api/stationsApi";
+import {deleteStation, getStations, type Station} from "../api/stations_api.ts";
 import {useNavigate} from "react-router-dom";
 import {StatusBadge} from "../../../util/badge.tsx";
 
@@ -9,11 +9,11 @@ export default function StationsPage() {
     const [stations, setStations] = useState<Station[]>([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
-    const navigate = useNavigate();
+    const   navigate = useNavigate();
 
     useEffect(() => {
         getStations()
-            .then((res) => setStations(res.data))
+            .then((response) => setStations(response.data))
             .catch(() => setMessage("Errore nel caricamento delle stazioni."))
             .finally(() => setLoading(false));
     }, []);
@@ -23,7 +23,7 @@ export default function StationsPage() {
 
         try {
             await deleteStation(id);
-            setStations((prev) => prev.filter((s) => s.id !== id));
+            setStations((previousStations) => previousStations.filter((station) => station.id !== id));
         } catch {
             setMessage("Errore durante l'eliminazione.");
         }
@@ -55,27 +55,27 @@ export default function StationsPage() {
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {stations.map((s) => (
+                    {stations.map((station) => (
                         <div
-                            key={s.id}
+                            key={station.id}
                             className="p-4 bg-white shadow rounded-lg border border-gray-200"
                         >
                             <div className="flex justify-between">
-                                <h2 className="text-xl font-semibold">{s.name}</h2>
-                                <StatusBadge status={s.status} />
+                                <h2 className="text-xl font-semibold">{station.name}</h2>
+                                <StatusBadge status={station.status} />
                             </div>
 
-                            <p className="text-gray-600">{s.city}, {s.region}</p>
+                            <p className="text-gray-600">{station.city}, {station.region}</p>
 
                             <div className="flex gap-3 mt-4">
                                 <button
-                                    onClick={() => navigate(`/stations/${s.id}`)}
+                                    onClick={() => navigate(`/stations/${station.id}`)}
                                     className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg"
                                 >
                                     Modifica
                                 </button>
                                 <button
-                                    onClick={() => handleDelete(s.id)}
+                                    onClick={() => handleDelete(station.id)}
                                     className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg"
                                 >
                                     Elimina

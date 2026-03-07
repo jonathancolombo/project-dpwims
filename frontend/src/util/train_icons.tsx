@@ -1,8 +1,6 @@
 import type {ReactNode} from "react";
 import {Train, TrainFront, TrainTrack} from "lucide-react";
 
-// oppure qualsiasi set di icone preferisci
-
 export function getTrainIcon(type: string): ReactNode {
     switch (type) {
         case "regional":

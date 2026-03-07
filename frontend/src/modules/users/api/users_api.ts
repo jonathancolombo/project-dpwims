@@ -1,5 +1,5 @@
-import {apiUsers} from "../../../core/api/client";
-import type {UpdateUserRequest, User} from "../types/User";
+import {apiUsers} from "../../../core/api/client.ts";
+import type {UpdateUserRequest, User} from "../types/user.ts";
 
 export const getUsers = () => apiUsers.get<User[]>("/users");
 

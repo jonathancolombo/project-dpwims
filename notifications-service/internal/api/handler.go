@@ -51,7 +51,6 @@ func (handler *Handler) Subscribe(writer http.ResponseWriter, request *http.Requ
 // GetSubscription handles the retrieval of subscriptions. If a user_id is provided as a URL parameter, it retrieves subscriptions for that specific user; otherwise, it retrieves all subscriptions.
 func (handler *Handler) GetSubscription(writer http.ResponseWriter, request *http.Request) {
 	userIDStr := request.URL.Query().Get("user_id")
-	//userIDStr := chi.URLParam(request, "user_id")
 	if userIDStr != "" {
 		userID, errorParsing := strconv.ParseInt(userIDStr, baseNumber, bitSize)
 		if errorParsing != nil {

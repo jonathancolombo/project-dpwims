@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {getStations} from "../api/stationsApi.ts";
+import {getStations} from "../api/stations_api.ts";
 
 interface StationSelectProps {
     value: number;

@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import MainLayout from "../../../core/layout/MainLayout";
-import {getRouteById, updateRoute} from "../api/routesApi";
+import {getRouteById, updateRoute} from "../api/routes_api.ts";
 
 export default function EditRoutePage() {
     const { id } = useParams();

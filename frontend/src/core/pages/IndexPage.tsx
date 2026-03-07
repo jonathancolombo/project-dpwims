@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import MainLayout from "../../../core/layout/MainLayout";
+import MainLayout from "../layout/MainLayout.tsx";
 import {BellElectric, RouteIcon, Settings, StopCircle, Ticket, Train, UserIcon} from "lucide-react";
 
 export default function IndexPage() {

@@ -1,28 +1,7 @@
 import axios from "axios";
+import type {CreateRouteRequest, Route, UpdateRouteRequest} from "../types/route.ts";
 
 const API_URL = "http://localhost:8082";
-
-export interface Route {
-    id: number;
-    train_id: string;
-    departure_station: string;
-    arrival_station: string;
-    distance: number;
-}
-
-export interface CreateRouteRequest {
-    train_id: string;
-    departure_station: string;
-    arrival_station: string;
-    distance: number;
-}
-
-export interface UpdateRouteRequest {
-    train_id?: string;
-    departure_station?: string;
-    arrival_station?: string;
-    distance?: number;
-}
 
 export const getRoutes = () =>
     axios.get<Route[]>(`${API_URL}/routes`);

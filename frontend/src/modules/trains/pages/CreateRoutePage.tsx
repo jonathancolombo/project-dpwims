@@ -1,19 +1,20 @@
 import {useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import {createRoute} from "../api/routesApi";
+import {createRoute} from "../api/routes_api.ts";
 import {useNavigate} from "react-router-dom";
 
 export default function CreateRoutePage() {
+    const initialStateString = "";
+    const initialStateNumber = 0;
     const navigate = useNavigate();
-
-    const [trainId, setTrainId] = useState("");
-    const [departure, setDeparture] = useState("");
-    const [arrival, setArrival] = useState("");
-    const [distance, setDistance] = useState(0);
-    const [message, setMessage] = useState("");
+    const [trainId, setTrainId] = useState(initialStateString);
+    const [departure, setDeparture] = useState(initialStateString);
+    const [arrival, setArrival] = useState(initialStateString);
+    const [distance, setDistance] = useState(initialStateNumber);
+    const [message, setMessage] = useState(initialStateString);
 
     const handleSave = async () => {
-        if (!trainId || !departure || !arrival || distance <= 0) {
+        if (!trainId || !departure || !arrival || distance <= initialStateNumber) {
             setMessage("Tutti i campi sono obbligatori.");
             return;
         }
@@ -46,21 +47,21 @@ export default function CreateRoutePage() {
                         className="w-full border p-2 rounded"
                         placeholder="Train ID"
                         value={trainId}
-                        onChange={(e) => setTrainId(e.target.value)}
+                        onChange={(element) => setTrainId(element.target.value)}
                     />
 
                     <input
                         className="w-full border p-2 rounded"
                         placeholder="Stazione di partenza"
                         value={departure}
-                        onChange={(e) => setDeparture(e.target.value)}
+                        onChange={(element) => setDeparture(element.target.value)}
                     />
 
                     <input
                         className="w-full border p-2 rounded"
                         placeholder="Stazione di arrivo"
                         value={arrival}
-                        onChange={(e) => setArrival(e.target.value)}
+                        onChange={(element) => setArrival(element.target.value)}
                     />
 
                     <input
@@ -68,7 +69,7 @@ export default function CreateRoutePage() {
                         className="w-full border p-2 rounded"
                         placeholder="Distanza (km)"
                         value={distance}
-                        onChange={(e) => setDistance(Number(e.target.value))}
+                        onChange={(element) => setDistance(Number(element.target.value))}
                     />
                 </div>
 

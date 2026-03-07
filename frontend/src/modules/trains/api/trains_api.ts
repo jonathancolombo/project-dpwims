@@ -1,6 +1,5 @@
-// src/modules/trains/api/trainsApi.ts
 import {apiTrains} from "../../../core/api/client";
-import type {Train} from "../types/Train.ts";
+import type {Train} from "../types/train.ts";
 
 export const getTrains = () => apiTrains.get<Train[]>("/trains");
 export const patchTrain = (uuid: string, data: any) =>

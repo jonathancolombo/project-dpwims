@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import {deleteRoute, getRoutes, type Route} from "../api/routesApi";
+import {deleteRoute, getRoutes, type Route} from "../api/routes_api.ts";
 import {useNavigate} from "react-router-dom";
 
 export default function RoutesPage() {

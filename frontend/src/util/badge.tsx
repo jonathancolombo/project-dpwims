@@ -1,4 +1,4 @@
-export function StatusBadge({ status }: { status: "active" | "inactive" }) {
+export function StatusBadge({ status }: Readonly<{ status: "active" | "inactive" }>) {
     const color =
         status === "active"
             ? "bg-green-100 text-green-700 border-green-300"

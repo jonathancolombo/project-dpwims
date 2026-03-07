@@ -92,14 +92,6 @@ func (ticketService *TicketService) UpdateTicket(context context.Context, uuid s
 		return nil, fmt.Errorf("get ticket by id: %w", err)
 	}
 
-	if updatedTicket.TrainUUID != "" {
-		ticket.TrainUUID = updatedTicket.TrainUUID
-	}
-
-	if updatedTicket.ScheduleID > 0 {
-		ticket.ScheduleID = updatedTicket.ScheduleID
-	}
-
 	if updatedTicket.SeatNumber != "" {
 		ticket.SeatNumber = updatedTicket.SeatNumber
 	}

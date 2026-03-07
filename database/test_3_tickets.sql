@@ -1,10 +1,6 @@
 USE tickets_db;
 START TRANSACTION;
 
--- ============================
---  TICKETS (10 records)
--- ============================
-
 INSERT INTO tickets (uuid, user_id, train_uuid, schedule_id, seat_number, price, status)
 VALUES
     -- Schedule 1 (Roma → Milano, price 50)
@@ -30,11 +26,6 @@ ON DUPLICATE KEY UPDATE
                      price = VALUES(price),
                      status = VALUES(status);
 
--- ============================
---  PAYMENTS (10 records)
---  Only for tickets with status = 'issued'
--- ============================
-
 INSERT INTO payments (ticket_id, amount, payment_method, provider_reference)
 VALUES
     ('aaa11111-1111-1111-1111-111111111111', 50, 'credit_card', 'PAY-AAA-001'),
@@ -43,7 +34,6 @@ VALUES
     ('ccc11111-1111-1111-1111-111111111111', 30, 'credit_card', 'PAY-CCC-001'),
     ('ccc33333-3333-3333-3333-333333333333', 30, 'paypal', 'PAY-CCC-002'),
 
-    -- Extra payments for variety
     ('bbb11111-1111-1111-1111-111111111111', 70, 'credit_card', 'PAY-BBB-003'),
     ('aaa11111-1111-1111-1111-111111111111', 50, 'paypal', 'PAY-AAA-002'),
     ('ccc33333-3333-3333-3333-333333333333', 30, 'credit_card', 'PAY-CCC-003'),
