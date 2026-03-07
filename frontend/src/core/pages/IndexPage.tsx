@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import MainLayout from "../layout/MainLayout.tsx";
-import {BellElectric, RouteIcon, Settings, StopCircle, Ticket, Train, UserIcon} from "lucide-react";
+import {AlarmClockCheck, BellElectric, RouteIcon, StopCircle, Ticket, Train, UserIcon} from "lucide-react";
 
 export default function IndexPage() {
     const navigate = useNavigate();
@@ -107,17 +107,17 @@ export default function IndexPage() {
                         </p>
                     </div>
 
-                    {/* CARD IMPOSTAZIONI */}
+                    {/* CARD SOTTOSCRIZIONI */}
                     <div
-                        onClick={() => navigate("/settings")}
+                        onClick={() => navigate("/subscriptions")}
                         className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                     >
                         <div className="flex items-center gap-4 mb-4">
-                            <Settings className="w-10 h-10 text-gray-700" />
-                            <h2 className="text-xl font-semibold text-gray-900">Impostazioni</h2>
+                            <AlarmClockCheck className="w-10 h-10 text-purple-600" />
+                            <h2 className="text-xl font-semibold text-gray-900">Sottoscrizioni</h2>
                         </div>
                         <p className="text-gray-600">
-                            Configura parametri di sistema, ruoli e preferenze dell’applicazione.
+                            Gestisci le sottoscrizioni degli utenti.
                         </p>
                     </div>
 

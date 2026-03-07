@@ -17,19 +17,19 @@ func NewMySQLSubscriptionRepository(db *sql.DB) *MySQLSubscriptionRepository {
 	return &MySQLSubscriptionRepository{database: db}
 }
 
-// AddSubscription adds a new subscription for a user to receive notifications about a specific train.
+// AddSubscription adds a new subscription for a user to receive subscriptions about a specific train.
 func (subscriptionRepository *MySQLSubscriptionRepository) AddSubscription(context context.Context, userID int64, trainUUID string) error {
-	_, err := subscriptionRepository.database.ExecContext(context, "INSERT INTO subscriptions (user_id, train_uuid) VALUES (?, ?)", userID, trainUUID)
+	_, err := subscriptionRepository.database.ExecContext(context, "INSERT INTO subscriptions (user_id, train_uuid, plan) VALUES (?, ?, ?)", userID, trainUUID)
 	return err
 }
 
-// RemoveSubscription removes an existing subscription for a user to stop receiving notifications about a specific train.
+// RemoveSubscription removes an existing subscription for a user to stop receiving subscriptions about a specific train.
 func (subscriptionRepository *MySQLSubscriptionRepository) RemoveSubscription(context context.Context, userID int64, trainUUID string) error {
 	_, err := subscriptionRepository.database.ExecContext(context, "DELETE FROM subscriptions WHERE user_id = ? AND train_uuid = ?", userID, trainUUID)
 	return err
 }
 
-// GetUsersByTrainUUID retrieves a list of user IDs that are subscribed to receive notifications about a specific train.
+// GetUsersByTrainUUID retrieves a list of user IDs that are subscribed to receive subscriptions about a specific train.
 func (subscriptionRepository *MySQLSubscriptionRepository) GetUsersByTrainUUID(context context.Context, trainUUID string) ([]int64, error) {
 	rows, err := subscriptionRepository.database.QueryContext(context, "SELECT user_id FROM subscriptions WHERE train_uuid = ?", trainUUID)
 	if err != nil {
@@ -56,7 +56,7 @@ func (subscriptionRepository *MySQLSubscriptionRepository) GetUsersByTrainUUID(c
 
 // GetAllSubscriptions retrieves all subscriptions from the database, returning a slice of Subscription models.
 func (subscriptionRepository *MySQLSubscriptionRepository) GetAllSubscriptions(context context.Context) ([]models.Subscription, error) {
-	rows, err := subscriptionRepository.database.QueryContext(context, "SELECT id, user_id, train_uuid FROM subscriptions")
+	rows, err := subscriptionRepository.database.QueryContext(context, "SELECT id, user_id, train_uuid, plan FROM subscriptions")
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (subscriptionRepository *MySQLSubscriptionRepository) GetAllSubscriptions(c
 	var subscriptions []models.Subscription
 	for rows.Next() {
 		var subscription models.Subscription
-		if err := rows.Scan(&subscription.ID, &subscription.UserID, &subscription.TrainUUID); err != nil {
+		if err := rows.Scan(&subscription.ID, &subscription.UserID, &subscription.TrainUUID, &subscription.Plan); err != nil {
 			return nil, err
 		}
 		subscriptions = append(subscriptions, subscription)
@@ -81,7 +81,7 @@ func (subscriptionRepository *MySQLSubscriptionRepository) GetAllSubscriptions(c
 
 // GetByUser retrieves all subscriptions for a specific user, returning a slice of Subscription models associated with the given user ID.
 func (subscriptionRepository *MySQLSubscriptionRepository) GetByUser(context context.Context, userID int64) ([]models.Subscription, error) {
-	rows, err := subscriptionRepository.database.QueryContext(context, "SELECT id, user_id, train_uuid FROM subscriptions WHERE user_id = ?", userID)
+	rows, err := subscriptionRepository.database.QueryContext(context, "SELECT id, user_id, train_uuid, plan FROM subscriptions WHERE user_id = ?", userID)
 	if err != nil {
 		log.Println("failed to execute query: ", err)
 		return []models.Subscription{}, err
@@ -96,7 +96,7 @@ func (subscriptionRepository *MySQLSubscriptionRepository) GetByUser(context con
 	var subscriptions []models.Subscription
 	for rows.Next() {
 		var subscription models.Subscription
-		if err := rows.Scan(&subscription.ID, &subscription.UserID, &subscription.TrainUUID); err != nil {
+		if err := rows.Scan(&subscription.ID, &subscription.UserID, &subscription.TrainUUID, &subscription.Plan); err != nil {
 			log.Println("failed to scan row: ", err)
 			return []models.Subscription{}, err
 		}
@@ -107,7 +107,7 @@ func (subscriptionRepository *MySQLSubscriptionRepository) GetByUser(context con
 
 // GetByTrain retrieves all subscriptions for a specific train, returning a slice of Subscription models associated with the given train UUID.
 func (subscriptionRepository *MySQLSubscriptionRepository) GetByTrain(context context.Context, trainUUID string) ([]models.Subscription, error) {
-	rows, err := subscriptionRepository.database.QueryContext(context, "SELECT id, user_id, train_uuid FROM subscriptions WHERE train_uuid = ?", trainUUID)
+	rows, err := subscriptionRepository.database.QueryContext(context, "SELECT id, user_id, train_uuid, plan FROM subscriptions WHERE train_uuid = ?", trainUUID)
 	if err != nil {
 		log.Println("failed to execute query: ", err)
 		return []models.Subscription{}, err
@@ -123,7 +123,7 @@ func (subscriptionRepository *MySQLSubscriptionRepository) GetByTrain(context co
 	var subscriptions []models.Subscription
 	for rows.Next() {
 		var subscription models.Subscription
-		if err := rows.Scan(&subscription.ID, &subscription.UserID, &subscription.TrainUUID); err != nil {
+		if err := rows.Scan(&subscription.ID, &subscription.UserID, &subscription.TrainUUID, &subscription.Plan); err != nil {
 			log.Println("failed to scan row: ", err)
 			return []models.Subscription{}, err
 		}

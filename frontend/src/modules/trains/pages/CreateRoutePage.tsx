@@ -73,12 +73,22 @@ export default function CreateRoutePage() {
                     />
                 </div>
 
-                <button
-                    onClick={handleSave}
-                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-                >
+                <div className="flex gap-3">
+
+                    <button
+                        onClick={handleSave}
+                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition disabled:opacity-50"
+                    >
                     Salva
                 </button>
+
+                <button
+                    onClick={() => navigate("/routes")}
+                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg font-medium transition"
+                >
+                    Annulla
+                </button>
+                </div>
             </div>
         </MainLayout>
     );

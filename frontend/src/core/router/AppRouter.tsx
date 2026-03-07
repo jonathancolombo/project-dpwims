@@ -18,6 +18,8 @@ import EditSchedulePage from "../../modules/trains/pages/EditSchedulePage.tsx";
 import ScheduleStopsPage from "../../modules/trains/pages/ScheduleStopsPage.tsx";
 import TicketsPage from "../../modules/tickets/pages/TicketsPage.tsx";
 import EditTicketPage from "../../modules/tickets/pages/EditTicketPage.tsx";
+import NotificationsPage from "../../modules/subscriptions/pages/SubscriptionsPage.tsx";
+import CreateSubscriptionPage from "../../modules/subscriptions/pages/CreateSubscriptionPage.tsx";
 
 export default function AppRouter() {
     return (
@@ -46,6 +48,8 @@ export default function AppRouter() {
                 <Route path="/tickets" element={<TicketsPage />} />
                 <Route path="/tickets/:uuid" element={<EditTicketPage />} />
 
+                <Route path="/subscriptions" element={<NotificationsPage />} />
+                <Route path="/subscriptions/create" element={<CreateSubscriptionPage />} />
 
             </Routes>
         </BrowserRouter>

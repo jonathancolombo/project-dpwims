@@ -78,7 +78,7 @@ export default function ScheduleStopsPage() {
     return (
         <MainLayout>
             <div className="p-6 max-w-3xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold">Fermate dello Schedule</h1>
+                <h1 className="text-3xl font-bold">Fermate della Rotta</h1>
 
                 {message && (
                     <div className="p-3 bg-red-100 text-red-700 rounded-lg">{message}</div>

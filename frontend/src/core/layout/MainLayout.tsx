@@ -42,17 +42,10 @@ export default function MainLayout({ children }: Readonly<{ children: ReactNode 
                     </Link>
 
                     <Link
-                        to="/notifications"
+                        to="/subscriptions"
                         className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
                     >
-                        🔔 Notifiche
-                    </Link>
-
-                    <Link
-                        to="/settings"
-                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
-                    >
-                        ⚙️ Impostazioni
+                        🔔 Sottoscrizioni
                     </Link>
 
                 </nav>
@@ -71,8 +64,6 @@ export default function MainLayout({ children }: Readonly<{ children: ReactNode 
                     <h2 className="text-lg font-semibold text-gray-800">Dashboard</h2>
 
                     <div className="flex items-center gap-4">
-                        <button className="text-gray-600 hover:text-gray-800">🔍</button>
-                        <button className="text-gray-600 hover:text-gray-800">⚙️</button>
                         <button className="text-gray-600 hover:text-gray-800">🚪 Logout</button>
                     </div>
                 </header>
