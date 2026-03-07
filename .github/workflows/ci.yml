@@ -124,19 +124,19 @@ jobs:
           path: |
             notifications-service/.cache/go-build
             notifications-service/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('subscriptions-service/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('notifications-service/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
 
       - name: Install dependencies
-        working-directory: ./subscriptions-service
+        working-directory: ./notifications-service
         run: go mod tidy
 
       - name: Build
-        working-directory: ./subscriptions-service
+        working-directory: ./notifications-service
         run: go build ./...
 
       - name: Run tests
-        working-directory: ./subscriptions-service
+        working-directory: ./notifications-service
         run: go test ./... -v
 
   frontend:
