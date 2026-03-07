@@ -31,8 +31,8 @@ export default function CreateTrainPage() {
             });
 
             navigate("/trains");
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error(error);
             setMessage("Errore durante la creazione del treno.");
         } finally {
             setSaving(false);

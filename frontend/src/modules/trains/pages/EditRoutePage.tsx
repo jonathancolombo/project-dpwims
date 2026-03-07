@@ -20,12 +20,12 @@ export default function EditRoutePage() {
         if (!id) return;
 
         getRouteById(Number(id))
-            .then((res) => {
-                const r = res.data;
-                setTrainId(r.train_id);
-                setDeparture(r.departure_station);
-                setArrival(r.arrival_station);
-                setDistance(r.distance);
+            .then((response) => {
+                const route = response.data;
+                setTrainId(route.train_id);
+                setDeparture(route.departure_station);
+                setArrival(route.arrival_station);
+                setDistance(route.distance);
             })
             .catch(() => setMessage("Errore nel caricamento della rotta."))
             .finally(() => setLoading(false));
@@ -49,8 +49,8 @@ export default function EditRoutePage() {
             });
 
             navigate("/routes");
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error(error);
             setMessage("Errore durante il salvataggio.");
         } finally {
             setSaving(false);
@@ -84,7 +84,7 @@ export default function EditRoutePage() {
                         <input
                             className="w-full border p-2 rounded mt-1"
                             value={trainId}
-                            onChange={(e) => setTrainId(e.target.value)}
+                            onChange={(element) => setTrainId(element.target.value)}
                         />
                     </div>
 
@@ -95,7 +95,7 @@ export default function EditRoutePage() {
                         <input
                             className="w-full border p-2 rounded mt-1"
                             value={departure}
-                            onChange={(e) => setDeparture(e.target.value)}
+                            onChange={(element) => setDeparture(element.target.value)}
                         />
                     </div>
 
@@ -106,7 +106,7 @@ export default function EditRoutePage() {
                         <input
                             className="w-full border p-2 rounded mt-1"
                             value={arrival}
-                            onChange={(e) => setArrival(e.target.value)}
+                            onChange={(element) => setArrival(element.target.value)}
                         />
                     </div>
 
@@ -118,7 +118,7 @@ export default function EditRoutePage() {
                             type="number"
                             className="w-full border p-2 rounded mt-1"
                             value={distance}
-                            onChange={(e) => setDistance(Number(e.target.value))}
+                            onChange={(element) => setDistance(Number(element.target.value))}
                         />
                     </div>
                 </div>

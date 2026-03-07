@@ -5,3 +5,5 @@ export interface Train {
     capacity: number;
     status: string;
 }
+
+export type CreateTrainDTO = Partial<Omit<Train, "uuid">>;

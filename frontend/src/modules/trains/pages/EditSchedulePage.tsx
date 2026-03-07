@@ -24,16 +24,16 @@ export default function EditSchedulePage() {
         if (!id) return;
 
         getScheduleById(Number(id))
-            .then((res) => {
-                const s = res.data;
-                setTrainId(s.train_id);
-                setStationId(s.station_id);
-                setArrival(s.arrival);
-                setDeparture(s.departure);
-                setStatus(s.status);
-                setPrice(s.price);
+            .then((response) => {
+                const schedule = response.data;
+                setTrainId(schedule.train_id);
+                setStationId(schedule.station_id);
+                setArrival(schedule.arrival);
+                setDeparture(schedule.departure);
+                setStatus(schedule.status);
+                setPrice(schedule.price);
             })
-            .catch(() => setMessage("Errore nel caricamento dello schedule."))
+            .catch(() => setMessage("Errore nel caricamento della rotta."))
             .finally(() => setLoading(false));
     }, [id]);
 
@@ -59,7 +59,7 @@ export default function EditSchedulePage() {
             navigate("/schedules");
         } catch (err) {
             console.error(err);
-            setMessage("Errore durante il salvataggio.");
+            setMessage("Errore durante il salvataggio della rotta.");
         } finally {
             setSaving(false);
         }
@@ -76,7 +76,7 @@ export default function EditSchedulePage() {
     return (
         <MainLayout>
             <div className="p-6 max-w-xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold">Modifica Schedule</h1>
+                <h1 className="text-3xl font-bold">Modifica Fermata</h1>
 
                 {message && (
                     <div className="p-3 bg-red-100 text-red-700 rounded-lg">
@@ -101,7 +101,7 @@ export default function EditSchedulePage() {
                         <input
                             className="w-full border p-2 rounded mt-1"
                             value={arrival}
-                            onChange={(e) => setArrival(e.target.value)}
+                            onChange={(element) => setArrival(element.target.value)}
                         />
                     </div>
 
@@ -110,7 +110,7 @@ export default function EditSchedulePage() {
                         <input
                             className="w-full border p-2 rounded mt-1"
                             value={departure}
-                            onChange={(e) => setDeparture(e.target.value)}
+                            onChange={(element) => setDeparture(element.target.value)}
                         />
                     </div>
 
@@ -119,7 +119,7 @@ export default function EditSchedulePage() {
                         <select
                             className="w-full border p-2 rounded mt-1"
                             value={status}
-                            onChange={(e) => setStatus(e.target.value as "active" | "inactive")}
+                            onChange={(element) => setStatus(element.target.value as "active" | "inactive")}
                         >
                             <option value="active">Attivo</option>
                             <option value="inactive">Non attivo</option>
@@ -132,7 +132,7 @@ export default function EditSchedulePage() {
                             type="number"
                             className="w-full border p-2 rounded mt-1"
                             value={price}
-                            onChange={(e) => setPrice(Number(e.target.value))}
+                            onChange={(element) => setPrice(Number(element.target.value))}
                         />
                     </div>
                 </div>

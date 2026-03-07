@@ -35,7 +35,7 @@ export default function CreateSchedulePage() {
 
             navigate("/schedules");
         } catch {
-            setMessage("Errore durante la creazione.");
+            setMessage("Errore durante la creazione della fermata.");
         }
     };
 
@@ -64,20 +64,20 @@ export default function CreateSchedulePage() {
                         className="w-full border p-2 rounded"
                         placeholder="Arrivo (es. 08:30)"
                         value={arrival}
-                        onChange={(e) => setArrival(e.target.value)}
+                        onChange={(element) => setArrival(element.target.value)}
                     />
 
                     <input
                         className="w-full border p-2 rounded"
                         placeholder="Partenza (es. 08:45)"
                         value={departure}
-                        onChange={(e) => setDeparture(e.target.value)}
+                        onChange={(element) => setDeparture(element.target.value)}
                     />
 
                     <select
                         className="w-full border p-2 rounded"
                         value={status}
-                        onChange={(e) => setStatus(e.target.value as "active" | "inactive")}
+                        onChange={(element) => setStatus(element.target.value as "active" | "inactive")}
                     >
                         <option value="active">Attivo</option>
                         <option value="inactive">Non attivo</option>
@@ -88,7 +88,7 @@ export default function CreateSchedulePage() {
                         className="w-full border p-2 rounded"
                         placeholder="Prezzo"
                         value={price}
-                        onChange={(e) => setPrice(Number(e.target.value))}
+                        onChange={(element) => setPrice(Number(element.target.value))}
                     />
                 </div>
 

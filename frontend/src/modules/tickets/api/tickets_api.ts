@@ -1,7 +1,6 @@
 import {apiTickets} from "../../../core/api/client";
 import type {Ticket} from "../types/ticket.ts";
 
-
 export const getTicket = (uuid: string) =>
     apiTickets.get<Ticket>(`/tickets/${uuid}`);
 

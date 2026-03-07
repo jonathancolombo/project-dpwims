@@ -17,3 +17,7 @@ export interface UpdateUserRequest {
     role?: UserRole;
     password?: string;
 }
+
+export type CreateUserDTO = Omit<User, "id"> & {
+    password: string;
+};

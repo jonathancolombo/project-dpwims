@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import {deleteRoute, getRoutes, type Route} from "../api/routes_api.ts";
+import {deleteRoute, getRoutes} from "../api/routes_api.ts";
 import {useNavigate} from "react-router-dom";
+import type {Route} from "../types/route.ts";
 
 export default function RoutesPage() {
     const [routes, setRoutes] = useState<Route[]>([]);
@@ -11,7 +12,7 @@ export default function RoutesPage() {
 
     useEffect(() => {
         getRoutes()
-            .then((res) => setRoutes(res.data))
+            .then((response) => setRoutes(response.data))
             .catch(() => setMessage("Errore nel caricamento delle rotte."))
             .finally(() => setLoading(false));
     }, []);
@@ -21,7 +22,7 @@ export default function RoutesPage() {
 
         try {
             await deleteRoute(id);
-            setRoutes((prev) => prev.filter((r) => r.id !== id));
+            setRoutes((routes) => routes.filter((route) => route.id !== id));
         } catch {
             setMessage("Errore durante l'eliminazione.");
         }
@@ -53,32 +54,32 @@ export default function RoutesPage() {
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {routes.map((r) => (
+                    {routes.map((route) => (
                         <div
-                            key={r.id}
+                            key={route.id}
                             className="p-4 bg-white shadow rounded-lg border border-gray-200"
                         >
                             <h2 className="text-xl font-semibold">
-                                {r.departure_station} → {r.arrival_station}
+                                {route.departure_station} → {route.arrival_station}
                             </h2>
 
                             <p className="text-gray-600 mt-1">
-                                Treno: {r.train_id}
+                                Treno: {route.train_id}
                             </p>
 
                             <p className="text-gray-600">
-                                Distanza: {r.distance} km
+                                Distanza: {route.distance} km
                             </p>
 
                             <div className="flex gap-3 mt-4">
                                 <button
-                                    onClick={() => navigate(`/routes/${r.id}`)}
+                                    onClick={() => navigate(`/routes/${route.id}`)}
                                     className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg"
                                 >
                                     Modifica
                                 </button>
                                 <button
-                                    onClick={() => handleDelete(r.id)}
+                                    onClick={() => handleDelete(route.id)}
                                     className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg"
                                 >
                                     Elimina
