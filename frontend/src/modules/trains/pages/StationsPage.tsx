@@ -1,8 +1,9 @@
 import {useEffect, useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import {deleteStation, getStations, type Station} from "../api/stations_api.ts";
+import {deleteStation, getStations} from "../api/stations_api.ts";
 import {useNavigate} from "react-router-dom";
 import {StatusBadge} from "../../../util/badge.tsx";
+import type {Station} from "../types/station.ts";
 
 
 export default function StationsPage() {

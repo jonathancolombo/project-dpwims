@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import {deleteSchedule, getSchedules, type Schedule} from "../api/schedules_api.ts";
+import {deleteSchedule, getSchedules} from "../api/schedules_api.ts";
 import {useNavigate} from "react-router-dom";
+import type {Schedule} from "../types/schedule.ts";
 
 export default function SchedulesPage() {
     const [schedules, setSchedules] = useState<Schedule[]>([]);
