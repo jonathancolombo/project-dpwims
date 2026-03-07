@@ -59,7 +59,7 @@ export default function EditTicketPage() {
 
                 <div className="p-4 bg-white shadow rounded-lg border space-y-4">
                     <div>
-                        <label className="block text-sm font-medium">UUID</label>
+                        <label className="block text-sm font-medium">UUID del biglietto</label>
                         <input
                             type="text"
                             value={ticket.uuid}
@@ -69,7 +69,7 @@ export default function EditTicketPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">User ID</label>
+                        <label className="block text-sm font-medium">ID utente</label>
                         <input
                             type="number"
                             value={ticket.user_id}
@@ -79,7 +79,7 @@ export default function EditTicketPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Train UUID</label>
+                        <label className="block text-sm font-medium">UUID del treno</label>
                         <input
                             type="text"
                             value={ticket.train_id}
@@ -89,7 +89,7 @@ export default function EditTicketPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Schedule ID</label>
+                        <label className="block text-sm font-medium">ID della fermata</label>
                         <input
                             type="number"
                             value={ticket.schedule_id}
@@ -101,7 +101,8 @@ export default function EditTicketPage() {
                     <div>
                         <label className="block text-sm font-medium">Numero Posto</label>
                         <input
-                            type="number"
+                            type="text"
+                            placeholder={"Es. A10"}
                             value={ticket.seat_number}
                             onChange={(element) =>
                                 setTicket({ ...ticket, seat_number: element.target.value })
@@ -116,15 +117,15 @@ export default function EditTicketPage() {
                             type="number"
                             step="0.01"
                             value={ticket.price}
-                            onChange={(e) =>
-                                setTicket({ ...ticket, price: Number(e.target.value) })
+                            onChange={(element) =>
+                                setTicket({ ...ticket, price: Number(element.target.value) })
                             }
                             className="w-full mt-1 p-2 border rounded"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Stato</label>
+                        <label className="block text-sm font-medium">Stato del biglietto</label>
                         <select
                             value={ticket.status}
                             onChange={(element) =>
@@ -132,9 +133,9 @@ export default function EditTicketPage() {
                             }
                             className="w-full mt-1 p-2 border rounded"
                         >
-                            <option value="booked">Booked</option>
-                            <option value="used">Used</option>
-                            <option value="canceled">Canceled</option>
+                            <option value="booked">Prenotato</option>
+                            <option value="issued">Utilizzato</option>
+                            <option value="canceled">Cancellato</option>
                         </select>
                     </div>
 

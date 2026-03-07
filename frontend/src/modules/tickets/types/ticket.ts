@@ -5,6 +5,6 @@ export interface Ticket {
     schedule_id: number;
     seat_number: string;
     price: number;
-    status: "booked" | "cancelled" | "used";
+    status: "booked" | "cancelled" | "issued";
 }
 

@@ -123,13 +123,25 @@ export default function TrainDetailPage() {
                         </select>
                     </label>
 
-                    <button
-                        onClick={handleSave}
-                        disabled={saving}
-                        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:opacity-50"
-                    >
-                        {saving ? "Salvataggio..." : "Salva modifiche"}
-                    </button>
+
+                    <div className="flex flex-col gap-3">
+                        <button
+                            onClick={handleSave}
+                            disabled={saving}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+                        >
+                            {saving ? "Salvataggio..." : "Salva modifiche"}
+                        </button>
+
+                        <button
+                            onClick={() => navigate("/trains")}
+                            className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg font-medium transition"
+                        >
+                            Annulla
+                        </button>
+                    </div>
+
+
                 </div>
             </div>
         </MainLayout>

@@ -1,4 +1,5 @@
-import type {ReactNode} from "react";
+import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 export default function MainLayout({ children }: Readonly<{ children: ReactNode }>) {
     return (
@@ -12,22 +13,50 @@ export default function MainLayout({ children }: Readonly<{ children: ReactNode 
                 </div>
 
                 <nav className="flex-1 px-4 py-6 space-y-2">
-                    <a className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium cursor-pointer">
+                    <Link
+                        to="/"
+                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
+                    >
+                        🏠 Home
+                    </Link>
+
+                    <Link
+                        to="/trains"
+                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
+                    >
                         🚆 Treni
-                    </a>
-                    <a className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium cursor-pointer">
+                    </Link>
+
+                    <Link
+                        to="/tickets"
+                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
+                    >
                         🎫 Biglietti
-                    </a>
-                    <a className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium cursor-pointer">
+                    </Link>
+
+                    <Link
+                        to="/users"
+                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
+                    >
                         👤 Utenti
-                    </a>
-                    <a className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium cursor-pointer">
+                    </Link>
+
+                    <Link
+                        to="/notifications"
+                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
+                    >
                         🔔 Notifiche
-                    </a>
-                    <a className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium cursor-pointer">
+                    </Link>
+
+                    <Link
+                        to="/settings"
+                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
+                    >
                         ⚙️ Impostazioni
-                    </a>
+                    </Link>
+
                 </nav>
+
 
                 <div className="px-6 py-4 border-t border-gray-200 text-sm text-gray-500">
                     Admin logged in

@@ -32,7 +32,7 @@ export default function TicketsPage() {
 
     const statusLabels: Record<Ticket["status"], string> = {
         booked: "Prenotato",
-        used: "Utilizzato",
+        issued: "Utilizzato",
         cancelled: "Cancellato"
     };
 
@@ -62,7 +62,7 @@ export default function TicketsPage() {
                                 <span
                                     className={`px-2 py-1 rounded text-white ${
                                         ticket.status === "booked" ? "bg-green-600" 
-                                            : ticket.status === "used" ? "bg-gray-500" : "bg-red-600"
+                                            : ticket.status === "issued" ? "bg-gray-500" : "bg-red-600"
                                     }`}
                                 >
                                     {statusLabels[ticket.status]}
