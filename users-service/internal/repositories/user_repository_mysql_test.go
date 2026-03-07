@@ -35,13 +35,14 @@ func TestMySQLCreateUserSuccessfully(testing *testing.T) {
 		Email:        "test@example.com",
 		FiscalCode:   "ABC123",
 		Telephone:    "1234567890",
+		Role:         models.RoleAdmin,
 	}
 
-	query := "INSERT INTO users (username, password, password_salt, email, fiscal_code, telephone) VALUES (?, ?, ?, ?, ?, ?)"
+	query := "INSERT INTO users (username, password, password_salt, email, fiscal_code, telephone, role) VALUES (?, ?, ?, ?, ?, ?, ?)"
 
 	sqlMock.ExpectPrepare(regexp.QuoteMeta(query)).
 		ExpectExec().
-		WithArgs("testuser", "password123", "16", "test@example.com", "ABC123", "1234567890").
+		WithArgs("testuser", "password123", "16", "test@example.com", "ABC123", "1234567890", models.RoleAdmin).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	emptyContext := context.Background()
@@ -85,18 +86,17 @@ func TestFindByIDSuccessfully(testing *testing.T) {
 	repository := NewMySQLRepositoryUsers(databaseMock)
 	expectedID := int64(1)
 	expectedUser := models.User{
-		ID:           expectedID,
-		Username:     "username",
-		Password:     "passowordhashed",
-		Email:        "username@email.com",
-		FiscalCode:   "ABCDEF12G34H567I",
-		Telephone:    "1234567890",
-		Role:         "",
-		PasswordSalt: "",
+		ID:         expectedID,
+		Username:   "username",
+		Password:   "passowordhashed",
+		Email:      "username@email.com",
+		FiscalCode: "ABCDEF12G34H567I",
+		Telephone:  "1234567890",
+		Role:       models.RoleCustomer,
 	}
 
-	rows := sqlMock.NewRows([]string{"id", "username", "password", "email", "fiscal_code", "telephone"}).AddRow(expectedUser.ID, expectedUser.Username, expectedUser.Password, expectedUser.Email, expectedUser.FiscalCode, expectedUser.Telephone)
-	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone FROM users WHERE id = ?").WithArgs(expectedID).WillReturnRows(rows)
+	rows := sqlMock.NewRows([]string{"id", "username", "password", "email", "fiscal_code", "telephone", "role"}).AddRow(expectedUser.ID, expectedUser.Username, expectedUser.Password, expectedUser.Email, expectedUser.FiscalCode, expectedUser.Telephone, expectedUser.Role)
+	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone, role FROM users WHERE id = ?").WithArgs(expectedID).WillReturnRows(rows)
 	user, err := repository.GetByID(context.Background(), expectedID)
 	require.NoError(testing, err)
 	require.NotNil(testing, user)
@@ -115,7 +115,7 @@ func TestFindByID_NotFound(testing *testing.T) {
 
 	repository := &MySQLUserRepository{database: databaseMock}
 
-	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone FROM users WHERE id = ?").
+	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone, role FROM users WHERE id = ?").
 		WithArgs(int64(99)).
 		WillReturnError(sql.ErrNoRows)
 
@@ -138,11 +138,11 @@ func TestFindByID_ScanError(testing *testing.T) {
 
 	repository := &MySQLUserRepository{database: databaseMock}
 
-	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone FROM users WHERE id = ?").
+	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone, role FROM users WHERE id = ?").
 		WithArgs(int64(1)).
 		WillReturnRows(
 			sqlmock.NewRows([]string{
-				"id", "username", "password", "email", "fiscal_code", "telephone",
+				"id", "username", "password", "email", "fiscal_code", "telephone", "role",
 			}).AddRow(
 				"invalid-int",
 				"john",
@@ -150,6 +150,7 @@ func TestFindByID_ScanError(testing *testing.T) {
 				"john@mail.com",
 				"ABCDEF12G34H567I",
 				"1234567890",
+				models.RoleAdmin,
 			),
 		)
 
@@ -173,12 +174,12 @@ func TestGetAll_Success(testing *testing.T) {
 	repo := &MySQLUserRepository{database: databaseMock}
 
 	rows := sqlmock.NewRows([]string{
-		"id", "username", "password", "email", "fiscal_code", "telephone",
+		"id", "username", "password", "email", "fiscal_code", "telephone", "role",
 	}).
-		AddRow(1, "john", "hashed1", "john@mail.com", "ABCDEF12G34H567I", "1234567890").
-		AddRow(2, "mary", "hashed2", "mary@mail.com", "LMNOPQ12R34S567T", "0987654321")
+		AddRow(1, "john", "hashed1", "john@mail.com", "ABCDEF12G34H567I", "1234567890", models.RoleAdmin).
+		AddRow(2, "mary", "hashed2", "mary@mail.com", "LMNOPQ12R34S567T", "0987654321", models.RoleCustomer)
 
-	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone FROM users").
+	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone, role FROM users").
 		WillReturnRows(rows)
 
 	users, err := repo.GetAll(context.Background())
@@ -209,7 +210,7 @@ func TestGetAll_Empty(testing *testing.T) {
 		"id", "username", "password", "email", "fiscal_code", "telephone",
 	})
 
-	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone FROM users").
+	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone, role FROM users").
 		WillReturnRows(rows)
 
 	users, err := repository.GetAll(context.Background())
@@ -230,7 +231,7 @@ func TestGetAll_QueryError(testing *testing.T) {
 
 	repository := &MySQLUserRepository{database: databaseMock}
 
-	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone FROM users").
+	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone, role FROM users").
 		WillReturnError(errors.New("databaseMock failure"))
 
 	users, err := repository.GetAll(context.Background())
@@ -253,7 +254,7 @@ func TestGetAll_ScanError(testing *testing.T) {
 	repository := &MySQLUserRepository{database: databaseMock}
 
 	rows := sqlmock.NewRows([]string{
-		"id", "username", "password", "email", "fiscal_code", "telephone",
+		"id", "username", "password", "email", "fiscal_code", "telephone", "role",
 	}).AddRow(
 		"invalid-int",
 		"john",
@@ -261,9 +262,10 @@ func TestGetAll_ScanError(testing *testing.T) {
 		"john@mail.com",
 		"ABCDEF12G34H567I",
 		"1234567890",
+		models.RoleAdmin,
 	)
 
-	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone FROM users").
+	sqlMock.ExpectQuery("SELECT id, username, password, email, fiscal_code, telephone, role FROM users").
 		WillReturnRows(rows)
 
 	users, err := repository.GetAll(context.Background())
@@ -378,7 +380,7 @@ func TestUpdateByID_Success(testing *testing.T) {
 		Email:        "john@mail.it",
 		FiscalCode:   "MCJDBNFVKCVSDÈG",
 		Telephone:    "25645456",
-		Role:         "user",
+		Role:         models.RoleAdmin,
 		PasswordSalt: "16",
 	}
 
@@ -418,7 +420,7 @@ func TestUpdateByID_NotFound(testing *testing.T) {
 		Email:        "john@mail.it",
 		FiscalCode:   "MCJDBNFVKCVSDÈG",
 		Telephone:    "25645456",
-		Role:         "user",
+		Role:         models.RoleCustomer,
 		PasswordSalt: "16",
 	}
 
