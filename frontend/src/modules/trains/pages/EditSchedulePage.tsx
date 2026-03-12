@@ -2,8 +2,8 @@ import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import MainLayout from "../../../core/layout/MainLayout";
 import {getScheduleById, updateSchedule} from "../api/schedules_api.ts";
-import StationSelect from "./StationSelect.tsx";
 import TrainSelect from "./TrainSelect.tsx";
+import StationNameSelect from "./StationNameSelect.tsx";
 
 export default function EditSchedulePage() {
     const { id } = useParams();
@@ -33,7 +33,7 @@ export default function EditSchedulePage() {
                 setStatus(schedule.status);
                 setPrice(schedule.price);
             })
-            .catch(() => setMessage("Errore nel caricamento della rotta."))
+            .catch(() => setMessage("Errore nel caricamento dell'itinerario."))
             .finally(() => setLoading(false));
     }, [id]);
 
@@ -59,7 +59,7 @@ export default function EditSchedulePage() {
             navigate("/schedules");
         } catch (err) {
             console.error(err);
-            setMessage("Errore durante il salvataggio della rotta.");
+            setMessage("Errore durante il salvataggio dell'itinerario.");
         } finally {
             setSaving(false);
         }
@@ -76,7 +76,7 @@ export default function EditSchedulePage() {
     return (
         <MainLayout>
             <div className="p-6 max-w-xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold">Modifica Fermata</h1>
+                <h1 className="text-3xl font-bold">Modifica Itinerario</h1>
 
                 {message && (
                     <div className="p-3 bg-red-100 text-red-700 rounded-lg">
@@ -92,27 +92,25 @@ export default function EditSchedulePage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Stazione</label>
-                        <StationSelect value={stationId} onChange={setStationId} />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Arrivo</label>
+                        <label className="block text-sm font-medium text-gray-700">Id stazione di riferimento</label>
                         <input
-                            className="w-full border p-2 rounded mt-1"
-                            value={arrival}
-                            onChange={(element) => setArrival(element.target.value)}
+                            type="text"
+                            value={stationId}
+                            disabled
+                            className="w-full mt-1 p-2 border rounded bg-gray-100"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Partenza</label>
-                        <input
-                            className="w-full border p-2 rounded mt-1"
-                            value={departure}
-                            onChange={(element) => setDeparture(element.target.value)}
-                        />
+                        <label className="block text-sm font-medium text-gray-700">Nome stazione di partenza</label>
+                        <StationNameSelect value={departure} onChange={setDeparture} />
                     </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Nome stazione di arrivo</label>
+                        <StationNameSelect value={arrival} onChange={setArrival} />
+                    </div>
+
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Stato</label>

@@ -4,6 +4,7 @@ import {createSchedule} from "../api/schedules_api.ts";
 import {useNavigate} from "react-router-dom";
 import StationSelect from "./StationSelect.tsx";
 import TrainSelect from "./TrainSelect.tsx";
+import StationNameSelect from "./StationNameSelect.tsx";
 
 export default function CreateSchedulePage() {
     const initialStateString = "";
@@ -42,7 +43,7 @@ export default function CreateSchedulePage() {
     return (
         <MainLayout>
             <div className="p-6 max-w-xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold">Nuova fermata</h1>
+                <h1 className="text-3xl font-bold">Nuovo itinerario</h1>
 
                 {message && (
                     <div className="p-3 bg-red-100 text-red-700 rounded-lg">{message}</div>
@@ -60,20 +61,19 @@ export default function CreateSchedulePage() {
                         <StationSelect value={stationId} onChange={setStationId} />
                     </div>
 
-                    <input
-                        className="w-full border p-2 rounded"
-                        placeholder="Arrivo (es. 08:30)"
-                        value={arrival}
-                        onChange={(element) => setArrival(element.target.value)}
-                    />
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Nome stazione di partenza</label>
+                        <StationNameSelect value={departure} onChange={setDeparture} />
+                    </div>
 
-                    <input
-                        className="w-full border p-2 rounded"
-                        placeholder="Partenza (es. 08:45)"
-                        value={departure}
-                        onChange={(element) => setDeparture(element.target.value)}
-                    />
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Nome stazione di arrivo</label>
+                        <StationNameSelect value={arrival} onChange={setArrival} />
+                    </div>
 
+
+                <div>
+                <label className="block text-sm font-medium text-gray-700">Stato</label>
                     <select
                         className="w-full border p-2 rounded"
                         value={status}
@@ -82,22 +82,42 @@ export default function CreateSchedulePage() {
                         <option value="active">Attivo</option>
                         <option value="inactive">Non attivo</option>
                     </select>
-
-                    <input
-                        type="number"
-                        className="w-full border p-2 rounded"
-                        placeholder="Prezzo"
-                        value={price}
-                        onChange={(element) => setPrice(Number(element.target.value))}
-                    />
                 </div>
 
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Prezzo</label>
+
+                        <input
+                        type="text"
+                        inputMode="decimal"
+                        className="w-full border p-2 rounded"
+                        placeholder="Inserisci il prezzo in €"
+                        value={price === 0 ? "" : price}
+                        onChange={(element) => {
+                            const value = element.target.value;
+                            if (/^[0-9]*[.,]?[0-9]*$/.test(value)) {
+                                setPrice(Number(value.replace(",", ".")));
+                            }
+                        }}
+                    />
+                    </div>
+                </div>
+
+                <div className="flex gap-3">
                 <button
                     onClick={handleSave}
                     className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
                 >
                     Salva
                 </button>
+
+                <button
+                    onClick={() => navigate("/schedules")}
+                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg transition"
+                >
+                    Annulla
+                </button>
+                </div>
             </div>
         </MainLayout>
     );

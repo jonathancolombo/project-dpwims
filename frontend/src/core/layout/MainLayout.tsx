@@ -8,8 +8,8 @@ export default function MainLayout({ children }: Readonly<{ children: ReactNode 
             {/* SIDEBAR */}
             <aside className="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
                 <div className="px-6 py-5 border-b border-gray-200">
-                    <h1 className="text-xl font-bold text-blue-700">Railway Admin</h1>
-                    <p className="text-xs text-gray-500">Control Panel</p>
+                    <h1 className="text-xl font-bold text-blue-700">Amministratore Ferroviario</h1>
+                    <p className="text-xs text-gray-500">Pannello di Controllo</p>
                 </div>
 
                 <nav className="flex-1 px-4 py-6 space-y-2">

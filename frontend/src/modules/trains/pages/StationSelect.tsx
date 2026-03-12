@@ -12,7 +12,7 @@ export default function StationSelect({ value, onChange }: Readonly<StationSelec
 
     useEffect(() => {
         getStations()
-            .then((res) => setStations(res.data))
+            .then((response) => setStations(response.data))
             .finally(() => setLoading(false));
     }, []);
 
@@ -24,14 +24,16 @@ export default function StationSelect({ value, onChange }: Readonly<StationSelec
         <select
             className="w-full border p-2 rounded"
             value={value}
-            onChange={(e) => onChange(Number(e.target.value))}
+            onChange={(element) => onChange(Number(element.target.value))}
         >
             <option value={0}>Seleziona una stazione</option>
-            {stations.map((s) => (
-                <option key={s.id} value={s.id}>
-                    {s.name}
+            {stations.map((station) => (
+                <option key={station.id} value={station.id}>
+                    {station.name}
                 </option>
             ))}
         </select>
     );
 }
+
+

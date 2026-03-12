@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import MainLayout from "../layout/MainLayout.tsx";
-import {AlarmClockCheck, BellElectric, RouteIcon, StopCircle, Ticket, Train, UserIcon} from "lucide-react";
+import {AlarmClockCheck, BellElectric, StopCircle, Ticket, Train, UserIcon} from "lucide-react";
 
 export default function IndexPage() {
     const navigate = useNavigate();
@@ -64,22 +64,7 @@ export default function IndexPage() {
                         </p>
                     </div>
 
-                    {/* CARD Rotte */}
-
-                    <div
-                        onClick={() => navigate("/routes")}
-                        className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
-                    >
-                        <div className="flex items-center gap-4 mb-4">
-                            <RouteIcon className="w-10 h-10 text-blue-600" />
-                            <h2 className="text-xl font-semibold text-gray-900">Rotte</h2>
-                        </div>
-                        <p className="text-gray-600">
-                            Gestisci le rotte commerciali: crea, modifica e visualizza le rotte disponibili.
-                        </p>
-                    </div>
-
-                    {/* CARD Fermate */}
+                    {/* CARD Itinerari */}
 
                     <div
                         onClick={() => navigate("/schedules")}
@@ -87,9 +72,9 @@ export default function IndexPage() {
                     >
                         <div className="flex items-center gap-4 mb-4">
                             <StopCircle className="w-10 h-10 text-blue-600" />
-                            <h2 className="text-xl font-semibold text-gray-900">Fermate</h2>
+                            <h2 className="text-xl font-semibold text-gray-900">Itinerari</h2>
                         </div>
-                        <p className="text-gray-600 mt-2">Gestisci gli orari dei treni e le varie fermate dei treni delle rotte.</p>
+                        <p className="text-gray-600 mt-2">Gestisci gli orari dei e le varie fermate dei treni relativi agli itinerari.</p>
                     </div>
 
 

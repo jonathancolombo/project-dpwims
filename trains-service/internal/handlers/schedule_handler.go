@@ -2,11 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"strconv"
 	"trains-service/internal/models"
-	"trains-service/internal/repositories"
 	"trains-service/internal/services"
 
 	"github.com/go-chi/chi/v5"
@@ -50,7 +48,7 @@ func (scheduleHandler *ScheduleHandler) GetSchedule(writer http.ResponseWriter, 
 	schedule, err := scheduleHandler.service.GetSchedule(request.Context(), id)
 
 	if err != nil || schedule == nil {
-		http.Error(writer, errorMessageRouteNotFound, http.StatusNotFound)
+		http.Error(writer, err.Error(), http.StatusNotFound)
 		return
 	}
 
@@ -92,7 +90,7 @@ func (scheduleHandler *ScheduleHandler) UpdateSchedule(writer http.ResponseWrite
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
 	if err != nil || id <= 0 {
-		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -104,11 +102,6 @@ func (scheduleHandler *ScheduleHandler) UpdateSchedule(writer http.ResponseWrite
 
 	route, err := scheduleHandler.service.UpdateSchedule(request.Context(), id, &scheduleUpdate)
 	if err != nil {
-		if errors.Is(err, repositories.ErrRouteNotFound) {
-			http.Error(writer, errorMessageRouteNotFound, http.StatusNotFound)
-			return
-		}
-
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}

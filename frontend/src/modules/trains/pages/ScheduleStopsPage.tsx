@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../../core/layout/MainLayout";
-import {createStop, deleteStop, getStopsBySchedule,} from "../api/schedule_stops_api.ts";
-import StationSelect from "./StationSelect.tsx";
-import type {ScheduleStop} from "../types/schedule_stop.ts";
+import { createStop, deleteStop, getStopsBySchedule } from "../api/schedule_stops_api";
+import StationSelect from "./StationSelect";
+import type { ScheduleStop } from "../types/schedule_stop";
 
 export default function ScheduleStopsPage() {
     const { id } = useParams();
@@ -13,7 +13,7 @@ export default function ScheduleStopsPage() {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
 
-    const [newStationId, setNewStationId] = useState(0);
+    const [newStationId, setNewStationId] = useState<number>(0);
     const [newArrival, setNewArrival] = useState("");
     const [newDeparture, setNewDeparture] = useState("");
 
@@ -22,7 +22,9 @@ export default function ScheduleStopsPage() {
 
         getStopsBySchedule(Number(id))
             .then((response) => {
-                const sorted = response.data.sort((firstScheduleStop, secondScheduleStop) => firstScheduleStop.stop_order - secondScheduleStop.stop_order);
+                const sorted = response.data.sort(
+                    (firstScheduleStop, secondScheduleStop) => firstScheduleStop.stop_order - secondScheduleStop.stop_order
+                );
                 setStops(sorted);
             })
             .catch(() => setMessage("Errore nel caricamento delle fermate."))
@@ -43,7 +45,10 @@ export default function ScheduleStopsPage() {
             });
 
             const response = await getStopsBySchedule(Number(id));
-            setStops(response.data.sort((firstScheduleStop, secondScheduleStop) => firstScheduleStop.stop_order - secondScheduleStop.stop_order));
+            setStops(
+                response.data.sort(
+                    (firstScheduleStop, secondScheduleStop) => firstScheduleStop.stop_order - secondScheduleStop.stop_order)
+            );
 
             // reset
             setNewStationId(0);
@@ -54,16 +59,19 @@ export default function ScheduleStopsPage() {
         }
     };
 
-    const handleDelete = async () => {
-        if (!confirm("Eliminare questa fermata?")) return;
+    const handleDelete = async (stopId: number) => {
+        if (!confirm("Sei sicuro di voler eliminare questa fermata?")) return;
 
         try {
-            await deleteStop(Number(id));
+            await deleteStop(stopId);
 
             const response = await getStopsBySchedule(Number(id));
-            setStops(response.data.sort((firstScheduleStop, secondScheduleStop) => firstScheduleStop.stop_order - secondScheduleStop.stop_order));
+            setStops(
+                response.data.sort(
+                    (firstScheduleStop, secondScheduleStop) => firstScheduleStop.stop_order - secondScheduleStop.stop_order)
+            );
         } catch {
-            setMessage("Errore durante l'eliminazione.");
+            setMessage("Errore durante l'eliminazione della fermata.");
         }
     };
 
@@ -78,10 +86,12 @@ export default function ScheduleStopsPage() {
     return (
         <MainLayout>
             <div className="p-6 max-w-3xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold">Fermate della Rotta</h1>
+                <h1 className="text-3xl font-bold">Fermate dell'Itinerario</h1>
 
                 {message && (
-                    <div className="p-3 bg-red-100 text-red-700 rounded-lg">{message}</div>
+                    <div className="p-3 bg-red-100 text-red-700 rounded-lg">
+                        {message}
+                    </div>
                 )}
 
                 {/* Lista fermate */}
@@ -96,14 +106,12 @@ export default function ScheduleStopsPage() {
                                     {stop.stop_order}. {stop.station_name}
                                 </h2>
 
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleDelete()}
-                                        className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded"
-                                    >
-                                        Elimina
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={() => handleDelete(stop.id)}
+                                    className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded"
+                                >
+                                    Elimina
+                                </button>
                             </div>
 
                             <div className="mt-2 text-gray-700">
@@ -118,24 +126,35 @@ export default function ScheduleStopsPage() {
                     <h2 className="text-xl font-semibold">Aggiungi Fermata</h2>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Stazione</label>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Stazione
+                        </label>
                         <StationSelect value={newStationId} onChange={setNewStationId} />
                     </div>
 
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Orario di arrivo
+                        </label>
+                        <input
+                            className="w-full border p-2 rounded"
+                            placeholder="Es. 08:30"
+                            value={newArrival}
+                            onChange={(e) => setNewArrival(e.target.value)}
+                        />
+                    </div>
 
-                    <input
-                        className="w-full border p-2 rounded"
-                        placeholder="Arrivo (es. 08:30)"
-                        value={newArrival}
-                        onChange={(element) => setNewArrival(element.target.value)}
-                    />
-
-                    <input
-                        className="w-full border p-2 rounded"
-                        placeholder="Partenza (es. 08:45)"
-                        value={newDeparture}
-                        onChange={(element) => setNewDeparture(element.target.value)}
-                    />
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Orario di partenza
+                        </label>
+                        <input
+                            className="w-full border p-2 rounded"
+                            placeholder="Es. 08:45"
+                            value={newDeparture}
+                            onChange={(e) => setNewDeparture(e.target.value)}
+                        />
+                    </div>
 
                     <button
                         onClick={handleAddStop}

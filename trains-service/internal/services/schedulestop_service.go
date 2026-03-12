@@ -20,35 +20,34 @@ func NewStopScheduleService(repository repositories.IScheduleStopRepository) *Sc
 }
 
 // CreateStopSchedule creates a new stop schedule
-func (scheduleStopService *ScheduleStopService) CreateStopSchedule(ctx context.Context, stop *models.ScheduleStop) (*models.ScheduleStop, error) {
-	// prendi tutte le fermate esistenti
-	stops, _ := scheduleStopService.repository.GetStopsBySchedule(ctx, stop.ScheduleID)
+func (scheduleStopService *ScheduleStopService) CreateStopSchedule(context context.Context, scheduleStop *models.ScheduleStop) (*models.ScheduleStop, error) {
+	stops, _ := scheduleStopService.repository.GetStopsBySchedule(context, scheduleStop.ScheduleID)
 
-	stop.StopOrder = len(stops) + 1
+	scheduleStop.StopOrder = len(stops) + 1
 
-	return scheduleStopService.repository.Create(ctx, stop)
+	return scheduleStopService.repository.Create(context, scheduleStop)
 }
 
 // GetStopSchedule retrieves a stop schedule by their id
 func (scheduleStopService *ScheduleStopService) GetStopSchedule(context context.Context, id int64) (*models.ScheduleStop, error) {
 	if id <= 0 {
-		return nil, fmt.Errorf(formatMessageIdError)
+		return nil, nil
 	}
 	return scheduleStopService.repository.GetByID(context, id)
 }
 
-// GetAllStopSchedules retrieves all stop schedules
-func (scheduleStopService *ScheduleStopService) GetAllStopSchedules(context context.Context) ([]*models.ScheduleStop, error) {
+// GetAllStopSchedules retrieves all stop schedules given an id
+func (scheduleStopService *ScheduleStopService) GetAllStopSchedules(context context.Context, scheduleID int64) ([]*models.ScheduleStop, error) {
 	if scheduleStopService.repository == nil {
 		return nil, fmt.Errorf("repositories must not be nil")
 	}
-	return scheduleStopService.repository.GetAll(context)
+	return scheduleStopService.repository.GetAll(context, scheduleID)
 }
 
 // DeleteStopSchedule deletes a stop schedule by their id
 func (scheduleStopService *ScheduleStopService) DeleteStopSchedule(context context.Context, id int64) error {
 	if id <= 0 {
-		return fmt.Errorf(formatMessageIdError)
+		return nil
 	}
 	return scheduleStopService.repository.DeleteByID(context, id)
 }
@@ -56,7 +55,7 @@ func (scheduleStopService *ScheduleStopService) DeleteStopSchedule(context conte
 // UpdateStopSchedule updates a stop schedule by their id
 func (scheduleStopService *ScheduleStopService) UpdateStopSchedule(context context.Context, id int64, updateScheduleStop *models.UpdateScheduleStop) (*models.ScheduleStop, error) {
 	if id <= 0 {
-		return nil, fmt.Errorf(formatMessageIdError)
+		return nil, nil
 	}
 
 	if updateScheduleStop == nil {
@@ -80,10 +79,6 @@ func (scheduleStopService *ScheduleStopService) UpdateStopSchedule(context conte
 		stopSchedule.StationID = updateScheduleStop.StationID
 	}
 
-	if updateScheduleStop.StationName != "" {
-		stopSchedule.StationName = updateScheduleStop.StationName
-	}
-
 	if updateScheduleStop.StopOrder > 0 {
 		stopSchedule.StopOrder = updateScheduleStop.StopOrder
 	}
@@ -98,14 +93,14 @@ func (scheduleStopService *ScheduleStopService) UpdateStopSchedule(context conte
 
 	errorUpdating := scheduleStopService.repository.Update(context, stopSchedule)
 	if errorUpdating != nil {
-		return nil, fmt.Errorf("update stopSchedule: %w", errorUpdating)
+		return nil, fmt.Errorf("update stop schedule: %w", errorUpdating)
 	}
 
 	return stopSchedule, nil
 }
 
-func (scheduleStopService *ScheduleStopService) GetStopsBySchedule(ctx context.Context, scheduleId int64) ([]*models.ScheduleStop, error) {
-	stops, err := scheduleStopService.repository.GetStopsBySchedule(ctx, scheduleId)
+func (scheduleStopService *ScheduleStopService) GetStopsBySchedule(context context.Context, scheduleId int64) ([]*models.ScheduleStop, error) {
+	stops, err := scheduleStopService.repository.GetStopsBySchedule(context, scheduleId)
 	if err != nil {
 		return nil, err
 	}

@@ -2,11 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"strconv"
 	"trains-service/internal/models"
-	"trains-service/internal/repositories"
 	"trains-service/internal/services"
 
 	"github.com/go-chi/chi/v5"
@@ -29,6 +27,7 @@ func (stopScheduleHandler *StopScheduleHandler) CreateStopSchedule(writer http.R
 	if err != nil {
 		http.Error(writer, "invalid JSON body"+err.Error(), http.StatusBadRequest)
 	}
+
 	created, err := stopScheduleHandler.service.CreateStopSchedule(request.Context(), &stopSchedule)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
@@ -47,7 +46,7 @@ func (stopScheduleHandler *StopScheduleHandler) GetStopSchedule(writer http.Resp
 	stopSchedule, err := stopScheduleHandler.service.GetStopSchedule(request.Context(), id)
 
 	if err != nil || stopSchedule == nil {
-		http.Error(writer, errorMessageRouteNotFound, http.StatusNotFound)
+		http.Error(writer, err.Error(), http.StatusNotFound)
 		return
 	}
 
@@ -57,19 +56,17 @@ func (stopScheduleHandler *StopScheduleHandler) GetStopSchedule(writer http.Resp
 
 // GetAllStopSchedules a handlers method to get all stop schedules from repositories memory
 func (stopScheduleHandler *StopScheduleHandler) GetAllStopSchedules(writer http.ResponseWriter, request *http.Request) {
-	stopSchedules, err := stopScheduleHandler.service.GetAllStopSchedules(request.Context())
+	scheduleIDStr := chi.URLParam(request, "id")
+	scheduleID, _ := strconv.ParseInt(scheduleIDStr, 10, 64)
+
+	stops, err := stopScheduleHandler.service.GetStopsBySchedule(request.Context(), scheduleID)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if len(stopSchedules) == 0 {
-		http.Error(writer, errorMessageRouteNotFound, http.StatusNotFound)
-		return
-	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	err = json.NewEncoder(writer).Encode(stopSchedules)
+	writer.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(writer).Encode(stops)
 }
 
 // DeleteStopSchedule a handlers method to delete a stop schedule by id from repositories memory
@@ -94,7 +91,7 @@ func (stopScheduleHandler *StopScheduleHandler) UpdateStopSchedule(writer http.R
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
 	if err != nil || id <= 0 {
-		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -106,10 +103,6 @@ func (stopScheduleHandler *StopScheduleHandler) UpdateStopSchedule(writer http.R
 
 	route, err := stopScheduleHandler.service.UpdateStopSchedule(request.Context(), id, &updateScheduleStop)
 	if err != nil {
-		if errors.Is(err, repositories.ErrRouteNotFound) {
-			http.Error(writer, errorMessageRouteNotFound, http.StatusNotFound)
-			return
-		}
 
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return

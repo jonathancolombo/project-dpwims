@@ -8,9 +8,10 @@ export interface ScheduleStop {
     departure_time: string;
 }
 
+
 export interface CreateScheduleStopRequest {
-    schedule_id: number;
     station_id: number;
     arrival_time: string;
     departure_time: string;
 }
+

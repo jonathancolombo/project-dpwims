@@ -15,23 +15,6 @@ CREATE TABLE IF NOT EXISTS trains
     PRIMARY KEY (uuid)
 );
 
-DROP TABLE IF EXISTS routes;
-CREATE TABLE IF NOT EXISTS routes
-(
-    id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    train_id       VARCHAR(36)  NOT NULL,
-    departure_station      VARCHAR(100) NOT NULL,
-    arrival_station        VARCHAR(100) NOT NULL,
-    departure_time DATETIME     NOT NULL,
-    arrival_time   DATETIME     NOT NULL,
-    distance       INT          NOT NULL,
-    created_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (id),
-    FOREIGN KEY (train_id) REFERENCES trains (uuid) ON DELETE CASCADE
-);
-
 DROP TABLE IF EXISTS stations;
 CREATE TABLE IF NOT EXISTS stations
 (
@@ -52,8 +35,8 @@ CREATE TABLE IF NOT EXISTS schedules
     id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     train_id   VARCHAR(36) NOT NULL,
     station_id BIGINT UNSIGNED NOT NULL,
-    departure_station  VARCHAR(100) NOT NULL,
-    arrival_station    VARCHAR(100) NOT NULL,
+    departure_station  VARCHAR(100) NOT NULL references stations (name) ON DELETE CASCADE ,
+    arrival_station    VARCHAR(100) NOT NULL REFERENCES stations (name) ON DELETE CASCADE,
     status     VARCHAR(50)  NOT NULL DEFAULT 'active',
     price      DOUBLE          NOT NULL,
     created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -69,7 +52,6 @@ CREATE TABLE IF NOT EXISTS schedules_stops
     id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     schedule_id    BIGINT UNSIGNED NOT NULL,
     station_id     BIGINT UNSIGNED NOT NULL,
-    station_name   VARCHAR(100) NOT NULL REFERENCES stations (name) ON DELETE CASCADE,
     stop_order     INT          NOT NULL,
     arrival_time   DATETIME     NOT NULL,
     departure_time DATETIME     NOT NULL,
