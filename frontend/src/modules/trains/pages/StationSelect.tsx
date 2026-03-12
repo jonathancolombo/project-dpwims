@@ -1,9 +1,10 @@
-import {useEffect, useState} from "react";
-import {getStations} from "../api/stations_api.ts";
+import { useEffect, useState } from "react";
+import { getStations } from "../api/stations_api.ts";
+import * as React from "react";
 
 interface StationSelectProps {
     value: number;
-    onChange: (value: number) => void;
+    onChange: (id: number, name: string) => void;
 }
 
 export default function StationSelect({ value, onChange }: Readonly<StationSelectProps>) {
@@ -20,11 +21,20 @@ export default function StationSelect({ value, onChange }: Readonly<StationSelec
         return <div className="text-gray-500">Caricamento stazioni...</div>;
     }
 
+    const handleChange = (element: React.ChangeEvent<HTMLSelectElement>) => {
+        const id = Number(element.target.value);
+        const station = stations.find((station) => station.id === id);
+
+        if (station) {
+            onChange(station.id, station.name);
+        }
+    };
+
     return (
         <select
             className="w-full border p-2 rounded"
             value={value}
-            onChange={(element) => onChange(Number(element.target.value))}
+            onChange={handleChange}
         >
             <option value={0}>Seleziona una stazione</option>
             {stations.map((station) => (
@@ -35,5 +45,3 @@ export default function StationSelect({ value, onChange }: Readonly<StationSelec
         </select>
     );
 }
-
-

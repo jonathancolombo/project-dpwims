@@ -98,6 +98,8 @@ export default function TrainsPage() {
                             </div>
 
                             <div className="mt-5 flex gap-3">
+                                <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg font-medium transition" onClick={() => navigate(`/admin/trains/${train.uuid}`)} >
+                                    Modifica </button>
                                 <button
                                     className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition"
                                     onClick={() => handleDelete(train.uuid)}
@@ -105,8 +107,6 @@ export default function TrainsPage() {
                                     Cancella
                                 </button>
 
-                                <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg font-medium transition" onClick={() => navigate(`/admin/trains/${train.uuid}`)} >
-                                    Modifica </button>
                             </div>
                         </div>
                     ))}

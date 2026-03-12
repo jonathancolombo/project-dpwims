@@ -4,6 +4,7 @@ import MainLayout from "../../../core/layout/MainLayout";
 import {getScheduleById, updateSchedule} from "../api/schedules_api.ts";
 import TrainSelect from "./TrainSelect.tsx";
 import StationNameSelect from "./StationNameSelect.tsx";
+import StationSelect from "./StationSelect.tsx";
 
 export default function EditSchedulePage() {
     const { id } = useParams();
@@ -102,8 +103,14 @@ export default function EditSchedulePage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Nome stazione di partenza</label>
-                        <StationNameSelect value={departure} onChange={setDeparture} />
+                        <label className="block text-sm font-medium text-gray-700">Stazione di partenza</label>
+                        <StationSelect
+                            value={stationId}
+                            onChange={(id, name) => {
+                                setStationId(id);
+                                setDeparture(name);
+                            }}
+                        />
                     </div>
 
                     <div>

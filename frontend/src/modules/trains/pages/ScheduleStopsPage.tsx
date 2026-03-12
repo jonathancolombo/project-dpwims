@@ -121,7 +121,6 @@ export default function ScheduleStopsPage() {
                     ))}
                 </div>
 
-                {/* Aggiungi fermata */}
                 <div className="bg-white p-6 rounded-xl shadow border space-y-4">
                     <h2 className="text-xl font-semibold">Aggiungi Fermata</h2>
 
@@ -140,7 +139,7 @@ export default function ScheduleStopsPage() {
                             className="w-full border p-2 rounded"
                             placeholder="Es. 08:30"
                             value={newArrival}
-                            onChange={(e) => setNewArrival(e.target.value)}
+                            onChange={(element) => setNewArrival(element.target.value)}
                         />
                     </div>
 
@@ -152,9 +151,10 @@ export default function ScheduleStopsPage() {
                             className="w-full border p-2 rounded"
                             placeholder="Es. 08:45"
                             value={newDeparture}
-                            onChange={(e) => setNewDeparture(e.target.value)}
+                            onChange={(element) => setNewDeparture(element.target.value)}
                         />
                     </div>
+
 
                     <button
                         onClick={handleAddStop}
@@ -162,7 +162,6 @@ export default function ScheduleStopsPage() {
                     >
                         Aggiungi Fermata
                     </button>
-                </div>
 
                 <button
                     onClick={() => navigate("/schedules")}
@@ -170,6 +169,7 @@ export default function ScheduleStopsPage() {
                 >
                     Torna alle Fermate
                 </button>
+                </div>
             </div>
         </MainLayout>
     );
