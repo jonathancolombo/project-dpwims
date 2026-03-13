@@ -55,7 +55,7 @@ func (mySqlPaymentRepository *MySQLPaymentRepository) GetByID(context context.Co
 	rows := mySqlPaymentRepository.database.QueryRowContext(context, query, uuid)
 
 	var payment models.Payment
-	errorScan := rows.Scan(&payment.TicketID, &payment.Amount, &payment.ProviderReference)
+	errorScan := rows.Scan(&payment.TicketID, &payment.Amount, &payment.PaymentMethod, &payment.ProviderReference)
 
 	if errors.Is(errorScan, sql.ErrNoRows) {
 		return nil, fmt.Errorf("payment with uuid %s not found: %w", uuid, errorScan)
@@ -70,7 +70,7 @@ func (mySqlPaymentRepository *MySQLPaymentRepository) GetByID(context context.Co
 
 // GetAll retrieves all payments into a slice
 func (mySqlPaymentRepository *MySQLPaymentRepository) GetAll(context context.Context) ([]*models.Payment, error) {
-	query := `SELECT ticket_id, amount, payment_method, provider_reference FROM payments`
+	query := `SELECT uuid, ticket_id, amount, payment_method, provider_reference FROM payments`
 	rows, err := mySqlPaymentRepository.database.QueryContext(context, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query payments: %w", err)
@@ -85,7 +85,7 @@ func (mySqlPaymentRepository *MySQLPaymentRepository) GetAll(context context.Con
 	var payments []*models.Payment
 	for rows.Next() {
 		var payment models.Payment
-		err := rows.Scan(&payment.TicketID, &payment.Amount, &payment.PaymentMethod, &payment.ProviderReference)
+		err := rows.Scan(&payment.UUID, &payment.TicketID, &payment.Amount, &payment.PaymentMethod, &payment.ProviderReference)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan payment: %w", err)
 		}

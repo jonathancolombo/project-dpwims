@@ -18,6 +18,7 @@ import EditTicketPage from "../../modules/tickets/pages/EditTicketPage.tsx";
 import NotificationsPage from "../../modules/subscriptions/pages/SubscriptionsPage.tsx";
 import CreateSubscriptionPage from "../../modules/subscriptions/pages/CreateSubscriptionPage.tsx";
 import CreateTicketPage from "../../modules/tickets/pages/CreateTicketPage.tsx";
+import PaymentsPage from "../../modules/tickets/pages/PaymentsPage.tsx";
 
 export default function AppRouter() {
     return (
@@ -46,6 +47,7 @@ export default function AppRouter() {
                 <Route path="/subscriptions" element={<NotificationsPage />} />
                 <Route path="/subscriptions/create" element={<CreateSubscriptionPage />} />
 
+                <Route path={"/payments"} element={<PaymentsPage />} />
             </Routes>
         </BrowserRouter>
     );

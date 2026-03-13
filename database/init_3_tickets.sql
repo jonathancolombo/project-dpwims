@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS tickets
 DROP TABLE IF EXISTS payments;
 CREATE TABLE IF NOT EXISTS payments
 (
-    uuid           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    uuid           VARCHAR(36),
     ticket_id      VARCHAR(36) NOT NULL,
     amount         DOUBLE NOT NULL,
     payment_method VARCHAR(50) NOT NULL,

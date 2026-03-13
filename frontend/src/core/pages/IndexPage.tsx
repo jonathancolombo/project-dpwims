@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import MainLayout from "../layout/MainLayout.tsx";
-import {AlarmClockCheck, BellElectric, StopCircle, Ticket, Train, UserIcon} from "lucide-react";
+import {AlarmClockCheck, Banknote, BellElectric, StopCircle, Ticket, Train, UserIcon} from "lucide-react";
 
 export default function IndexPage() {
     const navigate = useNavigate();
@@ -86,6 +86,20 @@ export default function IndexPage() {
                         <div className="flex items-center gap-4 mb-4">
                             <Ticket className="w-10 h-10 text-green-600" />
                             <h2 className="text-xl font-semibold text-gray-900">Biglietti</h2>
+                        </div>
+                        <p className="text-gray-600">
+                            Visualizza, modifica e gestisci i biglietti acquistati dai passeggeri.
+                        </p>
+                    </div>
+
+                    {/* CARD Pagamenti */}
+                    <div
+                        onClick={() => navigate("/payments")}
+                        className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                    >
+                        <div className="flex items-center gap-4 mb-4">
+                            <Banknote className="w-10 h-10 text-green-600" />
+                            <h2 className="text-xl font-semibold text-gray-900">Pagamenti</h2>
                         </div>
                         <p className="text-gray-600">
                             Visualizza, modifica e gestisci i biglietti acquistati dai passeggeri.
