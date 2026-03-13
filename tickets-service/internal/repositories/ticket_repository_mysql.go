@@ -27,7 +27,7 @@ func (mySqlTicketRepository *MySQLTicketRepository) Create(context context.Conte
 		return nil, errors.New("ticket is nil")
 	}
 
-	query := `INSERT INTO tickets (user_id, train_uuid, schedule_id, seat_number, price, status) VALUES (?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO tickets (uuid, user_id, train_uuid, schedule_id, seat_number, price, status) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	statement, err := mySqlTicketRepository.database.PrepareContext(context, query)
 
 	if err != nil {
@@ -42,7 +42,7 @@ func (mySqlTicketRepository *MySQLTicketRepository) Create(context context.Conte
 		}
 	}(statement)
 
-	_, err = statement.Exec(ticket.TrainUUID, ticket.ScheduleID, ticket.SeatNumber, ticket.Price, strings.ToLower(string(ticket.Status)))
+	_, err = statement.Exec(ticket.UUID, ticket.UserId, ticket.TrainUUID, ticket.ScheduleID, ticket.SeatNumber, ticket.Price, strings.ToLower(string(ticket.Status)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert ticket: %w", err)
 	}

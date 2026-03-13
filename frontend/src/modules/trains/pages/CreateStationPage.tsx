@@ -40,27 +40,27 @@ export default function CreateStationPage() {
                         className="w-full border p-2 rounded"
                         placeholder="Nome"
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(element) => setName(element.target.value)}
                     />
 
                     <input
                         className="w-full border p-2 rounded"
                         placeholder="Città"
                         value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        onChange={(element) => setCity(element.target.value)}
                     />
 
                     <input
                         className="w-full border p-2 rounded"
                         placeholder="Regione"
                         value={region}
-                        onChange={(e) => setRegion(e.target.value)}
+                        onChange={(element) => setRegion(element.target.value)}
                     />
 
                     <select
                         className="w-full border p-2 rounded"
                         value={status}
-                        onChange={(e) => setStatus(e.target.value as "active" | "inactive")}
+                        onChange={(element) => setStatus(element.target.value as "active" | "inactive")}
                     >
                         <option value="active">Attiva</option>
                         <option value="inactive">Non attiva</option>

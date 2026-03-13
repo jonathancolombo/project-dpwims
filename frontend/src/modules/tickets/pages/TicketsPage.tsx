@@ -24,7 +24,7 @@ export default function TicketsPage() {
 
         try {
             await deleteTicket(uuid);
-            setTickets(previousTickets => previousTickets.filter(ticket => ticket.uuid !== uuid));
+            setTickets(tickets => tickets.filter(ticket => ticket.uuid !== uuid));
         } catch {
             setMessage("Errore durante l'eliminazione.");
         }
@@ -40,7 +40,12 @@ export default function TicketsPage() {
         <MainLayout>
             <div className="p-6 space-y-6">
                 <h1 className="text-3xl font-bold">Biglietti</h1>
-
+                <button
+                    onClick={() => navigate("/tickets/create")}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                >
+                    + Nuovo Biglietto
+                </button>
                 {message && (
                     <div className="p-3 bg-red-100 text-red-700 rounded-lg">
                         {message}
