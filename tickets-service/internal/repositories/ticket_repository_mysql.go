@@ -148,3 +148,9 @@ func (mySqlTicketRepository *MySQLTicketRepository) Update(context context.Conte
 
 	return nil
 }
+
+func (mySqlTicketRepository *MySQLTicketRepository) UpdateStatus(context context.Context, uuid string, status string) error {
+	query := `UPDATE tickets SET status = ? WHERE uuid = ?`
+	_, err := mySqlTicketRepository.database.ExecContext(context, query, status, uuid)
+	return err
+}

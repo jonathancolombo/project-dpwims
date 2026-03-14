@@ -24,7 +24,7 @@ func (mySqlPaymentRepository *MySQLPaymentRepository) Create(context context.Con
 		return nil, errors.New("payment is nil")
 	}
 
-	query := `INSERT INTO payments (ticket_id, amount, payment_method, provider_reference) VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO payments (uuid, ticket_id, amount, payment_method, provider_reference) VALUES (?, ?, ?, ?, ?)`
 	statement, err := mySqlPaymentRepository.database.PrepareContext(context, query)
 
 	if err != nil {
@@ -39,10 +39,11 @@ func (mySqlPaymentRepository *MySQLPaymentRepository) Create(context context.Con
 		}
 	}(statement)
 
-	_, err = statement.Exec(payment.TicketID, payment.Amount, payment.PaymentMethod, payment.ProviderReference)
+	_, err = statement.Exec(payment.UUID, payment.TicketID, payment.Amount, payment.PaymentMethod, payment.ProviderReference)
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert payment: %w", err)
 	}
+
 	return payment, nil
 }
 
@@ -51,7 +52,7 @@ func (mySqlPaymentRepository *MySQLPaymentRepository) GetByID(context context.Co
 	if uuid == "" {
 		return nil, errors.New("uuid must be greater than 0")
 	}
-	query := `SELECT ticket_id, amount, payment_method, provider_reference FROM payments WHERE uuid = ?`
+	query := `SELECT uuid, ticket_id, amount, payment_method, provider_reference FROM payments WHERE uuid = ?`
 	rows := mySqlPaymentRepository.database.QueryRowContext(context, query, uuid)
 
 	var payment models.Payment

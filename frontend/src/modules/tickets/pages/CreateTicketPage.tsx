@@ -104,6 +104,15 @@ export default function CreateTicketPage() {
                         />
                     </div>
 
+                    <div>
+                        <label className="block text-sm font-medium">Stato</label>
+                        <input
+                            type="text"
+                            value="Prenotato"
+                            disabled
+                            className="w-full mt-1 p-2 border rounded bg-gray-100"
+                        />
+                    </div>
 
                     <div>
                         <label className="block text-sm font-medium">Posto</label>

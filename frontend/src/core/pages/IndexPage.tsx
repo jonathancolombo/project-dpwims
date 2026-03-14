@@ -102,7 +102,7 @@ export default function IndexPage() {
                             <h2 className="text-xl font-semibold text-gray-900">Pagamenti</h2>
                         </div>
                         <p className="text-gray-600">
-                            Visualizza, modifica e gestisci i biglietti acquistati dai passeggeri.
+                            Visualizza, modifica e gestisci i pagamenti dei biglietti acquistati dai passeggeri.
                         </p>
                     </div>
 

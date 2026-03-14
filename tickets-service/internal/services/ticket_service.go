@@ -63,7 +63,7 @@ func (ticketService *TicketService) GetTicket(context context.Context, uuid stri
 // GetAllTickets retrieves all tickets
 func (ticketService *TicketService) GetAllTickets(context context.Context) ([]*models.Ticket, error) {
 	if ticketService.repository == nil {
-		return nil, errors.New("repository is nil")
+		return nil, errors.New("paymentRepository is nil")
 	}
 
 	return ticketService.repository.GetAll(context)

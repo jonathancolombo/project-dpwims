@@ -19,6 +19,7 @@ import NotificationsPage from "../../modules/subscriptions/pages/SubscriptionsPa
 import CreateSubscriptionPage from "../../modules/subscriptions/pages/CreateSubscriptionPage.tsx";
 import CreateTicketPage from "../../modules/tickets/pages/CreateTicketPage.tsx";
 import PaymentsPage from "../../modules/tickets/pages/PaymentsPage.tsx";
+import CreatePaymentPage from "../../modules/tickets/pages/CreatePaymentPage.tsx";
 
 export default function AppRouter() {
     return (
@@ -48,6 +49,8 @@ export default function AppRouter() {
                 <Route path="/subscriptions/create" element={<CreateSubscriptionPage />} />
 
                 <Route path={"/payments"} element={<PaymentsPage />} />
+                <Route path={"/payments/create"} element={<CreatePaymentPage />} />
+
             </Routes>
         </BrowserRouter>
     );

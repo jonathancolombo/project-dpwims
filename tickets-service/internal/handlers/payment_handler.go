@@ -73,7 +73,7 @@ func (paymentHandler *PaymentHandler) GetAllPayments(writer http.ResponseWriter,
 func (paymentHandler *PaymentHandler) DeletePayment(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "uuid")
 	if idString == "" {
-		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
+		http.Error(writer, errorMessageInvalidUUID, http.StatusBadRequest)
 		return
 	}
 
@@ -91,7 +91,7 @@ func (paymentHandler *PaymentHandler) UpdatePayment(writer http.ResponseWriter, 
 	idString := chi.URLParam(request, "uuid")
 
 	if idString == "" {
-		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
+		http.Error(writer, errorMessageInvalidUUID, http.StatusBadRequest)
 		return
 	}
 

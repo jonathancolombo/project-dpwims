@@ -13,7 +13,7 @@ import (
 
 const KeyContentType = "Content-TrainType"
 const ValueAppJson = "application/json"
-const errorMessageInvalidID = "invalid id"
+const errorMessageInvalidUUID = "invalid uuid"
 const errorMessageTicketNotFound = "ticket not found"
 
 // TicketHandler is responsible for handling HTTP requests related to Ticket entities.
@@ -76,7 +76,7 @@ func (ticketHandler *TicketHandler) GetAllTickets(writer http.ResponseWriter, re
 func (ticketHandler *TicketHandler) DeleteTicket(writer http.ResponseWriter, request *http.Request) {
 	idString := chi.URLParam(request, "uuid")
 	if idString == "" {
-		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
+		http.Error(writer, errorMessageInvalidUUID, http.StatusBadRequest)
 		return
 	}
 
@@ -94,7 +94,7 @@ func (ticketHandler *TicketHandler) UpdateTicket(writer http.ResponseWriter, req
 	idString := chi.URLParam(request, "uuid")
 
 	if idString == "" {
-		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
+		http.Error(writer, errorMessageInvalidUUID, http.StatusBadRequest)
 		return
 	}
 
