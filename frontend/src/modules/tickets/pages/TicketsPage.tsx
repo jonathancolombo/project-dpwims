@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import MainLayout from "../../../core/layout/MainLayout.tsx";
-import { deleteTicket, getTickets } from "../api/tickets_api.ts";
-import { useNavigate } from "react-router-dom";
+import {deleteTicket, getTickets} from "../api/tickets_api.ts";
+import {useNavigate} from "react-router-dom";
 import type {Ticket} from "../types/ticket.ts";
 
 export default function TicketsPage() {

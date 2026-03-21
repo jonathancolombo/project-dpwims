@@ -20,36 +20,219 @@ import CreateSubscriptionPage from "../../modules/subscriptions/pages/CreateSubs
 import CreateTicketPage from "../../modules/tickets/pages/CreateTicketPage.tsx";
 import PaymentsPage from "../../modules/tickets/pages/PaymentsPage.tsx";
 import CreatePaymentPage from "../../modules/tickets/pages/CreatePaymentPage.tsx";
+import {RequireAdmin} from "../../modules/authentication/pages/RequireAdmin.tsx";
+import LoginPage from "../../modules/authentication/pages/LoginPage.tsx";
+import {RequireUser} from "../../modules/authentication/pages/RequireUser.tsx";
+import UserHomePage from "../../modules/authentication/pages/UserHomePage.tsx";
 
 export default function AppRouter() {
     return (
         <BrowserRouter>
             <Routes>
+
+                {/* HOME + LOGIN */}
                 <Route path="/" element={<IndexPage />} />
-                <Route path="/trains" element={<TrainsPage />} />
-                <Route path="/admin/trains/:uuid" element={<TrainDetailPage />} />
-                <Route path="/trains/create" element={<CreateTrainPage />} />
-                <Route path="/users" element={<UsersPage />} />
-                <Route path="/users/create" element={<CreateUserPage />} />
-                <Route path="/users/:id" element={<UserDetailPage />} />
-                <Route path="/stations" element={<StationsPage />} />
-                <Route path="/stations/create" element={<CreateStationPage />} />
-                <Route path="/stations/:id" element={<EditStationPage />} />
+                <Route path="/login" element={<LoginPage />} />
 
-                <Route path="/schedules" element={<SchedulesPage />} />
-                <Route path="/schedules/create" element={<CreateSchedulePage />} />
-                <Route path="/schedules/:id" element={<EditSchedulePage />} />
-                <Route path="/schedules/:id/stops" element={<ScheduleStopsPage />} />
+                {/* AREA UTENTE */}
+                <Route
+                    path="/user"
+                    element={
+                        <RequireUser>
+                            <UserHomePage />
+                        </RequireUser>
+                    }
+                />
 
-                <Route path="/tickets" element={<TicketsPage />} />
-                <Route path="/tickets/create" element={<CreateTicketPage />} />
-                <Route path="/tickets/:uuid" element={<EditTicketPage />} />
+                {/* AREA ADMIN */}
+                <Route
+                    path="/admin"
+                    element={
+                        <RequireAdmin>
+                            <IndexPage />
+                        </RequireAdmin>
+                    }
+                />
 
-                <Route path="/subscriptions" element={<NotificationsPage />} />
-                <Route path="/subscriptions/create" element={<CreateSubscriptionPage />} />
+                <Route
+                    path="/trains"
+                    element={
+                        <RequireAdmin>
+                            <TrainsPage />
+                        </RequireAdmin>
+                    }
+                />
 
-                <Route path={"/payments"} element={<PaymentsPage />} />
-                <Route path={"/payments/create"} element={<CreatePaymentPage />} />
+                <Route
+                    path="/admin/trains/:uuid"
+                    element={
+                        <RequireAdmin>
+                            <TrainDetailPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/trains/create"
+                    element={
+                        <RequireAdmin>
+                            <CreateTrainPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/users"
+                    element={
+                        <RequireAdmin>
+                            <UsersPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/users/create"
+                    element={
+                        <RequireAdmin>
+                            <CreateUserPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/users/:id"
+                    element={
+                        <RequireAdmin>
+                            <UserDetailPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/stations"
+                    element={
+                        <RequireAdmin>
+                            <StationsPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/stations/create"
+                    element={
+                        <RequireAdmin>
+                            <CreateStationPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/stations/:id"
+                    element={
+                        <RequireAdmin>
+                            <EditStationPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/schedules"
+                    element={
+                        <RequireAdmin>
+                            <SchedulesPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/schedules/create"
+                    element={
+                        <RequireAdmin>
+                            <CreateSchedulePage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/schedules/:id"
+                    element={
+                        <RequireAdmin>
+                            <EditSchedulePage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/schedules/:id/stops"
+                    element={
+                        <RequireAdmin>
+                            <ScheduleStopsPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/tickets"
+                    element={
+                        <RequireAdmin>
+                            <TicketsPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/tickets/create"
+                    element={
+                        <RequireAdmin>
+                            <CreateTicketPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/tickets/:uuid"
+                    element={
+                        <RequireAdmin>
+                            <EditTicketPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/subscriptions"
+                    element={
+                        <RequireAdmin>
+                            <NotificationsPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/subscriptions/create"
+                    element={
+                        <RequireAdmin>
+                            <CreateSubscriptionPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/payments"
+                    element={
+                        <RequireAdmin>
+                            <PaymentsPage />
+                        </RequireAdmin>
+                    }
+                />
+
+                <Route
+                    path="/payments/create"
+                    element={
+                        <RequireAdmin>
+                            <CreatePaymentPage />
+                        </RequireAdmin>
+                    }
+                />
 
             </Routes>
         </BrowserRouter>
