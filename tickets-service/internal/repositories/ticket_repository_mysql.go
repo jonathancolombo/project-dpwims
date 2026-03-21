@@ -27,7 +27,7 @@ func (mySqlTicketRepository *MySQLTicketRepository) Create(context context.Conte
 		return nil, errors.New("ticket is nil")
 	}
 
-	query := `INSERT INTO tickets (user_id, train_uuid, schedule_id, seat_number, price, status) VALUES (?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO tickets (uuid, user_id, train_uuid, schedule_id, seat_number, price, status) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	statement, err := mySqlTicketRepository.database.PrepareContext(context, query)
 
 	if err != nil {
@@ -42,7 +42,7 @@ func (mySqlTicketRepository *MySQLTicketRepository) Create(context context.Conte
 		}
 	}(statement)
 
-	_, err = statement.Exec(ticket.TrainUUID, ticket.ScheduleID, ticket.SeatNumber, ticket.Price, strings.ToLower(string(ticket.Status)))
+	_, err = statement.Exec(ticket.UUID, ticket.UserId, ticket.TrainUUID, ticket.ScheduleID, ticket.SeatNumber, ticket.Price, strings.ToLower(string(ticket.Status)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert ticket: %w", err)
 	}
@@ -54,11 +54,11 @@ func (mySqlTicketRepository *MySQLTicketRepository) GetByID(context context.Cont
 	if uuid == "" {
 		return nil, errors.New("uuid must be greater than 0")
 	}
-	query := `SELECT user_id, train_uuid, schedule_id, seat_number, price, status FROM tickets WHERE uuid = ?`
+	query := `SELECT uuid, user_id, train_uuid, schedule_id, seat_number, price, status FROM tickets WHERE uuid = ?`
 	rows := mySqlTicketRepository.database.QueryRowContext(context, query, uuid)
 
 	var ticket models.Ticket
-	errorScan := rows.Scan(&ticket.TrainUUID, &ticket.ScheduleID, &ticket.SeatNumber, &ticket.Price, &ticket.Status)
+	errorScan := rows.Scan(&ticket.UUID, &ticket.UserId, &ticket.TrainUUID, &ticket.ScheduleID, &ticket.SeatNumber, &ticket.Price, &ticket.Status)
 
 	if errors.Is(errorScan, sql.ErrNoRows) {
 		return nil, fmt.Errorf("ticket with uuid %s not found: %w", uuid, errorScan)
@@ -73,7 +73,7 @@ func (mySqlTicketRepository *MySQLTicketRepository) GetByID(context context.Cont
 
 // GetAll retrieves all tickets into a slice
 func (mySqlTicketRepository *MySQLTicketRepository) GetAll(context context.Context) ([]*models.Ticket, error) {
-	query := `SELECT user_id, train_uuid, schedule_id, seat_number, price, status FROM tickets`
+	query := `SELECT uuid, user_id, train_uuid, schedule_id, seat_number, price, status FROM tickets`
 	rows, err := mySqlTicketRepository.database.QueryContext(context, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query tickets: %w", err)
@@ -88,7 +88,7 @@ func (mySqlTicketRepository *MySQLTicketRepository) GetAll(context context.Conte
 	var tickets []*models.Ticket
 	for rows.Next() {
 		var ticket models.Ticket
-		err := rows.Scan(&ticket.UserId, &ticket.TrainUUID, &ticket.ScheduleID, &ticket.SeatNumber, &ticket.Price, &ticket.Status)
+		err := rows.Scan(&ticket.UUID, &ticket.UserId, &ticket.TrainUUID, &ticket.ScheduleID, &ticket.SeatNumber, &ticket.Price, &ticket.Status)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan ticket: %w", err)
 		}
@@ -131,8 +131,8 @@ func (mySqlTicketRepository *MySQLTicketRepository) Update(context context.Conte
 		return errors.New("ticket is nil")
 	}
 
-	query := `UPDATE tickets SET user_id = ?, train_uuid = ?, schedule_id = ?, seat_number = ?, price = ?, status = ? WHERE uuid = ?`
-	result, err := mySqlTicketRepository.database.ExecContext(context, query, ticket.TrainUUID, ticket.ScheduleID, ticket.SeatNumber, ticket.Price, strings.ToLower(string(ticket.Status)), ticket.UUID)
+	query := `UPDATE tickets SET seat_number = ?, price = ?, status = ? WHERE uuid = ?`
+	result, err := mySqlTicketRepository.database.ExecContext(context, query, ticket.SeatNumber, ticket.Price, strings.ToLower(string(ticket.Status)), ticket.UUID)
 	if err != nil {
 		return fmt.Errorf("failed to update ticket: %w", err)
 	}
@@ -147,4 +147,10 @@ func (mySqlTicketRepository *MySQLTicketRepository) Update(context context.Conte
 	}
 
 	return nil
+}
+
+func (mySqlTicketRepository *MySQLTicketRepository) UpdateStatus(context context.Context, uuid string, status string) error {
+	query := `UPDATE tickets SET status = ? WHERE uuid = ?`
+	_, err := mySqlTicketRepository.database.ExecContext(context, query, status, uuid)
+	return err
 }

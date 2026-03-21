@@ -21,33 +21,9 @@ func NewStopScheduleService(repository repositories.IScheduleStopRepository) *Sc
 
 // CreateStopSchedule creates a new stop schedule
 func (scheduleStopService *ScheduleStopService) CreateStopSchedule(context context.Context, scheduleStop *models.ScheduleStop) (*models.ScheduleStop, error) {
-	if scheduleStop == nil {
-		return nil, fmt.Errorf("scheduleStop must not be nil")
-	}
+	stops, _ := scheduleStopService.repository.GetStopsBySchedule(context, scheduleStop.ScheduleID)
 
-	if scheduleStop.ScheduleID <= 0 {
-		return nil, fmt.Errorf("schedule id must not be minor or equal to zero")
-	}
-
-	if scheduleStop.StationID <= 0 {
-		return nil, fmt.Errorf("station id must not be minor or equal to zero")
-	}
-
-	if scheduleStop.StationName != "" {
-		return nil, fmt.Errorf("station name must not be empty")
-	}
-
-	if scheduleStop.StopOrder <= 0 {
-		return nil, fmt.Errorf("stop order must be greater than zero")
-	}
-
-	if scheduleStop.ArrivalTime == "" {
-		return nil, fmt.Errorf("arrival time must not be empty")
-	}
-
-	if scheduleStop.DepartureTime == "" {
-		return nil, fmt.Errorf("departure time must not be empty")
-	}
+	scheduleStop.StopOrder = len(stops) + 1
 
 	return scheduleStopService.repository.Create(context, scheduleStop)
 }
@@ -55,23 +31,23 @@ func (scheduleStopService *ScheduleStopService) CreateStopSchedule(context conte
 // GetStopSchedule retrieves a stop schedule by their id
 func (scheduleStopService *ScheduleStopService) GetStopSchedule(context context.Context, id int64) (*models.ScheduleStop, error) {
 	if id <= 0 {
-		return nil, fmt.Errorf(formatMessageIdError)
+		return nil, nil
 	}
 	return scheduleStopService.repository.GetByID(context, id)
 }
 
-// GetAllStopSchedules retrieves all stop schedules
-func (scheduleStopService *ScheduleStopService) GetAllStopSchedules(context context.Context) ([]*models.ScheduleStop, error) {
+// GetAllStopSchedules retrieves all stop schedules given an id
+func (scheduleStopService *ScheduleStopService) GetAllStopSchedules(context context.Context, scheduleID int64) ([]*models.ScheduleStop, error) {
 	if scheduleStopService.repository == nil {
 		return nil, fmt.Errorf("repositories must not be nil")
 	}
-	return scheduleStopService.repository.GetAll(context)
+	return scheduleStopService.repository.GetAll(context, scheduleID)
 }
 
 // DeleteStopSchedule deletes a stop schedule by their id
 func (scheduleStopService *ScheduleStopService) DeleteStopSchedule(context context.Context, id int64) error {
 	if id <= 0 {
-		return fmt.Errorf(formatMessageIdError)
+		return nil
 	}
 	return scheduleStopService.repository.DeleteByID(context, id)
 }
@@ -79,7 +55,7 @@ func (scheduleStopService *ScheduleStopService) DeleteStopSchedule(context conte
 // UpdateStopSchedule updates a stop schedule by their id
 func (scheduleStopService *ScheduleStopService) UpdateStopSchedule(context context.Context, id int64, updateScheduleStop *models.UpdateScheduleStop) (*models.ScheduleStop, error) {
 	if id <= 0 {
-		return nil, fmt.Errorf(formatMessageIdError)
+		return nil, nil
 	}
 
 	if updateScheduleStop == nil {
@@ -103,10 +79,6 @@ func (scheduleStopService *ScheduleStopService) UpdateStopSchedule(context conte
 		stopSchedule.StationID = updateScheduleStop.StationID
 	}
 
-	if updateScheduleStop.StationName != "" {
-		stopSchedule.StationName = updateScheduleStop.StationName
-	}
-
 	if updateScheduleStop.StopOrder > 0 {
 		stopSchedule.StopOrder = updateScheduleStop.StopOrder
 	}
@@ -121,8 +93,16 @@ func (scheduleStopService *ScheduleStopService) UpdateStopSchedule(context conte
 
 	errorUpdating := scheduleStopService.repository.Update(context, stopSchedule)
 	if errorUpdating != nil {
-		return nil, fmt.Errorf("update stopSchedule: %w", errorUpdating)
+		return nil, fmt.Errorf("update stop schedule: %w", errorUpdating)
 	}
 
 	return stopSchedule, nil
+}
+
+func (scheduleStopService *ScheduleStopService) GetStopsBySchedule(context context.Context, scheduleId int64) ([]*models.ScheduleStop, error) {
+	stops, err := scheduleStopService.repository.GetStopsBySchedule(context, scheduleId)
+	if err != nil {
+		return nil, err
+	}
+	return stops, nil
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	topics "project-dpwims/shared/mqtt"
 	"time"
 	"trains-service/internal/events"
@@ -84,7 +85,9 @@ func (trainService *TrainService) DeleteTrainByID(context context.Context, uuid 
 
 // UpdateTrain updates a train by their UUID
 func (trainService *TrainService) UpdateTrain(context context.Context, uuid string, updateTrain *models.UpdateTrain) (*models.Train, error) {
+	log.Println("DB lookup for UUID:", uuid)
 	train, err := trainService.repository.GetByID(context, uuid)
+	log.Printf("FOUND TRAIN: %+v\n", train)
 	if err != nil {
 		return nil, fmt.Errorf("get train by id: %w", err)
 	}

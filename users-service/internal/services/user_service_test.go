@@ -51,7 +51,7 @@ func TestUserService_CreateUser(testing *testing.T) {
 		Email:      "username@mail.com",
 		FiscalCode: "BNCLNZ90B15F205X",
 		Telephone:  "321654864651",
-		Role:       "user",
+		Role:       models.RoleCustomer,
 	}
 	repository.On("Create", mock.Anything, mock.AnythingOfType("*models.User")).Return(user, nil)
 	result, err := userService.CreateUser(context.Background(), user)
@@ -63,7 +63,7 @@ func TestUserService_CreateUser(testing *testing.T) {
 	assert.NotEqual(testing, "Password123!", result.Password)
 	assert.NotEmpty(testing, result.PasswordSalt)
 	assert.Len(testing, result.PasswordSalt, 32) // Ruolo
-	assert.Equal(testing, "user", result.Role)
+	assert.Equal(testing, models.RoleCustomer, result.Role)
 	repository.AssertExpectations(testing)
 }
 

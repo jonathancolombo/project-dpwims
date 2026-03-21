@@ -5,7 +5,7 @@ import (
 	"notifications-service/internal/models"
 )
 
-// SubscriptionRepository defines the interface for accessing subscription data related to train notifications.
+// SubscriptionRepository defines the interface for accessing subscription data related to train subscriptions.
 type SubscriptionRepository interface {
 	AddSubscription(context context.Context, userID int64, trainUUID string) error
 	RemoveSubscription(context context.Context, userID int64, trainUUID string) error

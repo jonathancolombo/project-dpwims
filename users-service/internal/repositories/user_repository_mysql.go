@@ -28,8 +28,8 @@ func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, 
 	}
 
 	query := `INSERT INTO users 
-    			(username, password, password_salt, email, fiscal_code, telephone) 
-					VALUES (?, ?, ?, ?, ?, ?)`
+    (username, password, password_salt, email, fiscal_code, telephone, role) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`
 
 	statement, err := mySqlUserRepository.database.PrepareContext(context, query)
 
@@ -45,7 +45,16 @@ func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, 
 		}
 	}(statement)
 
-	result, err := statement.Exec(strings.ToLower(user.Username), user.Password, user.PasswordSalt, user.Email, user.FiscalCode, user.Telephone)
+	result, err := statement.Exec(
+		strings.ToLower(user.Username),
+		user.Password,
+		user.PasswordSalt,
+		user.Email,
+		user.FiscalCode,
+		user.Telephone,
+		user.Role,
+	)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert user: %w", err)
 	}
@@ -60,7 +69,7 @@ func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, 
 // GetByID is a method to find the right user using id field
 func (mySqlUserRepository *MySQLUserRepository) GetByID(context context.Context, id int64) (*models.User, error) {
 	query := `
-        SELECT id, username, password, email, fiscal_code, telephone
+        SELECT id, username, password, email, fiscal_code, telephone, role
         FROM users
         WHERE id = ?
     `
@@ -68,7 +77,7 @@ func (mySqlUserRepository *MySQLUserRepository) GetByID(context context.Context,
 	row := mySqlUserRepository.database.QueryRowContext(context, query, id)
 
 	var user models.User
-	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.FiscalCode, &user.Telephone)
+	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.FiscalCode, &user.Telephone, &user.Role)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, ErrUserNotFound
 	}
@@ -82,7 +91,7 @@ func (mySqlUserRepository *MySQLUserRepository) GetByID(context context.Context,
 // GetAll retrieves all users into a slice
 func (mySqlUserRepository *MySQLUserRepository) GetAll(context context.Context) ([]*models.User, error) {
 	query := `
-        SELECT id, username, password, email, fiscal_code, telephone
+        SELECT id, username, password, email, fiscal_code, telephone, role
         FROM users
     `
 
@@ -100,7 +109,7 @@ func (mySqlUserRepository *MySQLUserRepository) GetAll(context context.Context) 
 	var users []*models.User
 	for rows.Next() {
 		var user models.User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.FiscalCode, &user.Telephone); err != nil {
+		if err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.FiscalCode, &user.Telephone, &user.Role); err != nil {
 			return nil, fmt.Errorf("scan user: %w", err)
 		}
 		users = append(users, &user)

@@ -1,10 +1,10 @@
 package models
 
-// Subscription represents a user's subscription to a train's notifications.
+// Subscription represents a user's subscription to a train's subscriptions.
 type Subscription struct {
-	ID        int64  `json:"id:omitempty"`
-	UserID    int64  `json:"user_id:omitempty"`
-	TrainUUID string `json:"train_uuid:omitempty"`
+	ID        int64  `json:"id,omitempty"`
+	UserID    int64  `json:"user_id,omitempty"`
+	TrainUUID string `json:"train_uuid,omitempty"`
 	Plan      Plan   `json:"plan"`
 }
 

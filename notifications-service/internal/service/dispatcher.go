@@ -18,9 +18,8 @@ func NewDispatcher(subscriptionRepository repository.SubscriptionRepository) *Di
 
 // HandleTrainEvent processes a train event by fetching the list of subscribed users and notifying them.
 func (dispatcher *Dispatcher) HandleTrainEvent(trainUUID string, payload []byte) {
-	ctx := context.Background()
 	log.Println("Handling train event", trainUUID)
-	users, err := dispatcher.repository.GetUsersByTrainUUID(ctx, trainUUID)
+	users, err := dispatcher.repository.GetUsersByTrainUUID(context.Background(), trainUUID)
 	if err != nil {
 		log.Println("Error fetching subscribers:", err)
 		return

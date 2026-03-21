@@ -1,10 +1,6 @@
 USE tickets_db;
 START TRANSACTION;
 
--- ============================
---  TICKETS (10 records)
--- ============================
-
 INSERT INTO tickets (uuid, user_id, train_uuid, schedule_id, seat_number, price, status)
 VALUES
     -- Schedule 1 (Roma → Milano, price 50)
@@ -30,24 +26,19 @@ ON DUPLICATE KEY UPDATE
                      price = VALUES(price),
                      status = VALUES(status);
 
--- ============================
---  PAYMENTS (10 records)
---  Only for tickets with status = 'issued'
--- ============================
-
-INSERT INTO payments (ticket_id, amount, payment_method, provider_reference)
+INSERT INTO payments (uuid, ticket_id, amount, payment_method, provider_reference)
 VALUES
-    ('aaa11111-1111-1111-1111-111111111111', 50, 'credit_card', 'PAY-AAA-001'),
-    ('bbb11111-1111-1111-1111-111111111111', 70, 'credit_card', 'PAY-BBB-001'),
-    ('bbb22222-2222-2222-2222-222222222222', 70, 'paypal', 'PAY-BBB-002'),
-    ('ccc11111-1111-1111-1111-111111111111', 30, 'credit_card', 'PAY-CCC-001'),
-    ('ccc33333-3333-3333-3333-333333333333', 30, 'paypal', 'PAY-CCC-002'),
+    ('11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'aaa11111-1111-1111-1111-111111111111', 50, 'credit_card', 'PAY-AAA-001'),
+    ('22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbb11111-1111-1111-1111-111111111111', 70, 'credit_card', 'PAY-BBB-001'),
+    ('33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbb22222-2222-2222-2222-222222222222', 70, 'banknotes', 'PAY-BBB-002'),
+    ('44444444-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'ccc11111-1111-1111-1111-111111111111', 30, 'credit_card', 'PAY-CCC-001'),
+    ('55555555-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'ccc33333-3333-3333-3333-333333333333', 30, 'bank_transfer', 'PAY-CCC-002'),
 
-    -- Extra payments for variety
-    ('bbb11111-1111-1111-1111-111111111111', 70, 'credit_card', 'PAY-BBB-003'),
-    ('aaa11111-1111-1111-1111-111111111111', 50, 'paypal', 'PAY-AAA-002'),
-    ('ccc33333-3333-3333-3333-333333333333', 30, 'credit_card', 'PAY-CCC-003'),
-    ('bbb22222-2222-2222-2222-222222222222', 70, 'credit_card', 'PAY-BBB-004'),
-    ('ccc11111-1111-1111-1111-111111111111', 30, 'paypal', 'PAY-CCC-004');
+    ('66666666-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbb11111-1111-1111-1111-111111111111', 70, 'credit_card', 'PAY-BBB-003'),
+    ('77777777-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'aaa11111-1111-1111-1111-111111111111', 50, 'banknotes', 'PAY-AAA-002'),
+    ('88888888-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'ccc33333-3333-3333-3333-333333333333', 30, 'credit_card', 'PAY-CCC-003'),
+    ('99999999-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbb22222-2222-2222-2222-222222222222', 70, 'bank_transfer', 'PAY-TTT-004'),
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'ccc11111-1111-1111-1111-111111111111', 30, 'banknotes', 'PAY-CCC-004');
+
 
 COMMIT;

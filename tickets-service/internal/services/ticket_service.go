@@ -36,8 +36,8 @@ func (ticketService *TicketService) CreateTicket(context context.Context, ticket
 		return nil, errors.New("schedule id cannot be minor or equal to zero")
 	}
 
-	if ticket.SeatNumber <= 0 {
-		return nil, errors.New("seat number cannot be minor or equal to zero")
+	if ticket.SeatNumber == "" {
+		return nil, errors.New("seat number cannot empty")
 	}
 
 	if ticket.Price <= 0 {
@@ -63,7 +63,7 @@ func (ticketService *TicketService) GetTicket(context context.Context, uuid stri
 // GetAllTickets retrieves all tickets
 func (ticketService *TicketService) GetAllTickets(context context.Context) ([]*models.Ticket, error) {
 	if ticketService.repository == nil {
-		return nil, errors.New("repository is nil")
+		return nil, errors.New("paymentRepository is nil")
 	}
 
 	return ticketService.repository.GetAll(context)
@@ -92,15 +92,7 @@ func (ticketService *TicketService) UpdateTicket(context context.Context, uuid s
 		return nil, fmt.Errorf("get ticket by id: %w", err)
 	}
 
-	if updatedTicket.TrainUUID != "" {
-		ticket.TrainUUID = updatedTicket.TrainUUID
-	}
-
-	if updatedTicket.ScheduleID > 0 {
-		ticket.ScheduleID = updatedTicket.ScheduleID
-	}
-
-	if updatedTicket.SeatNumber > 0 {
+	if updatedTicket.SeatNumber != "" {
 		ticket.SeatNumber = updatedTicket.SeatNumber
 	}
 

@@ -17,7 +17,7 @@ import (
 const urlUsers = "/users"
 const urlUsersID = "/users/{id}"
 
-// main, runs with this command in the terminal: docker compose --env-file ./env/develop.env up --build
+// main, runs with this command in the terminal: docker compose --env-file ./env/.env up --build
 func main() {
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")

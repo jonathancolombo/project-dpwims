@@ -119,7 +119,10 @@ func TestCreateAndGetUser(testing *testing.T) {
 				"password": "passwordtest", 
 				"email": "emailtest@mail.it", 
 				"fiscal_code": "RSSMRA80A01H501U", 
-				"telephone": "39852049548" }`
+				"telephone": "39852049548" ,
+				"role" : "admin"
+				}`
+
 	request := httptest.NewRequest("POST", "/users", strings.NewReader(body))
 	request.Header.Set("Content-Type", "application/json")
 	responseRecorder := httptest.NewRecorder()

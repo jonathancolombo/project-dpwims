@@ -14,7 +14,7 @@ import (
 const baseNumber = 10
 const bitSize = 64
 
-// Handler handles HTTP requests for train notifications.
+// Handler handles HTTP requests for train subscriptions.
 type Handler struct {
 	repository repository.SubscriptionRepository
 }
@@ -24,13 +24,13 @@ func NewHandler(repo repository.SubscriptionRepository) *Handler {
 	return &Handler{repository: repo}
 }
 
-// SubscribeRequest represents the request body for subscribing to train notifications.
+// SubscribeRequest represents the request body for subscribing to train subscriptions.
 type SubscribeRequest struct {
 	UserID    int64  `json:"user_id"`
 	TrainUUID string `json:"train_uuid"`
 }
 
-// Subscribe handles the subscription of a user to train notifications.
+// Subscribe handles the subscription of a user to train subscriptions.
 func (handler *Handler) Subscribe(writer http.ResponseWriter, request *http.Request) {
 	var subscribeRequest models.Subscription
 	if err := json.NewDecoder(request.Body).Decode(&subscribeRequest); err != nil {
@@ -51,7 +51,6 @@ func (handler *Handler) Subscribe(writer http.ResponseWriter, request *http.Requ
 // GetSubscription handles the retrieval of subscriptions. If a user_id is provided as a URL parameter, it retrieves subscriptions for that specific user; otherwise, it retrieves all subscriptions.
 func (handler *Handler) GetSubscription(writer http.ResponseWriter, request *http.Request) {
 	userIDStr := request.URL.Query().Get("user_id")
-	//userIDStr := chi.URLParam(request, "user_id")
 	if userIDStr != "" {
 		userID, errorParsing := strconv.ParseInt(userIDStr, baseNumber, bitSize)
 		if errorParsing != nil {

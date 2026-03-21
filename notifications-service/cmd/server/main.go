@@ -47,7 +47,7 @@ func main() {
 	httpHandler := api.NewHandler(subscriptionRepository)
 	router := api.NewRouter(httpHandler)
 
-	log.Println("Notification Service running on port 8084 with url http://localhost:8084")
+	log.Println("Subscription Service running on port 8084 with url http://localhost:8084")
 	errorHttp := http.ListenAndServe(":8084", router)
 	if errorHttp != nil {
 		return

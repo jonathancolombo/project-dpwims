@@ -12,17 +12,19 @@ import (
 
 // PaymentService defines the interface for managing Payment entities.
 type PaymentService struct {
-	repository repositories.IPaymentRepository
+	paymentRepository repositories.IPaymentRepository
+	ticketRepository  repositories.ITicketRepository
 }
 
 // NewPaymentService creates a new PaymentService instance
-func NewPaymentService(repository repositories.IPaymentRepository) *PaymentService {
+func NewPaymentService(paymentRepository repositories.IPaymentRepository, ticketRepository repositories.ITicketRepository) *PaymentService {
 	return &PaymentService{
-		repository: repository,
+		paymentRepository: paymentRepository,
+		ticketRepository:  ticketRepository,
 	}
 }
 
-// CreatePayment creates a new payment
+// CreatePayment creates a new payment and updates the ticket status to "issued"
 func (paymentService *PaymentService) CreatePayment(context context.Context, payment *models.Payment) (*models.Payment, error) {
 	if payment == nil {
 		return nil, errors.New("payment is nil")
@@ -39,8 +41,20 @@ func (paymentService *PaymentService) CreatePayment(context context.Context, pay
 	if payment.ProviderReference == "" {
 		return nil, errors.New("provider reference is empty")
 	}
+
 	payment.UUID = uuid.NewString()
-	return paymentService.repository.Create(context, payment)
+
+	createdPayment, err := paymentService.paymentRepository.Create(context, payment)
+	if err != nil {
+		return nil, err
+	}
+
+	err = paymentService.ticketRepository.UpdateStatus(context, payment.TicketID, "issued")
+	if err != nil {
+		return nil, err
+	}
+
+	return createdPayment, nil
 }
 
 // GetPayment retrieves a payment by their UUID
@@ -48,16 +62,16 @@ func (paymentService *PaymentService) GetPayment(context context.Context, uuid s
 	if uuid == "" {
 		return nil, errors.New("uuid must be different than empty")
 	}
-	return paymentService.repository.GetByID(context, uuid)
+	return paymentService.paymentRepository.GetByID(context, uuid)
 }
 
 // GetAllPayments retrieves all tickets
 func (paymentService *PaymentService) GetAllPayments(context context.Context) ([]*models.Payment, error) {
-	if paymentService.repository == nil {
-		return nil, errors.New("repository is nil")
+	if paymentService.paymentRepository == nil {
+		return nil, errors.New("paymentRepository is nil")
 	}
 
-	return paymentService.repository.GetAll(context)
+	return paymentService.paymentRepository.GetAll(context)
 }
 
 // DeletePaymentByID deletes a payment by their UUID
@@ -65,7 +79,7 @@ func (paymentService *PaymentService) DeletePaymentByID(context context.Context,
 	if uuid == "" {
 		return errors.New("uuid must be different than empty")
 	}
-	return paymentService.repository.DeleteByID(context, uuid)
+	return paymentService.paymentRepository.DeleteByID(context, uuid)
 }
 
 // UpdatePayment updates a payment by their UUID
@@ -78,7 +92,7 @@ func (paymentService *PaymentService) UpdatePayment(context context.Context, uui
 		return nil, errors.New("payment is nil")
 	}
 
-	payment, err := paymentService.repository.GetByID(context, uuid)
+	payment, err := paymentService.paymentRepository.GetByID(context, uuid)
 	if err != nil {
 		return nil, fmt.Errorf("get payment by id: %w", err)
 	}
@@ -99,7 +113,7 @@ func (paymentService *PaymentService) UpdatePayment(context context.Context, uui
 		payment.ProviderReference = updatePayment.ProviderReference
 	}
 
-	errorUpdating := paymentService.repository.Update(context, payment)
+	errorUpdating := paymentService.paymentRepository.Update(context, payment)
 	if errorUpdating != nil {
 		return nil, fmt.Errorf("update payment: %w", errorUpdating)
 	}

@@ -78,7 +78,7 @@ func (stationHandler *StationHandler) DeleteStation(writer http.ResponseWriter, 
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
 	if err != nil {
-		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
 	err = stationHandler.service.DeleteStation(request.Context(), id)
@@ -94,7 +94,7 @@ func (stationHandler *StationHandler) UpdateStation(writer http.ResponseWriter, 
 	idString := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(idString, baseNumber, bitSize)
 	if err != nil || id <= 0 {
-		http.Error(writer, errorMessageInvalidID, http.StatusBadRequest)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
 

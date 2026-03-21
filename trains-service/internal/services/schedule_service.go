@@ -7,6 +7,8 @@ import (
 	"trains-service/internal/repositories"
 )
 
+const formatIdMessageError = "id must be greater than 0"
+
 // ScheduleService defines the interface for managing Schedule entities.
 type ScheduleService struct {
 	repository repositories.IScheduleRepository
@@ -25,9 +27,6 @@ func (scheduleService *ScheduleService) CreateSchedule(context context.Context, 
 		return nil, fmt.Errorf("schedule must not be nil")
 	}
 
-	if schedule.ID <= 0 {
-		return nil, fmt.Errorf("route id must be greater than 0")
-	}
 	if schedule.TrainID == "" {
 		return nil, fmt.Errorf("train id must be greater than 0")
 	}
@@ -53,13 +52,12 @@ func (scheduleService *ScheduleService) CreateSchedule(context context.Context, 
 	}
 
 	return scheduleService.repository.Create(context, schedule)
-
 }
 
 // GetSchedule retrieves a schedule by their id
 func (scheduleService *ScheduleService) GetSchedule(context context.Context, id int64) (*models.Schedule, error) {
 	if id <= 0 {
-		return nil, fmt.Errorf("id must be greater than 0")
+		return nil, fmt.Errorf(formatIdMessageError)
 	}
 	return scheduleService.repository.GetByID(context, id)
 }
@@ -75,7 +73,7 @@ func (scheduleService *ScheduleService) GetAllSchedules(context context.Context)
 // DeleteSchedule deletes a schedule by their id
 func (scheduleService *ScheduleService) DeleteSchedule(context context.Context, id int64) error {
 	if id <= 0 {
-		return fmt.Errorf("id must be greater than 0")
+		return fmt.Errorf(formatIdMessageError)
 	}
 	return scheduleService.repository.DeleteByID(context, id)
 }
@@ -83,7 +81,7 @@ func (scheduleService *ScheduleService) DeleteSchedule(context context.Context, 
 // UpdateSchedule updates a schedule by their id
 func (scheduleService *ScheduleService) UpdateSchedule(context context.Context, id int64, updateSchedule *models.UpdateSchedule) (*models.Schedule, error) {
 	if id <= 0 {
-		return nil, fmt.Errorf("id must be greater than 0")
+		return nil, fmt.Errorf(formatIdMessageError)
 	}
 
 	if updateSchedule == nil {

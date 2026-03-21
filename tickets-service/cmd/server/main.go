@@ -19,12 +19,12 @@ import (
 )
 
 const urlTickets = "/tickets"
-const urlTicketsID = "/tickets/{id}"
+const urlTicketsID = "/tickets/{uuid}"
 
 const urlPayments = "/payments"
-const urlPaymentsID = "/payments/{id}"
+const urlPaymentsID = "/payments/{uuid}"
 
-// main, runs with this command in the terminal: docker compose --env-file ./env/develop.env up --build
+// main, runs with this command in the terminal: docker compose --env-file ./env/.env up --build
 func main() {
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
@@ -42,7 +42,7 @@ func main() {
 	ticketHandler := handlers.NewTicketHandler(ticketService)
 
 	repositoryPayments := repositories.NewMySQLRepositoryPayments(db)
-	paymentService := services.NewPaymentService(repositoryPayments)
+	paymentService := services.NewPaymentService(repositoryPayments, repositoryTickets)
 	paymentHandler := handlers.NewPaymentHandler(paymentService)
 
 	router := chi.NewRouter()

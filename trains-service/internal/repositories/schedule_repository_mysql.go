@@ -65,7 +65,7 @@ func (mySqlScheduleRepository *MySQLScheduleRepository) DeleteByID(context conte
 	}
 
 	if rows == 0 {
-		return ErrRouteNotFound
+		return nil
 	}
 
 	return nil
@@ -82,7 +82,7 @@ func (mySqlScheduleRepository *MySQLScheduleRepository) GetByID(context context.
 	var schedule models.Schedule
 	err := row.Scan(&schedule.ID, &schedule.TrainID, &schedule.StationID, &schedule.Departure, &schedule.Arrival, &schedule.Status, &schedule.Price)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, ErrRouteNotFound
+		return nil, nil
 	}
 	if err != nil {
 		return nil, fmt.Errorf("scan schedule: %w", err)
@@ -135,6 +135,7 @@ func (mySqlScheduleRepository *MySQLScheduleRepository) Update(context context.C
 		schedule.Arrival,
 		schedule.Status,
 		schedule.Price,
+		schedule.ID,
 	)
 	if err != nil {
 		return fmt.Errorf("schedule error: %w", err)
