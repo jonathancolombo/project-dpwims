@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"users-service/internal/models"
-	"users-service/internal/repositories"
-	"users-service/internal/services"
+	"users-service/pkg/models"
+	"users-service/pkg/repositories"
+	"users-service/pkg/services"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
@@ -19,6 +19,11 @@ import (
 type FakeUserRepository struct {
 	users  map[int64]*models.User
 	nextID int64
+}
+
+func (r *FakeUserRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func NewFakeUserRepository() *FakeUserRepository {
@@ -294,6 +299,11 @@ func TestUpdateUser_NotFound(t *testing.T) {
 
 type FailingUpdateRepository struct {
 	FakeUserRepository
+}
+
+func (r *FailingUpdateRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (r *FailingUpdateRepository) Update(context context.Context, user *models.User) error {

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"users-service/internal/models"
-	"users-service/internal/repositories"
-	"users-service/internal/services"
+	"users-service/pkg/models"
+	"users-service/pkg/repositories"
+	"users-service/pkg/services"
 
 	"github.com/go-chi/chi/v5"
 )

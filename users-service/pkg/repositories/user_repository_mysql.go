@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"users-service/internal/models"
+	"users-service/pkg/models"
 )
 
 var ErrUserNotFound = errors.New("user not found")
@@ -161,4 +161,35 @@ func (mySqlUserRepository *MySQLUserRepository) Update(context context.Context, 
 	}
 
 	return nil
+}
+
+// GetByEmail is a method that's retrieve a user by his email
+func (mySqlUserRepository *MySQLUserRepository) GetByEmail(context context.Context, email string) (*models.User, error) {
+	query := `
+        SELECT id, username, email, password, password_salt, role, fiscal_code, telephone
+        FROM users
+        WHERE email = ?
+        LIMIT 1
+    `
+
+	row := mySqlUserRepository.database.QueryRowContext(context, query, email)
+
+	var user models.User
+
+	err := row.Scan(
+		&user.ID,
+		&user.Username,
+		&user.Email,
+		&user.Password,
+		&user.PasswordSalt,
+		&user.Role,
+		&user.FiscalCode,
+		&user.Telephone,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

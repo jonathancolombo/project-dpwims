@@ -7,8 +7,8 @@ import (
 	"os"
 	"project-dpwims/database"
 	"users-service/internal/handlers"
-	"users-service/internal/repositories"
-	"users-service/internal/services"
+	"users-service/pkg/repositories"
+	"users-service/pkg/services"
 
 	"github.com/go-chi/chi/v5"
 	_ "github.com/go-sql-driver/mysql"

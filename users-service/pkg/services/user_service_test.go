@@ -3,8 +3,8 @@ package services_test
 import (
 	"context"
 	"testing"
-	"users-service/internal/models"
-	"users-service/internal/services"
+	"users-service/pkg/models"
+	"users-service/pkg/services"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -12,6 +12,11 @@ import (
 
 type MockUserRepository struct {
 	mock.Mock
+}
+
+func (m *MockUserRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (m *MockUserRepository) Create(ctx context.Context, user *models.User) (*models.User, error) {
