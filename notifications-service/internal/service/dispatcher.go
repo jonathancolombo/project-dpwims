@@ -2,18 +2,22 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"notifications-service/internal/ports"
 	"notifications-service/internal/repository"
 )
 
-// Dispatcher is responsible for handling train events and notifying subscribed users.
 type Dispatcher struct {
 	repository repository.SubscriptionRepository
+	mqttClient ports.MqttPublisher
 }
 
-// NewDispatcher creates a new Dispatcher instance with the provided SubscriptionRepository.
-func NewDispatcher(subscriptionRepository repository.SubscriptionRepository) *Dispatcher {
-	return &Dispatcher{repository: subscriptionRepository}
+func NewDispatcher(repo repository.SubscriptionRepository, publisher ports.MqttPublisher) *Dispatcher {
+	return &Dispatcher{
+		repository: repo,
+		mqttClient: publisher,
+	}
 }
 
 // HandleTrainEvent processes a train event by fetching the list of subscribed users and notifying them.
@@ -26,8 +30,14 @@ func (dispatcher *Dispatcher) HandleTrainEvent(trainUUID string, payload []byte)
 	}
 	log.Println("Got subscribers", len(users))
 	for _, userID := range users {
-		log.Println("Adding user", userID)
-		log.Printf("Notify user %dispatcher about train %s: %s\n",
-			userID, trainUUID, string(payload))
+		topic := fmt.Sprintf("notifications/user/%d", userID)
+
+		err := dispatcher.mqttClient.Publish(topic, 0, false, payload)
+		if err != nil {
+			log.Println("Error publishing notification:", err)
+		} else {
+			log.Printf("Notification sent to user %d on topic %s", userID, topic)
+		}
 	}
+
 }

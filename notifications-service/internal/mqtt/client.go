@@ -2,16 +2,20 @@ package mqtt
 
 import (
 	"log"
+	"notifications-service/internal/ports"
 	"os"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
-// Client is a wrapper around the MQTT client to manage connections and publish messages.
-type Client struct {
+// ClientMqtt is a wrapper around the MQTT client to manage connections and publish messages.
+type ClientMqtt struct {
 	client mqtt.Client
 }
+
+// ClientMqtt implementa ports.MqttPublisher
+var _ ports.MqttPublisher = (*ClientMqtt)(nil)
 
 const clientID = "golang-publisher"
 const keepAlive = 3 * time.Second
@@ -19,7 +23,7 @@ const connectRetryInterval = 3 * time.Second
 const quiesce = 250
 
 // NewClient initializes and returns a new MQTT client with the specified options.
-func NewClient() *Client {
+func NewClient() *ClientMqtt {
 	brokerURL := os.Getenv("MQTT_BROKER_URL")
 	options := mqtt.NewClientOptions()
 	log.Println(brokerURL)
@@ -40,11 +44,11 @@ func NewClient() *Client {
 	}
 
 	client := mqtt.NewClient(options)
-	return &Client{client: client}
+	return &ClientMqtt{client: client}
 }
 
 // Connect attempts to connect to the MQTT broker and logs the result.
-func (client *Client) Connect() error {
+func (client *ClientMqtt) Connect() error {
 	if token := client.client.Connect(); token.Wait() && token.Error() != nil {
 		log.Fatalf("Failed to connect to MQTT broker: %s", token.Error())
 		return token.Error()
@@ -54,13 +58,13 @@ func (client *Client) Connect() error {
 }
 
 // Disconnect gracefully disconnects from the MQTT broker and logs the action.
-func (client *Client) Disconnect() {
+func (client *ClientMqtt) Disconnect() {
 	client.client.Disconnect(quiesce)
 	log.Println("Disconnected from MQTT broker")
 }
 
 // Subscribe subscribes to a topic with the specified QoS and message handler, and logs the result.
-func (client *Client) Subscribe(topic string, qos byte, handler mqtt.MessageHandler) bool {
+func (client *ClientMqtt) Subscribe(topic string, qos byte, handler mqtt.MessageHandler) bool {
 	token := client.client.Subscribe(topic, qos, handler)
 	if token.Wait() && token.Error() != nil {
 		log.Printf("Failed to subscribe to topic %s: %s", topic, token.Error())
@@ -71,7 +75,7 @@ func (client *Client) Subscribe(topic string, qos byte, handler mqtt.MessageHand
 }
 
 // Publish publishes a message to a topic with the specified QoS and retained flag, and logs the result.
-func (client *Client) Publish(topic string, qos byte, retained bool, payload interface{}) error {
+func (client *ClientMqtt) Publish(topic string, qos byte, retained bool, payload interface{}) error {
 	token := client.client.Publish(topic, qos, retained, payload)
 	token.Wait()
 	if token.Error() != nil {

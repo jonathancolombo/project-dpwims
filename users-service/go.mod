@@ -4,7 +4,11 @@ go 1.25
 
 require project-dpwims/database v0.0.0
 
+require project-dpwims/shared v0.0.0
+
 replace project-dpwims/database => ../database
+
+replace project-dpwims/shared => ../shared
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
@@ -16,8 +20,8 @@ require (
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
-	github.com/kr/text v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/stretchr/objx v0.5.3 // indirect

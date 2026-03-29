@@ -7,10 +7,10 @@ import (
 	"os"
 	"project-dpwims/database"
 
-	"github.com/go-chi/chi/v5"
-)
+	sharedAuth "project-dpwims/shared/auth"
 
-import (
+	"github.com/go-chi/chi/v5"
+
 	"tickets-service/internal/handlers"
 	"tickets-service/internal/repositories"
 	"tickets-service/internal/services"
@@ -47,17 +47,34 @@ func main() {
 
 	router := chi.NewRouter()
 
-	router.Post(urlTickets, ticketHandler.CreateTicket)
-	router.Get(urlTickets, ticketHandler.GetAllTickets)
-	router.Get(urlTicketsID, ticketHandler.GetTicket)
-	router.Delete(urlTicketsID, ticketHandler.DeleteTicket)
-	router.Patch(urlTicketsID, ticketHandler.UpdateTicket)
+	// ROTTE PUBBLICHE
+	router.Group(func(chiRouter chi.Router) {
+		chiRouter.Use(sharedAuth.ValidateJWT)
 
-	router.Post(urlPayments, paymentHandler.CreatePayment)
-	router.Get(urlPayments, paymentHandler.GetAllPayments)
-	router.Get(urlPaymentsID, paymentHandler.GetPayment)
-	router.Delete(urlPaymentsID, paymentHandler.DeletePayment)
-	router.Patch(urlPaymentsID, paymentHandler.UpdatePayment)
+		// L'utente può creare ticket e pagamenti
+		chiRouter.Post(urlTickets, ticketHandler.CreateTicket)
+		chiRouter.Post(urlPayments, paymentHandler.CreatePayment)
+
+		// L'utente può vedere i propri ticket/pagamenti
+		// (qui potresti usare RequireSelfOrAdmin se hai userID nella URL)
+		chiRouter.Get(urlTicketsID, ticketHandler.GetTicket)
+		chiRouter.Get(urlPaymentsID, paymentHandler.GetPayment)
+	})
+
+	// ROTTE ADMIN
+	router.Group(func(chiRouter chi.Router) {
+		chiRouter.Use(sharedAuth.ValidateJWT)
+		chiRouter.Use(sharedAuth.RequireRole("admin"))
+		// Ticket admin
+		chiRouter.Get(urlTickets, ticketHandler.GetAllTickets)
+		chiRouter.Delete(urlTicketsID, ticketHandler.DeleteTicket)
+		chiRouter.Patch(urlTicketsID, ticketHandler.UpdateTicket)
+
+		// Payments admin
+		chiRouter.Get(urlPayments, paymentHandler.GetAllPayments)
+		chiRouter.Delete(urlPaymentsID, paymentHandler.DeletePayment)
+		chiRouter.Patch(urlPaymentsID, paymentHandler.UpdatePayment)
+	})
 
 	log.Println("Ticket Service running on port 8083 with url http://localhost:8083")
 	errorHttp := http.ListenAndServe(":8083", router)

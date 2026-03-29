@@ -4,6 +4,7 @@ import (
 	authModels "auth-service/internal/models"
 	"context"
 	"errors"
+	"project-dpwims/shared/auth"
 	"strings"
 	userServices "users-service/pkg/services"
 )
@@ -32,7 +33,10 @@ func (service *AuthService) Login(context context.Context, email, password strin
 	}
 
 	// 3. Generazione token (temporaneo, JWT)
-	token := "TEMP_TOKEN"
+	token, err := auth.GenerateJWT(user.ID, string(user.Role))
+	if err != nil {
+		return nil, errors.New("failed to generate token")
+	}
 
 	// 4. Risposta
 	return &authModels.LoginResponse{
