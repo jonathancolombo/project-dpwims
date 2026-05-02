@@ -46,10 +46,9 @@ export default function AppRouter() {
 
                 {/* AREA ADMIN */}
                 <Route
-                    path="/admin"
-                    element={
+                    path="/admin/*"                    element={
                         <RequireAdmin>
-                            <IndexPage />
+                            < UserHomePage/>
                         </RequireAdmin>
                     }
                 />

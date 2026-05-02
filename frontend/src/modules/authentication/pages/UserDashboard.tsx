@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Train, Ticket, AlarmClockCheck } from "lucide-react";
-import {useAuth} from "../../../core/hooks/useAuth.ts";
 import MainLayout from "../../../core/layout/MainLayout.tsx";
+import {useAuth} from "../../../core/hooks/useAuth.ts";
 
-export default function UserHomePage() {
+export default function UserDashboard() {
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -14,7 +14,7 @@ export default function UserHomePage() {
                 {/* HEADER */}
                 <div className="text-center space-y-2">
                     <h1 className="text-3xl font-bold text-gray-900">
-                        Benvenuto, {user?.email || "Cliente"}
+                        Benvenuto, {user?.email || "Utente"}
                     </h1>
                     <p className="text-gray-600">
                         Gestisci i tuoi viaggi e le tue notifiche.
