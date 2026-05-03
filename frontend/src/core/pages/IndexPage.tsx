@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../layout/MainLayout";
-import { useAuth } from "../hooks/useAuth";
+import { user_authorization } from "../hooks/user_authorization";
 import {
     AlarmClockCheck,
     Banknote,
@@ -13,7 +13,7 @@ import {
 
 export default function IndexPage() {
     const navigate = useNavigate();
-    const { isLoggedIn, role } = useAuth();
+    const { isLoggedIn, role } = user_authorization();
 
     // Se l'utente è loggato come USER → reindirizza alla sua dashboard
     if (isLoggedIn && role === "user") {

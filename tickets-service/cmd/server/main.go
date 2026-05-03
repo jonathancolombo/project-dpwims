@@ -51,12 +51,10 @@ func main() {
 	router.Group(func(chiRouter chi.Router) {
 		chiRouter.Use(sharedAuth.ValidateJWT)
 
-		// L'utente può creare ticket e pagamenti
 		chiRouter.Post(urlTickets, ticketHandler.CreateTicket)
 		chiRouter.Post(urlPayments, paymentHandler.CreatePayment)
+		chiRouter.Get("/tickets/user/{id}", ticketHandler.GetTicketsByUserID)
 
-		// L'utente può vedere i propri ticket/pagamenti
-		// (qui potresti usare RequireSelfOrAdmin se hai userID nella URL)
 		chiRouter.Get(urlTicketsID, ticketHandler.GetTicket)
 		chiRouter.Get(urlPaymentsID, paymentHandler.GetPayment)
 	})

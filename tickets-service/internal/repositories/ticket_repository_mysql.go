@@ -154,3 +154,47 @@ func (mySqlTicketRepository *MySQLTicketRepository) UpdateStatus(context context
 	_, err := mySqlTicketRepository.database.ExecContext(context, query, status, uuid)
 	return err
 }
+
+// GetByUserID retrieves all tickets belonging to a specific user.
+func (mySqlTicketRepository *MySQLTicketRepository) GetByUserID(context context.Context, userID int64) ([]*models.Ticket, error) {
+	query := `SELECT uuid, user_id, train_uuid, schedule_id, seat_number, price, status
+              FROM tickets
+              WHERE user_id = ?`
+
+	rows, err := mySqlTicketRepository.database.QueryContext(context, query, userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query tickets by user_id: %w", err)
+	}
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			return
+		}
+	}(rows)
+
+	var tickets []*models.Ticket
+
+	for rows.Next() {
+		var ticket models.Ticket
+		err := rows.Scan(
+			&ticket.UUID,
+			&ticket.UserId,
+			&ticket.TrainUUID,
+			&ticket.ScheduleID,
+			&ticket.SeatNumber,
+			&ticket.Price,
+			&ticket.Status,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan ticket: %w", err)
+		}
+
+		tickets = append(tickets, &ticket)
+	}
+
+	if tickets == nil {
+		tickets = []*models.Ticket{}
+	}
+
+	return tickets, nil
+}

@@ -12,6 +12,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=secret
       - DB_NAME=identity_users
+      - AUTH_SECRET=supersecretkey123
     depends_on:
       database:
         condition: service_healthy
@@ -30,6 +31,7 @@ services:
       - DB_PASSWORD=secret
       - DB_NAME=trains_db
       - MQTT_BROKER=tcp://server_mosquitto:1883
+      - AUTH_SECRET=supersecretkey123
     depends_on:
       database:
         condition: service_healthy
@@ -49,6 +51,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=secret
       - DB_NAME=tickets_db
+      - AUTH_SECRET=supersecretkey123
     depends_on:
       database:
         condition: service_healthy
@@ -67,6 +70,7 @@ services:
       - DB_PASSWORD=secret
       - DB_NAME=identity_subscriptions
       - MQTT_BROKER_URL=tcp://server_mosquitto:1883
+      - AUTH_SECRET=supersecretkey123
     depends_on:
       database:
         condition: service_healthy

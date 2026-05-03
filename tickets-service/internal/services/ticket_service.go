@@ -114,3 +114,16 @@ func (ticketService *TicketService) UpdateTicket(context context.Context, uuid s
 
 	return ticket, nil
 }
+
+func (ticketService *TicketService) GetTicketsByUserID(context context.Context, userID int64) ([]*models.Ticket, error) {
+	if userID <= 0 {
+		return nil, errors.New("invalid user id")
+	}
+
+	tickets, err := ticketService.repository.GetByUserID(context, userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get tickets for user %d: %w", userID, err)
+	}
+
+	return tickets, nil
+}

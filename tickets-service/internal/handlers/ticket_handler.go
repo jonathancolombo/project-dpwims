@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"tickets-service/internal/models"
 	"tickets-service/internal/repositories"
 	"tickets-service/internal/services"
@@ -121,4 +122,23 @@ func (ticketHandler *TicketHandler) UpdateTicket(writer http.ResponseWriter, req
 	if err != nil {
 		return
 	}
+}
+
+func (ticketHandler *TicketHandler) GetTicketsByUserID(writer http.ResponseWriter, request *http.Request) {
+	idStr := chi.URLParam(request, "id")
+
+	userID, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(writer, "invalid user id", http.StatusBadRequest)
+		return
+	}
+
+	tickets, err := ticketHandler.service.GetTicketsByUserID(request.Context(), userID)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writer.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(writer).Encode(tickets)
 }

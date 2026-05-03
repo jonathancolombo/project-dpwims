@@ -24,6 +24,8 @@ import {RequireAdmin} from "../../modules/authentication/pages/RequireAdmin.tsx"
 import LoginPage from "../../modules/authentication/pages/LoginPage.tsx";
 import {RequireUser} from "../../modules/authentication/pages/RequireUser.tsx";
 import UserHomePage from "../../modules/authentication/pages/UserHomePage.tsx";
+import MyTicketsPage from "../../modules/tickets/pages/MyTicketsPage";
+import AdminHomePage from "../../modules/authentication/pages/AdminHomePage";
 
 export default function AppRouter() {
     return (
@@ -44,11 +46,22 @@ export default function AppRouter() {
                     }
                 />
 
+                <Route
+                    path="/my-tickets"
+                    element={
+                        <RequireUser>
+                            <MyTicketsPage />
+                        </RequireUser>
+                    }
+                />
+    
+
                 {/* AREA ADMIN */}
                 <Route
-                    path="/admin/*"                    element={
+                    path="/admin"
+                    element={
                         <RequireAdmin>
-                            < UserHomePage/>
+                            <AdminHomePage />
                         </RequireAdmin>
                     }
                 />

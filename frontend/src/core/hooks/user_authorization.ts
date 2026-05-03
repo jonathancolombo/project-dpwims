@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import {jwtDecode} from "jwt-decode";
-export function useAuth() {
+export function user_authorization() {
     const token: string | null = localStorage.getItem("token");
     const user = useMemo(() => {
         if (!token) return null;

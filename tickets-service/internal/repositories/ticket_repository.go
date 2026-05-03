@@ -13,4 +13,5 @@ type ITicketRepository interface {
 	GetAll(context context.Context) ([]*models.Ticket, error)
 	Update(context context.Context, ticket *models.Ticket) error
 	UpdateStatus(context context.Context, uuid string, status string) error
+	GetByUserID(context context.Context, userID int64) ([]*models.Ticket, error)
 }
