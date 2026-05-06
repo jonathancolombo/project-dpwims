@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import {LogoutButton} from "./../../util/logout_button.tsx";
 
 export default function MainLayout({ children }: Readonly<{ children: ReactNode }>) {
     return (
@@ -13,43 +14,12 @@ export default function MainLayout({ children }: Readonly<{ children: ReactNode 
                 </div>
 
                 <nav className="flex-1 px-4 py-6 space-y-2">
-                    <Link
-                        to="/"
-                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
-                    >
-                        🏠 Home
-                    </Link>
-
-                    <Link
-                        to="/trains"
-                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
-                    >
-                        🚆 Treni
-                    </Link>
-
-                    <Link
-                        to="/tickets"
-                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
-                    >
-                        🎫 Biglietti
-                    </Link>
-
-                    <Link
-                        to="/users"
-                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
-                    >
-                        👤 Utenti
-                    </Link>
-
-                    <Link
-                        to="/subscriptions"
-                        className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium"
-                    >
-                        🔔 Sottoscrizioni
-                    </Link>
-
+                    <Link to="/" className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium">🏠 Home</Link>
+                    <Link to="/trains" className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium">🚆 Treni</Link>
+                    <Link to="/tickets" className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium">🎫 Biglietti</Link>
+                    <Link to="/users" className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium">👤 Utenti</Link>
+                    <Link to="/subscriptions" className="block px-4 py-2 rounded-lg hover:bg-blue-50 text-gray-700 font-medium">🔔 Sottoscrizioni</Link>
                 </nav>
-
 
                 <div className="px-6 py-4 border-t border-gray-200 text-sm text-gray-500">
                     Admin logged in
@@ -64,7 +34,7 @@ export default function MainLayout({ children }: Readonly<{ children: ReactNode 
                     <h2 className="text-lg font-semibold text-gray-800">Dashboard</h2>
 
                     <div className="flex items-center gap-4">
-                        <button className="text-gray-600 hover:text-gray-800">🚪 Logout</button>
+                        <LogoutButton />
                     </div>
                 </header>
 
