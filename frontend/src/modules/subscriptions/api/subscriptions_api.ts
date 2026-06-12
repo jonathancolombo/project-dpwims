@@ -1,8 +1,10 @@
 import { apiNotifications } from "../../../core/api/client";
 import type { Subscription, CreateSubscriptionDTO } from "../types/subscription";
 
-export const getSubscriptions = () =>
-    apiNotifications.get<Subscription[]>("/subscriptions");
+export const getSubscriptions = (userId?: number) =>
+    apiNotifications.get<Subscription[]>(
+        userId ? `/subscriptions?user_id=${userId}` : "/subscriptions"
+    );
 
 export const getSubscriptionsByTrain = (trainUUID: string) =>
     apiNotifications.get<Subscription[]>(`/subscriptions/train/${trainUUID}`);

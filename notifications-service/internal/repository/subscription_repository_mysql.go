@@ -18,8 +18,8 @@ func NewMySQLSubscriptionRepository(db *sql.DB) *MySQLSubscriptionRepository {
 }
 
 // AddSubscription adds a new subscription for a user to receive subscriptions about a specific train.
-func (subscriptionRepository *MySQLSubscriptionRepository) AddSubscription(context context.Context, userID int64, trainUUID string) error {
-	_, err := subscriptionRepository.database.ExecContext(context, "INSERT INTO subscriptions (user_id, train_uuid, plan) VALUES (?, ?, ?)", userID, trainUUID)
+func (subscriptionRepository *MySQLSubscriptionRepository) AddSubscription(context context.Context, userID int64, trainUUID string, plan models.Plan) error {
+	_, err := subscriptionRepository.database.ExecContext(context, "INSERT INTO subscriptions (user_id, train_uuid, plan) VALUES (?, ?, ?)", userID, trainUUID, plan)
 	return err
 }
 
@@ -68,7 +68,7 @@ func (subscriptionRepository *MySQLSubscriptionRepository) GetAllSubscriptions(c
 		}
 	}(rows)
 
-	var subscriptions []models.Subscription
+	subscriptions := []models.Subscription{}
 	for rows.Next() {
 		var subscription models.Subscription
 		if err := rows.Scan(&subscription.ID, &subscription.UserID, &subscription.TrainUUID, &subscription.Plan); err != nil {
@@ -93,7 +93,7 @@ func (subscriptionRepository *MySQLSubscriptionRepository) GetByUser(context con
 		}
 	}(rows)
 
-	var subscriptions []models.Subscription
+	subscriptions := []models.Subscription{}
 	for rows.Next() {
 		var subscription models.Subscription
 		if err := rows.Scan(&subscription.ID, &subscription.UserID, &subscription.TrainUUID, &subscription.Plan); err != nil {
@@ -120,7 +120,7 @@ func (subscriptionRepository *MySQLSubscriptionRepository) GetByTrain(context co
 		}
 	}(rows)
 
-	var subscriptions []models.Subscription
+	subscriptions := []models.Subscription{}
 	for rows.Next() {
 		var subscription models.Subscription
 		if err := rows.Scan(&subscription.ID, &subscription.UserID, &subscription.TrainUUID, &subscription.Plan); err != nil {

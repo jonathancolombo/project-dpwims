@@ -6,7 +6,7 @@ import (
 	"errors"
 	"regexp"
 	"testing"
-	"users-service/internal/models"
+	"users-service/pkg/models"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"

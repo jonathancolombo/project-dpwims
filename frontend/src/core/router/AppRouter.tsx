@@ -13,17 +13,20 @@ import SchedulesPage from "../../modules/trains/pages/SchedulesPage.tsx";
 import CreateSchedulePage from "../../modules/trains/pages/CreateSchedulePage.tsx";
 import EditSchedulePage from "../../modules/trains/pages/EditSchedulePage.tsx";
 import ScheduleStopsPage from "../../modules/trains/pages/ScheduleStopsPage.tsx";
-import TicketsPage from "../../modules/tickets/pages/TicketsPage.tsx";
 import EditTicketPage from "../../modules/tickets/pages/EditTicketPage.tsx";
 import NotificationsPage from "../../modules/subscriptions/pages/SubscriptionsPage.tsx";
 import CreateSubscriptionPage from "../../modules/subscriptions/pages/CreateSubscriptionPage.tsx";
 import CreateTicketPage from "../../modules/tickets/pages/CreateTicketPage.tsx";
-import PaymentsPage from "../../modules/tickets/pages/PaymentsPage.tsx";
 import CreatePaymentPage from "../../modules/tickets/pages/CreatePaymentPage.tsx";
+import TransactionsPage from "../../modules/tickets/pages/TransactionsPage.tsx";
 import {RequireAdmin} from "../../modules/authentication/pages/RequireAdmin.tsx";
 import LoginPage from "../../modules/authentication/pages/LoginPage.tsx";
 import {RequireUser} from "../../modules/authentication/pages/RequireUser.tsx";
 import UserHomePage from "../../modules/authentication/pages/UserHomePage.tsx";
+import MyTicketsPage from "../../modules/tickets/pages/MyTicketsPage";
+import AdminHomePage from "../../modules/authentication/pages/AdminHomePage";
+import UserSchedulesAndTicketsPage from "../../modules/users/pages/UserSchedulesAndTicketsPage.tsx";
+import UserSubscriptionsPage from "../../modules/subscriptions/pages/UserSubscriptionsPage.tsx";
 
 export default function AppRouter() {
     return (
@@ -44,12 +47,67 @@ export default function AppRouter() {
                     }
                 />
 
+                <Route
+                    path="/user/schedules"
+                    element={
+                        <RequireUser>
+                            <UserSchedulesAndTicketsPage />
+                        </RequireUser>
+                    }
+                />
+
+                <Route
+                    path="/my-tickets"
+                    element={
+                        <RequireUser>
+                            <MyTicketsPage />
+                        </RequireUser>
+                    }
+                />
+
+                <Route
+                    path="/user/tickets"
+                    element={
+                        <RequireUser>
+                            <MyTicketsPage />
+                        </RequireUser>
+                    }
+                />
+
+                <Route
+                    path="/user/subscriptions"
+                    element={
+                        <RequireUser>
+                            <UserSubscriptionsPage />
+                        </RequireUser>
+                    }
+                />
+
+                <Route
+                    path="/user/buy-ticket/:scheduleId"
+                    element={
+                        <RequireUser>
+                            <UserSchedulesAndTicketsPage />
+                        </RequireUser>
+                    }
+                />
+
+                <Route
+                    path="/buy-ticket/:scheduleId"
+                    element={
+                        <RequireUser>
+                            <UserSchedulesAndTicketsPage />
+                        </RequireUser>
+                    }
+                />
+
+
                 {/* AREA ADMIN */}
                 <Route
                     path="/admin"
                     element={
                         <RequireAdmin>
-                            <IndexPage />
+                            <AdminHomePage />
                         </RequireAdmin>
                     }
                 />
@@ -172,10 +230,10 @@ export default function AppRouter() {
                 />
 
                 <Route
-                    path="/tickets"
+                    path="/transactions"
                     element={
                         <RequireAdmin>
-                            <TicketsPage />
+                            <TransactionsPage />
                         </RequireAdmin>
                     }
                 />
@@ -212,15 +270,6 @@ export default function AppRouter() {
                     element={
                         <RequireAdmin>
                             <CreateSubscriptionPage />
-                        </RequireAdmin>
-                    }
-                />
-
-                <Route
-                    path="/payments"
-                    element={
-                        <RequireAdmin>
-                            <PaymentsPage />
                         </RequireAdmin>
                     }
                 />

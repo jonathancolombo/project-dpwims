@@ -19,6 +19,7 @@ export default function LoginPage() {
             const user = response.data;
 
             // Salvo l'utente localmente
+            localStorage.setItem("token", user.token);
             localStorage.setItem("user", JSON.stringify(user));
 
             // Controllo permessi

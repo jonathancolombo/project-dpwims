@@ -10,8 +10,8 @@ import (
 	"io"
 	"log"
 	"strings"
-	"users-service/internal/models"
-	"users-service/internal/repositories"
+	"users-service/pkg/models"
+	"users-service/pkg/repositories"
 )
 
 // UserService defines the interface for managing User entities.
@@ -208,7 +208,6 @@ func (userService *UserService) UpdateUser(context context.Context, id int64, up
 	if updateUserRequest.Password != nil && *updateUserRequest.Password != "" {
 
 		if looksLikeSHA256(*updateUserRequest.Password) {
-
 			return nil, errors.New("password must be provided in plain text, not hashed")
 		}
 		salt, _ := generateSalt(numberOfBytes)
@@ -235,4 +234,23 @@ func looksLikeSHA256(password string) bool {
 		}
 	}
 	return true
+}
+
+// GetUserByEmail retrieves a user by their email
+func (userService *UserService) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
+	if strings.TrimSpace(email) == "" {
+		return nil, errors.New("email is required")
+	}
+
+	email = strings.ToLower(strings.TrimSpace(email))
+
+	return userService.repository.GetByEmail(ctx, email)
+}
+
+// VerifyPassword verifies a plain password against the stored hash+salt
+func (userService *UserService) VerifyPassword(user *models.User, password string) bool {
+	if user == nil {
+		return false
+	}
+	return verifyPasswordSHA256(password, user.PasswordSalt, user.Password)
 }

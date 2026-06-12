@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"project-dpwims/database"
+	sharedAuth "project-dpwims/shared/auth"
 	"time"
 	"trains-service/internal/handlers"
 	"trains-service/internal/repositories"
@@ -56,6 +57,7 @@ func main() {
 	options.SetConnectRetryInterval(keepAlive)
 	options.SetKeepAlive(connectRetryInterval)
 	mqttClient := mqtt.NewClient(options)
+
 	if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
 		log.Fatalf("Mqtt connection failed %v", token.Error())
 	}
@@ -78,31 +80,33 @@ func main() {
 	stopScheduleHandler := handlers.NewStopScheduleHandler(stopScheduleService)
 
 	router := chi.NewRouter()
-
-	router.Post(urlTrains, trainHandler.CreateTrain)
+	// ROTTE PUBBLICHE
 	router.Get(urlTrains, trainHandler.GetAllTrains)
 	router.Get(urlTrainsId, trainHandler.GetTrain)
-	router.Delete(urlTrainsId, trainHandler.DeleteTrain)
-	router.Patch(urlTrainsId, trainHandler.UpdateTrain)
-
-	router.Post("/trains/{trainUUID}/arrived", trainHandler.MarkTrainArrived)
-
-	router.Post(urlStations, stationHandler.CreateStation)
-	router.Get(urlStations, stationHandler.GetAllStations)
-	router.Get(urlStationsId, stationHandler.GetStation)
-	router.Delete(urlStationsId, stationHandler.DeleteStation)
-	router.Patch(urlStationsId, stationHandler.UpdateStation)
-
-	router.Post(urlSchedules, scheduleHandler.CreateSchedule)
 	router.Get(urlSchedules, scheduleHandler.GetAllSchedules)
-	router.Get(urlSchedulesId, scheduleHandler.GetSchedule)
-	router.Delete(urlSchedulesId, scheduleHandler.DeleteSchedule)
-	router.Patch(urlSchedulesId, scheduleHandler.UpdateSchedule)
 
-	router.Post(urlStopSchedules, stopScheduleHandler.CreateStopSchedule)
-	router.Delete(urlStopSchedulesId, stopScheduleHandler.DeleteStopSchedule)
-	router.Patch(urlStopSchedulesId, stopScheduleHandler.UpdateStopSchedule)
-	router.Get("/stopschedules/schedule/{scheduleId}", stopScheduleHandler.GetStopsBySchedule)
+	// ROTTE ADMIN
+	router.Group(func(chiRouter chi.Router) {
+		chiRouter.Use(sharedAuth.ValidateJWT)
+		chiRouter.Use(sharedAuth.RequireRole("admin"))
+		chiRouter.Post(urlTrains, trainHandler.CreateTrain)
+		chiRouter.Patch(urlTrainsId, trainHandler.UpdateTrain)
+		chiRouter.Delete(urlTrainsId, trainHandler.DeleteTrain)
+		chiRouter.Post(urlStations, stationHandler.CreateStation)
+		chiRouter.Get(urlStations, stationHandler.GetAllStations)
+		chiRouter.Get(urlStationsId, stationHandler.GetStation)
+		chiRouter.Delete(urlStationsId, stationHandler.DeleteStation)
+		chiRouter.Patch(urlStationsId, stationHandler.UpdateStation)
+		chiRouter.Post(urlSchedules, scheduleHandler.CreateSchedule)
+		chiRouter.Get(urlSchedulesId, scheduleHandler.GetSchedule)
+		chiRouter.Delete(urlSchedulesId, scheduleHandler.DeleteSchedule)
+		chiRouter.Patch(urlSchedulesId, scheduleHandler.UpdateSchedule)
+		chiRouter.Post(urlStopSchedules, stopScheduleHandler.CreateStopSchedule)
+		chiRouter.Delete(urlStopSchedulesId, stopScheduleHandler.DeleteStopSchedule)
+		chiRouter.Patch(urlStopSchedulesId, stopScheduleHandler.UpdateStopSchedule)
+		chiRouter.Post("/trains/{trainUUID}/arrived", trainHandler.MarkTrainArrived)
+		chiRouter.Get("/stopschedules/schedule/{scheduleId}", stopScheduleHandler.GetStopsBySchedule)
+	})
 
 	log.Println("Trains Service running on port 8082 with url http://localhost:8082")
 

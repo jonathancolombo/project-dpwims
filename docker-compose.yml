@@ -12,6 +12,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=secret
       - DB_NAME=identity_users
+      - AUTH_SECRET=supersecretkey123
     depends_on:
       database:
         condition: service_healthy
@@ -30,6 +31,7 @@ services:
       - DB_PASSWORD=secret
       - DB_NAME=trains_db
       - MQTT_BROKER=tcp://server_mosquitto:1883
+      - AUTH_SECRET=supersecretkey123
     depends_on:
       database:
         condition: service_healthy
@@ -49,6 +51,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=secret
       - DB_NAME=tickets_db
+      - AUTH_SECRET=supersecretkey123
     depends_on:
       database:
         condition: service_healthy
@@ -67,11 +70,30 @@ services:
       - DB_PASSWORD=secret
       - DB_NAME=identity_subscriptions
       - MQTT_BROKER_URL=tcp://server_mosquitto:1883
+      - AUTH_SECRET=supersecretkey123
     depends_on:
       database:
         condition: service_healthy
       server_mosquitto:
         condition: service_started
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+    container_name: auth-service
+    ports:
+      - "8085:8085"
+    environment:
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=secret
+      - DB_NAME=identity_users   # usa lo stesso DB dello users service
+      - AUTH_SECRET=supersecretkey123
+    depends_on:
+      database:
+        condition: service_healthy
 
   database:
     build: ./database
