@@ -11,18 +11,25 @@ import {useNavigate} from "react-router-dom";
 export default function SubscriptionsPage() {
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
     const [trainFilter, setTrainFilter] = useState("");
     const navigate = useNavigate();
+
+    async function loadAll() {
+        try {
+            const response = await getSubscriptions();
+            setSubscriptions(response.data);
+        } catch (err) {
+            console.error(err);
+            setError("Impossibile caricare le sottoscrizioni.");
+        } finally {
+            setLoading(false);
+        }
+    }
 
     useEffect(() => {
         loadAll();
     }, []);
-
-    async function loadAll() {
-        const response = await getSubscriptions();
-        setSubscriptions(response.data);
-        setLoading(false);
-    }
 
     async function handleFilter() {
         if (!trainFilter.trim()) {
@@ -30,13 +37,24 @@ export default function SubscriptionsPage() {
             return;
         }
 
-        const response = await getSubscriptionsByTrain(trainFilter);
-        setSubscriptions(response.data);
+        try {
+            const response = await getSubscriptionsByTrain(trainFilter);
+            setSubscriptions(response.data);
+            setError("");
+        } catch (err) {
+            console.error(err);
+            setError("Impossibile filtrare le sottoscrizioni.");
+        }
     }
 
     async function handleDelete(id: number) {
-        await deleteSubscription(id);
-        setSubscriptions(subscriptions => subscriptions.filter(subscription => subscription.id !== id));
+        try {
+            await deleteSubscription(id);
+            setSubscriptions(subscriptions => subscriptions.filter(subscription => subscription.id !== id));
+        } catch (err) {
+            console.error(err);
+            setError("Impossibile eliminare la sottoscrizione.");
+        }
     }
 
     if (loading) return <MainLayout>Caricamento sottoscrizioni...</MainLayout>;
@@ -45,6 +63,11 @@ export default function SubscriptionsPage() {
         <MainLayout>
             <div className="p-6 space-y-6">
                 <h1 className="text-3xl font-bold">Sottoscrizioni</h1>
+                {error && (
+                    <div className="p-3 bg-red-100 text-red-700 rounded-lg">
+                        {error}
+                    </div>
+                )}
                 <button
                     onClick={() => navigate("/subscriptions/create")}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"

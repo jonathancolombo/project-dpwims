@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MainLayout from "../layout/MainLayout";
 import { user_authorization } from "../hooks/user_authorization";
 import {
@@ -15,9 +15,9 @@ export default function IndexPage() {
     const navigate = useNavigate();
     const { isLoggedIn, role } = user_authorization();
 
-    // Se l'utente è loggato come USER → reindirizza alla sua dashboard
-    if (isLoggedIn && role === "user") {
-        navigate("/user/dashboard");
+    // Se l'utente è loggato come customer → reindirizza alla sua area personale
+    if (isLoggedIn && role === "customer") {
+        navigate("/user");
         return null;
     }
 
@@ -69,9 +69,9 @@ export default function IndexPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
                             {/* CARD TRENI */}
-                            <div
-                                onClick={() => navigate("/trains")}
-                                className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                            <Link
+                                to="/trains"
+                                className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <Train className="w-10 h-10 text-blue-600" />
@@ -80,12 +80,12 @@ export default function IndexPage() {
                                 <p className="text-gray-600">
                                     Gestisci la flotta ferroviaria: crea, modifica e monitora i treni.
                                 </p>
-                            </div>
+                            </Link>
 
                             {/* CARD UTENTI */}
-                            <div
-                                onClick={() => navigate("/users")}
-                                className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                            <Link
+                                to="/users"
+                                className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <UserIcon className="w-10 h-10 text-purple-600" />
@@ -94,12 +94,12 @@ export default function IndexPage() {
                                 <p className="text-gray-600">
                                     Gestisci gli account del sistema: ruoli, email, credenziali e informazioni personali.
                                 </p>
-                            </div>
+                            </Link>
 
                             {/* CARD STAZIONI */}
-                            <div
-                                onClick={() => navigate("/stations")}
-                                className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                            <Link
+                                to="/stations"
+                                className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <BellElectric className="w-10 h-10 text-blue-600" />
@@ -108,12 +108,12 @@ export default function IndexPage() {
                                 <p className="text-gray-600">
                                     Gestisci le stazioni: crea, modifica e visualizza le stazioni disponibili.
                                 </p>
-                            </div>
+                            </Link>
 
                             {/* CARD ITINERARI */}
-                            <div
-                                onClick={() => navigate("/schedules")}
-                                className="cursor-pointer p-6 bg-white shadow rounded-xl border hover:shadow-lg transition"
+                            <Link
+                                to="/schedules"
+                                className="block cursor-pointer p-6 bg-white shadow rounded-xl border hover:shadow-lg transition"
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <StopCircle className="w-10 h-10 text-blue-600" />
@@ -122,12 +122,12 @@ export default function IndexPage() {
                                 <p className="text-gray-600 mt-2">
                                     Gestisci gli orari e le fermate dei treni.
                                 </p>
-                            </div>
+                            </Link>
 
                             {/* CARD BIGLIETTI */}
-                            <div
-                                onClick={() => navigate("/tickets")}
-                                className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                            <Link
+                                to="/tickets"
+                                className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <Ticket className="w-10 h-10 text-green-600" />
@@ -136,12 +136,12 @@ export default function IndexPage() {
                                 <p className="text-gray-600">
                                     Visualizza, modifica e gestisci i biglietti acquistati dai passeggeri.
                                 </p>
-                            </div>
+                            </Link>
 
                             {/* CARD PAGAMENTI */}
-                            <div
-                                onClick={() => navigate("/payments")}
-                                className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                            <Link
+                                to="/payments"
+                                className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <Banknote className="w-10 h-10 text-green-600" />
@@ -150,12 +150,12 @@ export default function IndexPage() {
                                 <p className="text-gray-600">
                                     Gestisci i pagamenti dei biglietti.
                                 </p>
-                            </div>
+                            </Link>
 
                             {/* CARD SOTTOSCRIZIONI */}
-                            <div
-                                onClick={() => navigate("/subscriptions")}
-                                className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                            <Link
+                                to="/subscriptions"
+                                className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <AlarmClockCheck className="w-10 h-10 text-purple-600" />
@@ -164,7 +164,7 @@ export default function IndexPage() {
                                 <p className="text-gray-600">
                                     Gestisci le sottoscrizioni degli utenti.
                                 </p>
-                            </div>
+                            </Link>
 
                         </div>
                     </>

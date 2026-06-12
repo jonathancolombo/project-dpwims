@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import MainLayout from "../../../core/layout/MainLayout";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import type {Ticket} from "../types/ticket";
+import { apiTickets } from "../../../core/api/client";
+import { user_authorization } from "../../../core/hooks/user_authorization";
 
 export default function MyTicketsPage() {
     const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -10,30 +11,42 @@ export default function MyTicketsPage() {
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const { user } = user_authorization();
+
+    const statusLabels: Record<string, string> = {
+        booked: "Prenotato",
+        issued: "Utilizzato",
+        used: "Utilizzato",
+        cancelled: "Cancellato",
+        canceled: "Cancellato",
+    };
+
+    const statusClasses: Record<string, string> = {
+        booked: "bg-green-600",
+        issued: "bg-gray-500",
+        used: "bg-gray-500",
+        cancelled: "bg-red-600",
+        canceled: "bg-red-600",
+    };
 
     useEffect(() => {
-        async function fetchTickets() {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8083/tickets/user/${user.id}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${user.token}`
-                        }
-                    }
-                );
-
-                setTickets(response.data);
-            } catch (err) {
-                setError("Impossibile caricare i tuoi biglietti");
-            } finally {
-                setLoading(false);
-            }
+        if (!user?.userID) {
+            return;
         }
 
-        fetchTickets();
-    }, []);
+        apiTickets
+            .get<Ticket[]>(`/tickets/user/${user.userID}`)
+            .then((response) => setTickets(response.data))
+            .catch((error) => {
+                console.error(error);
+                setError("Impossibile caricare i tuoi biglietti");
+            })
+            .finally(() => setLoading(false));
+    }, [user?.userID]);
+
+    if (!user?.userID) {
+        return null;
+    }
 
     if (loading) {
         return <MainLayout>Caricamento...</MainLayout>;
@@ -58,10 +71,10 @@ export default function MyTicketsPage() {
                         <p className="text-lg mb-4">Non hai ancora acquistato biglietti.</p>
 
                         <button
-                            onClick={() => navigate("/trains")}
+                            onClick={() => navigate("/user/schedules")}
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
                         >
-                            Cerca un treno
+                            Cerca un itinerario e acquista il tuo primo biglietto
                         </button>
                     </div>
                 )}
@@ -79,25 +92,15 @@ export default function MyTicketsPage() {
                                 </h2>
 
                                 <span
-                                    className={`px-2 py-1 rounded text-white ${
-                                        ticket.status === "booked"
-                                            ? "bg-green-600"
-                                            : ticket.status === "issued"
-                                                ? "bg-gray-500"
-                                                : "bg-red-600"
-                                    }`}
+                                    className={`px-2 py-1 rounded text-white ${statusClasses[ticket.status] ?? "bg-gray-500"}`}
                                 >
-                                    {ticket.status === "booked"
-                                        ? "Prenotato"
-                                        : ticket.status === "issued"
-                                            ? "Utilizzato"
-                                            : "Cancellato"}
+                                    {statusLabels[ticket.status] ?? ticket.status}
                                 </span>
                             </div>
 
                             <div className="text-gray-700 space-y-1">
                                 <div><strong>Treno:</strong> {ticket.train_id}</div>
-                                <div><strong>Orario:</strong> {ticket.schedule_id}</div>
+                                <div><strong>Itinerario:</strong> {ticket.schedule_id}</div>
                                 <div><strong>Posto:</strong> {ticket.seat_number}</div>
                                 <div><strong>Prezzo:</strong> € {ticket.price}</div>
                             </div>

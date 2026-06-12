@@ -11,6 +11,7 @@ export function LogoutButton() {
         setLoading(true);
         try {
             await logout(navigate);
+            navigate("/");
         } finally {
             setLoading(false);
             setOpen(false);

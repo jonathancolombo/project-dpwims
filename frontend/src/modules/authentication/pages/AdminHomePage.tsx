@@ -1,14 +1,13 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MainLayout from "../../../core/layout/MainLayout";
 import { user_authorization } from "../../../core/hooks/user_authorization";
 
 import {
     AlarmClockCheck,
-    Banknote,
     BellElectric,
+    CreditCard,
     StopCircle,
-    Ticket,
     Train,
     UserIcon
 } from "lucide-react";
@@ -42,9 +41,9 @@ export default function AdminHomePage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
-                    <div
-                        onClick={() => navigate("/trains")}
-                        className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                    <Link
+                        to="/trains"
+                        className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                     >
                         <div className="flex items-center gap-4 mb-4">
                             <Train className="w-10 h-10 text-blue-600" />
@@ -53,11 +52,11 @@ export default function AdminHomePage() {
                         <p className="text-gray-600">
                             Gestisci la flotta ferroviaria.
                         </p>
-                    </div>
+                    </Link>
 
-                    <div
-                        onClick={() => navigate("/users")}
-                        className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                    <Link
+                        to="/users"
+                        className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                     >
                         <div className="flex items-center gap-4 mb-4">
                             <UserIcon className="w-10 h-10 text-purple-600" />
@@ -66,11 +65,11 @@ export default function AdminHomePage() {
                         <p className="text-gray-600">
                             Gestisci gli account del sistema.
                         </p>
-                    </div>
+                    </Link>
 
-                    <div
-                        onClick={() => navigate("/stations")}
-                        className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                    <Link
+                        to="/stations"
+                        className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                     >
                         <div className="flex items-center gap-4 mb-4">
                             <BellElectric className="w-10 h-10 text-blue-600" />
@@ -79,11 +78,11 @@ export default function AdminHomePage() {
                         <p className="text-gray-600">
                             Gestisci le stazioni ferroviarie.
                         </p>
-                    </div>
+                    </Link>
 
-                    <div
-                        onClick={() => navigate("/schedules")}
-                        className="cursor-pointer p-6 bg-white shadow rounded-xl border hover:shadow-lg transition"
+                    <Link
+                        to="/schedules"
+                        className="block cursor-pointer p-6 bg-white shadow rounded-xl border hover:shadow-lg transition"
                     >
                         <div className="flex items-center gap-4 mb-4">
                             <StopCircle className="w-10 h-10 text-blue-600" />
@@ -92,37 +91,24 @@ export default function AdminHomePage() {
                         <p className="text-gray-600 mt-2">
                             Gestisci orari e fermate.
                         </p>
-                    </div>
+                    </Link>
 
-                    <div
-                        onClick={() => navigate("/tickets")}
-                        className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                    <Link
+                        to="/transactions"
+                        className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                     >
                         <div className="flex items-center gap-4 mb-4">
-                            <Ticket className="w-10 h-10 text-green-600" />
-                            <h2 className="text-xl font-semibold text-gray-900">Biglietti</h2>
+                            <CreditCard className="w-10 h-10 text-green-600" />
+                            <h2 className="text-xl font-semibold text-gray-900">Transazioni</h2>
                         </div>
                         <p className="text-gray-600">
-                            Gestisci i biglietti acquistati.
+                            Gestisci biglietti e pagamenti.
                         </p>
-                    </div>
+                    </Link>
 
-                    <div
-                        onClick={() => navigate("/payments")}
-                        className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
-                    >
-                        <div className="flex items-center gap-4 mb-4">
-                            <Banknote className="w-10 h-10 text-green-600" />
-                            <h2 className="text-xl font-semibold text-gray-900">Pagamenti</h2>
-                        </div>
-                        <p className="text-gray-600">
-                            Gestisci i pagamenti.
-                        </p>
-                    </div>
-
-                    <div
-                        onClick={() => navigate("/subscriptions")}
-                        className="cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
+                    <Link
+                        to="/subscriptions"
+                        className="block cursor-pointer bg-white p-6 rounded-xl shadow hover:shadow-xl border border-gray-200 transition"
                     >
                         <div className="flex items-center gap-4 mb-4">
                             <AlarmClockCheck className="w-10 h-10 text-purple-600" />
@@ -131,7 +117,7 @@ export default function AdminHomePage() {
                         <p className="text-gray-600">
                             Gestisci le sottoscrizioni degli utenti.
                         </p>
-                    </div>
+                    </Link>
 
                 </div>
             </div>

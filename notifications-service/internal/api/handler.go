@@ -39,7 +39,7 @@ func (handler *Handler) Subscribe(writer http.ResponseWriter, request *http.Requ
 		return
 	}
 
-	if err := handler.repository.AddSubscription(request.Context(), subscribeRequest.UserID, subscribeRequest.TrainUUID); err != nil {
+	if err := handler.repository.AddSubscription(request.Context(), subscribeRequest.UserID, subscribeRequest.TrainUUID, subscribeRequest.Plan); err != nil {
 		log.Println("Failed to add subscription:", err)
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
@@ -50,6 +50,7 @@ func (handler *Handler) Subscribe(writer http.ResponseWriter, request *http.Requ
 
 // GetSubscription handles the retrieval of subscriptions. If a user_id is provided as a URL parameter, it retrieves subscriptions for that specific user; otherwise, it retrieves all subscriptions.
 func (handler *Handler) GetSubscription(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
 	userIDStr := request.URL.Query().Get("user_id")
 	if userIDStr != "" {
 		userID, errorParsing := strconv.ParseInt(userIDStr, baseNumber, bitSize)
@@ -84,6 +85,7 @@ func (handler *Handler) GetSubscription(writer http.ResponseWriter, request *htt
 
 // GetSubscriptionsByTrain handles the retrieval of subscriptions for a specific train, identified by the trainUUID URL parameter. It returns a list of subscriptions associated with the specified train.
 func (handler *Handler) GetSubscriptionsByTrain(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
 	trainUUID := chi.URLParam(request, "trainUUID")
 	subs, err := handler.repository.GetByTrain(request.Context(), trainUUID)
 	if err != nil {

@@ -1,30 +1,29 @@
-import { useNavigate } from "react-router-dom";
 import { Train, Ticket, AlarmClockCheck } from "lucide-react";
+import { Link } from "react-router-dom";
 import { user_authorization } from "../../../core/hooks/user_authorization";
 import MainLayout from "../../../core/layout/MainLayout";
 
 export default function UserHomePage() {
-    const navigate = useNavigate();
     const { user } = user_authorization();
 
     const features = [
         {
-            title: "Treni",
-            description: "Consulta orari, disponibilità e dettagli dei treni.",
+            title: "Itinerari e Biglietti",
+            description: "Consulta gli orari dei treni e acquista i tuoi biglietti.",
             icon: <Train className="w-10 h-10 text-blue-600" />,
-            action: () => navigate("/trains"),
+            to: "/user/schedules",
         },
         {
             title: "I miei biglietti",
             description: "Visualizza e gestisci i biglietti acquistati.",
             icon: <Ticket className="w-10 h-10 text-green-600" />,
-            action: () => navigate("/my-tickets"),
+            to: "/user/tickets",
         },
         {
             title: "Sottoscrizioni",
             description: "Ricevi notifiche sui treni che ti interessano.",
             icon: <AlarmClockCheck className="w-10 h-10 text-purple-600" />,
-            action: () => navigate("/subscriptions"),
+            to: "/user/subscriptions",
         },
     ];
 
@@ -43,20 +42,22 @@ export default function UserHomePage() {
                 </div>
 
                 {/* GRID */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     {features.map((item) => (
-                        <div
+                        <Link
                             key={item.title}
-                            onClick={item.action}
-                            className="cursor-pointer bg-white p-6 rounded-2xl shadow-md border border-gray-200
-                                       hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
+                            to={item.to}
+                            className="block bg-white p-6 rounded-2xl shadow-md border border-gray-200 transition-all duration-200"
                         >
                             <div className="flex items-center gap-4 mb-4">
                                 {item.icon}
                                 <h2 className="text-xl font-semibold text-gray-900">{item.title}</h2>
                             </div>
                             <p className="text-gray-600">{item.description}</p>
-                        </div>
+                            <span className="inline-flex mt-4 text-blue-600 font-medium hover:text-blue-700">
+                                Apri
+                            </span>
+                        </Link>
                     ))}
                 </div>
             </div>

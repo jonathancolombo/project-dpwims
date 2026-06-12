@@ -40,8 +40,26 @@ func ValidateJWT(next http.Handler) http.Handler {
 
 		claims := token.Claims.(jwt.MapClaims)
 
-		ctx := context.WithValue(request.Context(), "userID", int64(claims["sub"].(float64)))
-		ctx = context.WithValue(ctx, "role", claims["role"].(string))
+		sub, ok := claims["sub"].(string)
+		if !ok {
+			http.Error(writer, "invalid sub claim", http.StatusUnauthorized)
+			return
+		}
+
+		userID, err := strconv.ParseInt(sub, 10, 64)
+		if err != nil {
+			http.Error(writer, "invalid user id", http.StatusUnauthorized)
+			return
+		}
+
+		role, ok := claims["role"].(string)
+		if !ok {
+			http.Error(writer, "invalid role claim", http.StatusUnauthorized)
+			return
+		}
+
+		ctx := context.WithValue(request.Context(), "userID", userID)
+		ctx = context.WithValue(ctx, "role", role)
 
 		next.ServeHTTP(writer, request.WithContext(ctx))
 	})
