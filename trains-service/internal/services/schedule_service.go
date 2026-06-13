@@ -2,9 +2,15 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"log"
+	topics "project-dpwims/shared/mqtt"
+	"time"
 	"trains-service/internal/models"
 	"trains-service/internal/repositories"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 const formatIdMessageError = "id must be greater than 0"
@@ -12,12 +18,14 @@ const formatIdMessageError = "id must be greater than 0"
 // ScheduleService defines the interface for managing Schedule entities.
 type ScheduleService struct {
 	repository repositories.IScheduleRepository
+	mqttClient mqtt.Client
 }
 
 // NewScheduleService creates a new ScheduleService instance
-func NewScheduleService(repository repositories.IScheduleRepository) *ScheduleService {
+func NewScheduleService(repository repositories.IScheduleRepository, mqttClient mqtt.Client) *ScheduleService {
 	return &ScheduleService{
 		repository: repository,
+		mqttClient: mqttClient,
 	}
 }
 
@@ -126,5 +134,33 @@ func (scheduleService *ScheduleService) UpdateSchedule(context context.Context, 
 		return nil, fmt.Errorf("update schedule: %w", errorUpdating)
 	}
 
+	scheduleService.publishScheduleUpdate(schedule)
+
 	return schedule, nil
+}
+
+func (scheduleService *ScheduleService) publishScheduleUpdate(schedule *models.Schedule) {
+	payload, err := json.Marshal(map[string]interface{}{
+		"event":       "schedule_updated",
+		"schedule_id": schedule.ID,
+		"train_id":    schedule.TrainID,
+		"departure":   schedule.Departure,
+		"arrival":     schedule.Arrival,
+		"status":      schedule.Status,
+		"price":       schedule.Price,
+		"time":        time.Now().Format(time.RFC3339),
+	})
+	if err != nil {
+		log.Println("Error marshaling schedule update event:", err)
+		return
+	}
+
+	topic := topics.TrainEventsTopicFor(schedule.TrainID, schedule.ID)
+	token := scheduleService.mqttClient.Publish(topic, 0, false, payload)
+	token.Wait()
+	if token.Error() != nil {
+		log.Println("Error publishing schedule update:", token.Error())
+	} else {
+		log.Printf("Schedule update published on topic %s", topic)
+	}
 }

@@ -29,6 +29,8 @@ const urlSchedulesId = "/schedules/{id}"
 const urlStopSchedules = "/stopschedules"
 const urlStopSchedulesId = "/stopschedules/{id}"
 
+const urlTrainArrived = "/trains/{trainUUID}/schedules/{scheduleID}/arrived"
+
 const clientID = "train-service"
 const keepAlive = 3 * time.Second
 const connectRetryInterval = 3 * time.Second
@@ -72,7 +74,7 @@ func main() {
 	stationHandler := handlers.NewStationHandler(stationService)
 
 	repositorySchedule := repositories.NewMySQLScheduleRepository(db)
-	scheduleService := services.NewScheduleService(repositorySchedule)
+	scheduleService := services.NewScheduleService(repositorySchedule, mqttClient)
 	scheduleHandler := handlers.NewScheduleHandler(scheduleService)
 
 	repositoryStopSchedule := repositories.NewMySQLStopScheduleRepository(db)
@@ -104,7 +106,7 @@ func main() {
 		chiRouter.Post(urlStopSchedules, stopScheduleHandler.CreateStopSchedule)
 		chiRouter.Delete(urlStopSchedulesId, stopScheduleHandler.DeleteStopSchedule)
 		chiRouter.Patch(urlStopSchedulesId, stopScheduleHandler.UpdateStopSchedule)
-		chiRouter.Post("/trains/{trainUUID}/arrived", trainHandler.MarkTrainArrived)
+		chiRouter.Post(urlTrainArrived, trainHandler.MarkTrainArrived)
 		chiRouter.Get("/stopschedules/schedule/{scheduleId}", stopScheduleHandler.GetStopsBySchedule)
 	})
 

@@ -122,13 +122,13 @@ func (trainService *TrainService) UpdateTrain(context context.Context, uuid stri
 }
 
 // PublishArrival a function for publishing a message for status of the train
-func (trainService *TrainService) PublishArrival(trainUUID string) error {
+func (trainService *TrainService) PublishArrival(trainUUID string, scheduleID int64) error {
 	event := events.TrainEvent{
 		Event: "arrived",
 		Time:  time.Now().Format(time.RFC3339),
 	}
 	payload, _ := json.Marshal(event)
-	topic := topics.TrainEventsTopicFor(trainUUID)
+	topic := topics.TrainEventsTopicFor(trainUUID, scheduleID)
 	token := trainService.mqttClient.Publish(topic, 0, false, payload)
 	token.Wait()
 	return token.Error()

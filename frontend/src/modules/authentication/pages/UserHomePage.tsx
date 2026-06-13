@@ -54,7 +54,6 @@ export default function UserHomePage() {
                                 <h2 className="text-xl font-semibold text-gray-900">{item.title}</h2>
                             </div>
                             <p className="text-gray-600">{item.description}</p>
-
                         </Link>
                     ))}
                 </div>

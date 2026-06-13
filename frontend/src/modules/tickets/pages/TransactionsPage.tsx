@@ -216,12 +216,6 @@ export default function TransactionsPage() {
 
                                         {/* Actions */}
                                         <div className="flex gap-3 pt-2">
-                                            <button
-                                                onClick={() => navigate(`/payments/${payment.uuid}`)}
-                                                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg"
-                                            >
-                                                Modifica
-                                            </button>
 
                                             <button
                                                 onClick={() => handleDeletePayment(payment.uuid)}

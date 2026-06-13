@@ -3,15 +3,19 @@ package mqtt
 import "fmt"
 
 const (
-	TrainEventsTopic = "trains/+/events"
-	TrainStopsTopic  = "trains/+/stops/+"
-	TrainDelayTopic  = "trains/+/delay"
+	TrainEventsTopic = "trains/+/schedules/+/events"
+	TrainStopsTopic  = "trains/+/schedules/+/stops"
+	TrainDelayTopic  = "trains/+/schedules/+/delay"
 )
 
-func TrainEventsTopicFor(trainUUID string) string {
-	return fmt.Sprintf("trains/%s/events", trainUUID)
+func TrainEventsTopicFor(trainUUID string, scheduleID int64) string {
+	return fmt.Sprintf("trains/%s/schedules/%d/events", trainUUID, scheduleID)
 }
 
-func TrainStopTopicFor(trainUUID string, stopID int64) string {
-	return fmt.Sprintf("trains/%s/stops/%d", trainUUID, stopID)
+func TrainStopTopicFor(trainUUID string, scheduleID int64) string {
+	return fmt.Sprintf("trains/%s/schedules/%d/stops", trainUUID, scheduleID)
+}
+
+func TrainDelayTopicFor(trainUUID string, scheduleID int64) string {
+	return fmt.Sprintf("trains/%s/schedules/%d/delay", trainUUID, scheduleID)
 }

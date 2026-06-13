@@ -18,7 +18,6 @@ export default function CreateTicketPage() {
     const [message, setMessage] = useState("");
     const [trainId, setTrainId] = useState("");
 
-
     useEffect(() => {
         getUsers().then(response => setUsers(response.data));
         getSchedules().then(response => setSchedules(response.data));
@@ -35,7 +34,7 @@ export default function CreateTicketPage() {
                 status: "booked"
             });
 
-            navigate("/tickets");
+            navigate("/transactions");
         } catch {
             setMessage("Errore durante la creazione del biglietto.");
         }
@@ -140,6 +139,12 @@ export default function CreateTicketPage() {
                     className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
                 >
                     Crea Biglietto
+                </button>
+                <button
+                    onClick={() => navigate("/transactions")}
+                    className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg"
+                >
+                    Torna indietro
                 </button>
             </div>
         </MainLayout>

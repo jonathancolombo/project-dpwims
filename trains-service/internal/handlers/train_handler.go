@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"trains-service/internal/models"
 	"trains-service/internal/repositories"
 	"trains-service/internal/services"
@@ -135,8 +136,15 @@ func (trainHandler *TrainHandler) MarkTrainArrived(writer http.ResponseWriter, r
 		http.Error(writer, errorMessageInvalidUUID, http.StatusBadRequest)
 		return
 	}
-	err := trainHandler.service.PublishArrival(trainUUID)
-	if err != nil {
+
+	scheduleIDStr := chi.URLParam(request, "scheduleID")
+	scheduleID, err := strconv.ParseInt(scheduleIDStr, 10, 64)
+	if err != nil || scheduleID == 0 {
+		http.Error(writer, "invalid schedule ID", http.StatusBadRequest)
+		return
+	}
+
+	if err := trainHandler.service.PublishArrival(trainUUID, scheduleID); err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
