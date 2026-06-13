@@ -1,0 +1,166 @@
+package services
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	topics "project-dpwims/shared/mqtt"
+	"time"
+	"trains-service/internal/models"
+	"trains-service/internal/repositories"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
+)
+
+const formatIdMessageError = "id must be greater than 0"
+
+// ScheduleService defines the interface for managing Schedule entities.
+type ScheduleService struct {
+	repository repositories.IScheduleRepository
+	mqttClient mqtt.Client
+}
+
+// NewScheduleService creates a new ScheduleService instance
+func NewScheduleService(repository repositories.IScheduleRepository, mqttClient mqtt.Client) *ScheduleService {
+	return &ScheduleService{
+		repository: repository,
+		mqttClient: mqttClient,
+	}
+}
+
+// CreateSchedule creates a new schedule
+func (scheduleService *ScheduleService) CreateSchedule(context context.Context, schedule *models.Schedule) (*models.Schedule, error) {
+	if schedule == nil {
+		return nil, fmt.Errorf("schedule must not be nil")
+	}
+
+	if schedule.TrainID == "" {
+		return nil, fmt.Errorf("train id must be greater than 0")
+	}
+
+	if schedule.StationID <= 0 {
+		return nil, fmt.Errorf("station id must be greater than 0")
+	}
+
+	if schedule.Departure == "" {
+		return nil, fmt.Errorf("departure must not be empty")
+	}
+
+	if schedule.Arrival == "" {
+		return nil, fmt.Errorf("arrival must not be empty")
+	}
+
+	if schedule.Price < 0 {
+		return nil, fmt.Errorf("price must be greater than or equal to zero")
+	}
+
+	if schedule.Status == "" {
+		return nil, fmt.Errorf("status must not be empty")
+	}
+
+	return scheduleService.repository.Create(context, schedule)
+}
+
+// GetSchedule retrieves a schedule by their id
+func (scheduleService *ScheduleService) GetSchedule(context context.Context, id int64) (*models.Schedule, error) {
+	if id <= 0 {
+		return nil, fmt.Errorf(formatIdMessageError)
+	}
+	return scheduleService.repository.GetByID(context, id)
+}
+
+// GetAllSchedules retrieves all schedules
+func (scheduleService *ScheduleService) GetAllSchedules(context context.Context) ([]*models.Schedule, error) {
+	if scheduleService.repository == nil {
+		return nil, fmt.Errorf("repositories must not be nil")
+	}
+	return scheduleService.repository.GetAll(context)
+}
+
+// DeleteSchedule deletes a schedule by their id
+func (scheduleService *ScheduleService) DeleteSchedule(context context.Context, id int64) error {
+	if id <= 0 {
+		return fmt.Errorf(formatIdMessageError)
+	}
+	return scheduleService.repository.DeleteByID(context, id)
+}
+
+// UpdateSchedule updates a schedule by their id
+func (scheduleService *ScheduleService) UpdateSchedule(context context.Context, id int64, updateSchedule *models.UpdateSchedule) (*models.Schedule, error) {
+	if id <= 0 {
+		return nil, fmt.Errorf(formatIdMessageError)
+	}
+
+	if updateSchedule == nil {
+		return nil, fmt.Errorf("update schedule must not be nil")
+	}
+
+	schedule, err := scheduleService.repository.GetByID(context, id)
+	if err != nil {
+		return nil, fmt.Errorf("get schedule by id: %w", err)
+	}
+
+	if schedule == nil {
+		return nil, fmt.Errorf("schedule must not be nil")
+	}
+
+	if updateSchedule.TrainID != "" {
+		schedule.TrainID = updateSchedule.TrainID
+	}
+
+	if updateSchedule.StationID > 0 {
+		schedule.StationID = updateSchedule.StationID
+	}
+
+	if updateSchedule.Departure != "" {
+		schedule.Departure = updateSchedule.Departure
+	}
+
+	if updateSchedule.Arrival != "" {
+		schedule.Arrival = updateSchedule.Arrival
+	}
+
+	if updateSchedule.Price >= 0 {
+		schedule.Price = updateSchedule.Price
+	}
+
+	if updateSchedule.Status != "" && (schedule.Status == models.StatusActive || schedule.Status == models.StatusInactive) {
+		schedule.Status = updateSchedule.Status
+	}
+
+	errorUpdating := scheduleService.repository.Update(context, schedule)
+	if errorUpdating != nil {
+		return nil, fmt.Errorf("update schedule: %w", errorUpdating)
+	}
+
+	scheduleService.publishScheduleUpdate(schedule)
+
+	return schedule, nil
+}
+
+func (scheduleService *ScheduleService) publishScheduleUpdate(schedule *models.Schedule) {
+	payload, err := json.Marshal(map[string]interface{}{
+		"event":       "schedule_updated",
+		"schedule_id": schedule.ID,
+		"train_id":    schedule.TrainID,
+		"departure":   schedule.Departure,
+		"arrival":     schedule.Arrival,
+		"status":      schedule.Status,
+		"price":       schedule.Price,
+		"time":        time.Now().Format(time.RFC3339),
+	})
+	if err != nil {
+		log.Println("Error marshaling schedule update event:", err)
+		return
+	}
+
+	topic := topics.TrainEventsTopicFor(schedule.TrainID, schedule.ID)
+	token := scheduleService.mqttClient.Publish(topic, 0, false, payload)
+	token.Wait()
+	if token.Error() != nil {
+		log.Println("Error publishing schedule update:", token.Error())
+	} else {
+		log.Printf("Schedule update published on topic %s", topic)
+	}
+}

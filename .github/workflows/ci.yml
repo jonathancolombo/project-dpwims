@@ -7,30 +7,195 @@ on:
     branches: [ "develop" ]
 
 jobs:
-  build_and_test:
+  user-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositories
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            user-service/.cache/go-build
+            user-service/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('users-service/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        working-directory: ./users-service
+        run: go mod tidy
+
+      - name: Build
+        working-directory: ./users-service
+        run: go build ./...
+
+      - name: Run tests
+        working-directory: ./users-service
+        run: go test ./... -v
+
+  trains-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositories
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            trains-service/.cache/go-build
+            trains-service/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('trains-service/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        working-directory: ./trains-service
+        run: go mod tidy
+
+      - name: Build
+        working-directory: ./trains-service
+        run: go build ./...
+
+      - name: Run tests
+        working-directory: ./trains-service
+        run: go test ./... -v
+
+  tickets-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositories
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            tickets-service/.cache/go-build
+            tickets-service/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('tickets-service/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        working-directory: ./tickets-service
+        run: go mod tidy
+
+      - name: Build
+        working-directory: ./tickets-service
+        run: go build ./...
+
+      - name: Run tests
+        working-directory: ./tickets-service
+        run: go test ./... -v
+
+  notifications-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositories
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            notifications-service/.cache/go-build
+            notifications-service/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('notifications-service/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        working-directory: ./notifications-service
+        run: go mod tidy
+
+      - name: Build
+        working-directory: ./notifications-service
+        run: go build ./...
+
+      - name: Run tests
+        working-directory: ./notifications-service
+        run: go test ./... -v
+
+  auth-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositories
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            notifications-service/.cache/go-build
+            notifications-service/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('auth-service/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        working-directory: ./auth-service
+        run: go mod tidy
+
+      - name: Build
+        working-directory: ./auth-service
+        run: go build ./...
+
+      - name: Run tests
+        working-directory: ./auth-service
+        run: go test ./... -v
+
+  frontend:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          go-version: "1.25.x"
+          node-version: "20"
 
-      - name: Caching Go modules
+      - name: Cache node modules
         uses: actions/cache@v4
         with:
-          path: ~/.cache/go-build ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('go.sum') }}
-          restore-keys: ${{ runner.os }}-go-
+          path: frontend/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: go mod tidy
+        working-directory: ./frontend
+        run: npm install
 
-      - name: Build
-        run: go build ./...
-
-      - name: Run tests
-        run: go test ./... -v
+      - name: Run build
+        working-directory: ./frontend
+        run: npm run build
