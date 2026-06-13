@@ -7,7 +7,7 @@ import { user_authorization } from "../../../core/hooks/user_authorization";
 import MainLayout from "../../../core/layout/MainLayout.tsx";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-export default function UserSchedulesAndTicketsPage() {
+export function UserSchedulesAndTicketsPage() {
     const [schedules, setSchedules] = useState<Schedule[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -15,7 +15,7 @@ export default function UserSchedulesAndTicketsPage() {
     const [seatNumber, setSeatNumber] = useState<Record<number, string>>({});
     const [savingScheduleId, setSavingScheduleId] = useState<number | null>(null);
     const navigate = useNavigate();
-    const { user } = user_authorization();
+    const {user} = user_authorization();
     const userId = user?.userID ?? 0;
 
     useEffect(() => {
@@ -24,6 +24,8 @@ export default function UserSchedulesAndTicketsPage() {
             .catch(() => setError("Errore nel caricamento degli itinerari."))
             .finally(() => setLoading(false));
     }, []);
+
+
 
     async function handleQuickBuy(schedule: Schedule) {
         if (!userId) {
@@ -34,7 +36,9 @@ export default function UserSchedulesAndTicketsPage() {
         setError("");
 
         try {
-            const autoSeat = `A${String((schedule.id % 99) + 1).padStart(2, "0")}`;
+
+            const autoSeat: string = generateRandomSeat();
+
 
             await createTicket({
                 user_id: userId,
@@ -52,6 +56,8 @@ export default function UserSchedulesAndTicketsPage() {
             setSavingScheduleId(null);
         }
     }
+
+
 
     async function handleDetailedBuy(schedule: Schedule) {
         if (!userId) {
@@ -123,7 +129,6 @@ export default function UserSchedulesAndTicketsPage() {
                             key={schedule.id}
                             className="bg-white rounded-xl shadow border overflow-hidden"
                         >
-                            {/* Header cliccabile */}
                             <button
                                 onClick={() =>
                                     setExpandedId(expandedId === schedule.id ? null : schedule.id)
@@ -140,13 +145,12 @@ export default function UserSchedulesAndTicketsPage() {
                                 </div>
 
                                 {expandedId === schedule.id ? (
-                                    <ChevronUp className="w-6 h-6 text-gray-600" />
+                                    <ChevronUp className="w-6 h-6 text-gray-600"/>
                                 ) : (
-                                    <ChevronDown className="w-6 h-6 text-gray-600" />
+                                    <ChevronDown className="w-6 h-6 text-gray-600"/>
                                 )}
                             </button>
 
-                            {/* Dettagli espanduti */}
                             {expandedId === schedule.id && (
                                 <div className="border-t p-5 space-y-4 bg-gray-50">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
@@ -197,7 +201,6 @@ export default function UserSchedulesAndTicketsPage() {
 
                                         <div className="flex gap-3">
                                             {seatNumber[schedule.id]?.trim() ? (
-                                                // Acquisto con posto personalizato
                                                 <button
                                                     onClick={() => handleDetailedBuy(schedule)}
                                                     disabled={savingScheduleId === schedule.id}
@@ -208,7 +211,6 @@ export default function UserSchedulesAndTicketsPage() {
                                                         : "Conferma acquisto"}
                                                 </button>
                                             ) : (
-                                                // Acquisto veloce con auto-assign
                                                 <button
                                                     onClick={() => handleQuickBuy(schedule)}
                                                     disabled={savingScheduleId === schedule.id}
@@ -226,12 +228,24 @@ export default function UserSchedulesAndTicketsPage() {
                                             >
                                                 Annulla
                                             </button>
+
                                         </div>
+
                                     </div>
+
                                 </div>
+
                             )}
+
                         </div>
+
                     ))}
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+                    >
+                        ← Torna indietro
+                    </button>
                 </div>
 
                 {schedules.length === 0 && (
@@ -240,7 +254,19 @@ export default function UserSchedulesAndTicketsPage() {
                     </div>
                 )}
             </div>
+
         </MainLayout>
     );
 }
 
+function generateRandomSeat(): string {
+    const letters = "ABCDEFGH";
+
+    const randomBytes = new Uint32Array(2);
+    crypto.getRandomValues(randomBytes);
+
+    const letter = letters[randomBytes[0] % letters.length];
+    const number = (randomBytes[1] % 100) + 1; // 1–100
+
+    return `${letter}${number}`;
+}

@@ -5,7 +5,7 @@ export const apiTrains : AxiosInstance = axios.create({
 });
 
 apiTrains.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
+    const token : string | null = localStorage.getItem("token");
     if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -17,7 +17,7 @@ export const apiUsers : AxiosInstance = axios.create({
 });
 
 apiUsers.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
+    const token : string | null = localStorage.getItem("token");
     if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -29,7 +29,7 @@ export const apiTickets : AxiosInstance = axios.create({
 })
 
 apiTickets.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
+    const token : string | null = localStorage.getItem("token");
     if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
     }
