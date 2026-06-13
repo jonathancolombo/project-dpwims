@@ -25,7 +25,9 @@ import {RequireUser} from "../../modules/authentication/pages/RequireUser.tsx";
 import UserHomePage from "../../modules/authentication/pages/UserHomePage.tsx";
 import MyTicketsPage from "../../modules/tickets/pages/MyTicketsPage";
 import AdminHomePage from "../../modules/authentication/pages/AdminHomePage";
-import UserSchedulesAndTicketsPage from "../../modules/users/pages/UserSchedulesAndTicketsPage.tsx";
+import {
+    UserSchedulesAndTicketsPage
+} from "../../modules/users/pages/UserSchedulesAndTicketsPage.tsx";
 import UserSubscriptionsPage from "../../modules/subscriptions/pages/UserSubscriptionsPage.tsx";
 
 export default function AppRouter() {

@@ -13,14 +13,13 @@ type TrainEvent struct {
 	Time  string `json:"time"`
 }
 
-// PublishTrainEvent a function to publish a message for notifying the status of the train to the subscribers
-func PublishTrainEvent(client mqtt.Client, trainUUID string, event TrainEvent) error {
+func PublishTrainEvent(client mqtt.Client, trainUUID string, scheduleID int64, event TrainEvent) error {
 	payload, err := json.Marshal(event)
 	if err != nil {
 		log.Fatalf("Error marshaling train event: %v", err)
 		return err
 	}
-	topic := topics.TrainEventsTopicFor(trainUUID)
+	topic := topics.TrainEventsTopicFor(trainUUID, scheduleID)
 	token := client.Publish(topic, 0, false, payload)
 	token.Wait()
 	return token.Error()

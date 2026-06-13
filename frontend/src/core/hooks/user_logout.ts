@@ -23,7 +23,6 @@ export async function logout(navigate?: NavigateFunction) {
         try { delete apiTickets.defaults.headers.common["Authorization"]; } catch {}
         try { delete apiNotifications.defaults.headers.common["Authorization"]; } catch {}
 
-
         // Redirect alla login
         if (navigate) navigate("/login");
         else globalThis.location.href = "/login";

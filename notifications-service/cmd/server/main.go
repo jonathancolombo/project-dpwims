@@ -18,7 +18,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Main function to start the notification service
 func main() {
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
@@ -34,17 +33,19 @@ func main() {
 	}
 
 	subscriptionRepository := repository.NewMySQLSubscriptionRepository(db)
+
 	mqttClient := mqtt.NewClient()
 	if err := mqttClient.Connect(); err != nil {
 		log.Fatal(err)
 	}
 
 	dispatcher := service.NewDispatcher(subscriptionRepository, mqttClient)
-	log.Println("Connected to MQTT Broker at ", os.Getenv("MQTT_BROKER_URL"))
+	log.Println("Connected to MQTT Broker at", os.Getenv("MQTT_BROKER_URL"))
+
 	mqttClient.Subscribe(topics.TrainEventsTopic, 0, mqtt.TrainEventHandler(dispatcher))
 	mqttClient.Subscribe(topics.TrainStopsTopic, 0, mqtt.TrainEventHandler(dispatcher))
 	mqttClient.Subscribe(topics.TrainDelayTopic, 0, mqtt.TrainEventHandler(dispatcher))
-	log.Println("Mqtt client subscribed to topics")
+	log.Println("MQTT client subscribed to topics")
 
 	httpHandler := api.NewHandler(subscriptionRepository)
 	router := api.NewRouter(httpHandler)
@@ -53,10 +54,8 @@ func main() {
 		chiRouter.Use(sharedAuth.ValidateJWT)
 	})
 
-	log.Println("Subscription Service running on port 8084 with url http://localhost:8084")
-	errorHttp := http.ListenAndServe(":8084", router)
-	if errorHttp != nil {
-		return
+	log.Println("Subscription Service running on port 8084")
+	if err := http.ListenAndServe(":8084", router); err != nil {
+		log.Fatal(err)
 	}
-
 }

@@ -21,7 +21,7 @@ export function useUserAuthorization() {
             exp: number;
         } : null;
 
-        const userIDFromToken = decoded?.sub ? Number(decoded.sub) : NaN;
+        const userIDFromToken = decoded?.sub ? Number(decoded.sub) : Number.NaN;
         if (!Number.isNaN(userIDFromToken) && userIDFromToken > 0) {
             const user = {
                 userID: userIDFromToken,
@@ -53,9 +53,13 @@ export function useUserAuthorization() {
 
         return { user: null, isLoggedIn: false, role: null };
     } catch {
-        return storedUser?.id
-            ? { user: { userID: Number(storedUser.id), role: storedUser.role ?? null, exp: null }, isLoggedIn: true, role: storedUser.role ?? null }
-            : { user: null, isLoggedIn: false, role: null };
+        if (storedUser !== null)
+        {
+            return storedUser?.id
+                ? { user: { userID: Number(storedUser.id), role: storedUser.role ?? null, exp: null }, isLoggedIn: true, role: storedUser.role ?? null }
+                : { user: null, isLoggedIn: false, role: null };
+        }
+        return { user: null, isLoggedIn: false, role: null };
     }
 
 }

@@ -4,7 +4,7 @@ import { user_authorization } from "../../../core/hooks/user_authorization";
 import MainLayout from "../../../core/layout/MainLayout";
 
 export default function UserHomePage() {
-    const { user } = user_authorization();
+    user_authorization();
 
     const features = [
         {
@@ -34,7 +34,7 @@ export default function UserHomePage() {
                 {/* HEADER */}
                 <div className="text-center space-y-3">
                     <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
-                        Ciao {user?.userID || "Cliente"} 👋
+                        Ciao {"Cliente"} 👋
                     </h1>
                     <p className="text-gray-600 text-lg">
                         Gestisci i tuoi viaggi, i tuoi biglietti e le tue notifiche.
@@ -54,9 +54,6 @@ export default function UserHomePage() {
                                 <h2 className="text-xl font-semibold text-gray-900">{item.title}</h2>
                             </div>
                             <p className="text-gray-600">{item.description}</p>
-                            <span className="inline-flex mt-4 text-blue-600 font-medium hover:text-blue-700">
-                                Apri
-                            </span>
                         </Link>
                     ))}
                 </div>

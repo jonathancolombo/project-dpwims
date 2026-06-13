@@ -57,6 +57,7 @@ func main() {
 
 		chiRouter.Get(urlTicketsID, ticketHandler.GetTicket)
 		chiRouter.Get(urlPaymentsID, paymentHandler.GetPayment)
+		chiRouter.Delete(urlTicketsID, ticketHandler.DeleteTicket)
 	})
 
 	// ROTTE ADMIN
@@ -65,7 +66,6 @@ func main() {
 		chiRouter.Use(sharedAuth.RequireRole("admin"))
 		// Ticket admin
 		chiRouter.Get(urlTickets, ticketHandler.GetAllTickets)
-		chiRouter.Delete(urlTicketsID, ticketHandler.DeleteTicket)
 		chiRouter.Patch(urlTicketsID, ticketHandler.UpdateTicket)
 
 		// Payments admin

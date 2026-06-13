@@ -1,22 +1,12 @@
-export type Plan = "basic" | "premium" | "full";
-
 export interface Subscription {
     id: number;
     user_id: number;
     train_uuid: string;
-    plan: Plan;
+    schedule_id: number;
 }
 
 export interface CreateSubscriptionDTO {
     user_id: number;
     train_uuid: string;
-    plan: Plan;
+    schedule_id: number;
 }
-
-export const planLabels = {
-    basic: "Base",
-    premium: "Premium",
-    full: "Completo"
-} as const;
-
-

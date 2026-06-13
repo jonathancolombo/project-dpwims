@@ -42,7 +42,7 @@ export default function CreatePaymentPage() {
 
         try {
             await createPayment(payload);
-            navigate("/payments");
+            navigate("/transactions");
         } catch {
             setMessage("Errore durante la creazione del pagamento.");
         }
@@ -135,10 +135,10 @@ export default function CreatePaymentPage() {
                 </button>
 
                 <button
-                    onClick={() => navigate("/payments")}
+                    onClick={() => navigate("/transactions")}
                     className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg"
                 >
-                    Annulla
+                    Torna indietro
                 </button>
             </div>
         </MainLayout>

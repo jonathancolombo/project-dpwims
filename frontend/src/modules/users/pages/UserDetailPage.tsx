@@ -28,7 +28,7 @@ export default function UserDetailPage() {
                 setEmail(u.email);
                 setTelephone(u.telephone);
                 setFiscalCode(u.fiscal_code);
-                setRole(u.role as "admin" | "customer");
+                setRole(u.role);
             })
             .catch(() => setMessage("Errore nel caricamento dell'utente."))
             .finally(() => setLoading(false));
