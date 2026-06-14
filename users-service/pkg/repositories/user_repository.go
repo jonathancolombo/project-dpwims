@@ -6,8 +6,6 @@ import (
 )
 
 // IUserRepository defines the interface for a user repositories.
-// All methods accept a context because the underlying implementation
-// may involve I/O operations (SQL, network, etc.).
 type IUserRepository interface {
 	Create(context context.Context, user *models.User) (*models.User, error)
 	DeleteByID(context context.Context, id int64) error

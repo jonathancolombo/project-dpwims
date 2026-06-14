@@ -41,14 +41,22 @@ export default function SchedulesPage() {
             <div className="p-6 max-w-5xl mx-auto space-y-6">
                 <div className="flex justify-between items-center">
                     <h1 className="text-3xl font-bold">Itinerari</h1>
-                    <button
-                        onClick={() => navigate("/schedules/create")}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                        + Nuovo itinerario
-                    </button>
-                </div>
 
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition"
+                        >
+                            ← Torna indietro
+                        </button>
+                        <button
+                            onClick={() => navigate("/schedules/create")}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                        >
+                            + Nuovo itinerario
+                        </button>
+                    </div>
+                </div>
                 {message && (
                     <div className="p-3 bg-red-100 text-red-700 rounded-lg">{message}</div>
                 )}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"project-dpwims/shared/utilities"
 	"strconv"
 	"trains-service/internal/models"
 	"trains-service/internal/repositories"
@@ -31,22 +32,17 @@ func NewTrainHandler(trainService *services.TrainService) *TrainHandler {
 
 // CreateTrain a handlers method to create a new train into repositories memory
 func (trainHandler *TrainHandler) CreateTrain(writer http.ResponseWriter, request *http.Request) {
-	var train models.Train
-	err := json.NewDecoder(request.Body).Decode(&train)
-	if err != nil {
-		http.Error(writer, "invalid JSON body"+err.Error(), http.StatusBadRequest)
+	train, ok := utilities.DecodeJSON[models.Train](writer, request)
+	if !ok {
 		return
 	}
 
-	created, err := trainHandler.service.CreateTrain(request.Context(), &train)
+	created, err := trainHandler.service.CreateTrain(request.Context(), train)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	writer.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(writer).Encode(created)
+	utilities.WriteJSON(writer, http.StatusCreated, created)
 }
 
 // GetTrain a handlers method to get a train by id from repositories memory

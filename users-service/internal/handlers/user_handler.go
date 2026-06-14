@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"project-dpwims/shared/utilities"
 	"strconv"
 	"users-service/pkg/models"
 	"users-service/pkg/repositories"
@@ -31,22 +32,16 @@ func NewUserHandler(userService *services.UserService) *UserHandler {
 
 // CreateUser a handlers method to create a new user into repositories memory
 func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *http.Request) {
-	var user models.User
-	err := json.NewDecoder(request.Body).Decode(&user)
-	if err != nil {
-		http.Error(writer, "invalid JSON body"+err.Error(), http.StatusBadRequest)
+	user, ok := utilities.DecodeJSON[models.User](writer, request)
+	if !ok {
 		return
 	}
-
-	created, err := userHandler.service.CreateUser(request.Context(), &user)
+	created, err := userHandler.service.CreateUser(request.Context(), user)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	writer.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(writer).Encode(created)
+	utilities.WriteJSON(writer, http.StatusCreated, created)
 }
 
 // GetUser a handlers method to get a user by id from repositories memory

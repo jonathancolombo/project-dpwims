@@ -154,7 +154,7 @@ export default function CreateUserPage() {
                         onClick={() => navigate("/users")}
                         className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg font-medium transition"
                     >
-                        Annulla
+                        Torna indietro
                     </button>
                 </div>
             </div>

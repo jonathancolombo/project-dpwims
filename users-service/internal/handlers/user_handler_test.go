@@ -22,7 +22,6 @@ type FakeUserRepository struct {
 }
 
 func (r *FakeUserRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
-	//TODO implement me
 	panic("implement me")
 }
 

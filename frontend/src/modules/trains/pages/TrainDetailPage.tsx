@@ -124,20 +124,19 @@ export default function TrainDetailPage() {
                     </label>
 
 
-                    <div className="flex flex-col gap-3">
+                    <div className="flex gap-3 pt-2">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg font-medium transition"
+                        >
+                            ← Torna indietro
+                        </button>
                         <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:opacity-50"
                         >
                             {saving ? "Salvataggio..." : "Salva modifiche"}
-                        </button>
-
-                        <button
-                            onClick={() => navigate("/trains")}
-                            className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg font-medium transition"
-                        >
-                            Annulla
                         </button>
                     </div>
 

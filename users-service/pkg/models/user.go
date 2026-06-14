@@ -1,5 +1,6 @@
 package models
 
+// User represents a system user with credentials and profile info.
 type User struct {
 	ID           int64    `json:"id"`
 	Username     string   `json:"username"`
@@ -11,6 +12,7 @@ type User struct {
 	PasswordSalt string   `json:"-"`
 }
 
+// UserRole defines the role assigned to a user.
 type UserRole string
 
 const (

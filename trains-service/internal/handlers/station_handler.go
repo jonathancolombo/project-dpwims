@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"project-dpwims/shared/utilities"
 	"strconv"
 	"trains-service/internal/models"
 	"trains-service/internal/repositories"
@@ -28,22 +29,17 @@ func NewStationHandler(stationService *services.StationService) *StationHandler 
 
 // CreateStation a handlers method to create a new station into repositories memory
 func (stationHandler *StationHandler) CreateStation(writer http.ResponseWriter, request *http.Request) {
-	var station models.Station
-	err := json.NewDecoder(request.Body).Decode(&station)
-	if err != nil {
-		http.Error(writer, "invalid JSON body"+err.Error(), http.StatusBadRequest)
+	station, ok := utilities.DecodeJSON[models.Station](writer, request)
+	if !ok {
 		return
 	}
 
-	stationCreated, err := stationHandler.service.CreateStation(request.Context(), &station)
+	stationCreated, err := stationHandler.service.CreateStation(request.Context(), station)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	writer.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(writer).Encode(stationCreated)
+	utilities.WriteJSON(writer, http.StatusCreated, stationCreated)
 }
 
 // GetStation a handlers method to get a station by id from repositories memory

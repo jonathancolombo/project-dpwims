@@ -38,12 +38,20 @@ export default function TrainsPage() {
                         <p className="text-gray-600 mt-1">Gestione e monitoraggio della flotta ferroviaria</p>
                     </div>
 
-                    <button
-                        onClick={() => navigate("/trains/create")}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow transition"
-                    >
-                        + Crea Treno
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition"
+                        >
+                            ← Torna indietro
+                        </button>
+                        <button
+                            onClick={() => navigate("/trains/create")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow transition"
+                        >
+                            + Crea Treno
+                        </button>
+                    </div>
                 </div>
 
 
