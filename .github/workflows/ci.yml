@@ -9,18 +9,17 @@ on:
 jobs:
   user-service:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repositories
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version: "1.24"
 
       - name: Cache Go modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             user-service/.cache/go-build
@@ -42,18 +41,17 @@ jobs:
 
   trains-service:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repositories
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version: "1.24"
 
       - name: Cache Go modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             trains-service/.cache/go-build
@@ -75,18 +73,17 @@ jobs:
 
   tickets-service:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repositories
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version: "1.24"
 
       - name: Cache Go modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             tickets-service/.cache/go-build
@@ -108,18 +105,17 @@ jobs:
 
   notifications-service:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repositories
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version: "1.24"
 
       - name: Cache Go modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             notifications-service/.cache/go-build
@@ -141,22 +137,21 @@ jobs:
 
   auth-service:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repositories
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version: "1.24"
 
       - name: Cache Go modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
-            notifications-service/.cache/go-build
-            notifications-service/pkg/mod
+            auth-service/.cache/go-build
+            auth-service/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('auth-service/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
 
@@ -174,18 +169,17 @@ jobs:
 
   frontend:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Cache node modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: frontend/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
@@ -194,7 +188,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./frontend
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Run build
         working-directory: ./frontend
