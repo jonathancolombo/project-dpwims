@@ -3,6 +3,9 @@ package utilities
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 // DecodeJSON decodes the JSON body of an HTTP request into a value of type T.
@@ -23,4 +26,15 @@ func WriteJSON(writer http.ResponseWriter, status int, body any) {
 	if err != nil {
 		return
 	}
+}
+
+// ParseIDParam extracts and parses an integer ID from a chi URL parameter.
+func ParseIDParam(writer http.ResponseWriter, request *http.Request, param string) (int64, bool) {
+	idStr := chi.URLParam(request, param)
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(writer, "invalid ID: "+err.Error(), http.StatusBadRequest)
+		return 0, false
+	}
+	return id, true
 }

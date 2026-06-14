@@ -44,17 +44,16 @@ func (stationHandler *StationHandler) CreateStation(writer http.ResponseWriter, 
 
 // GetStation a handlers method to get a station by id from repositories memory
 func (stationHandler *StationHandler) GetStation(writer http.ResponseWriter, request *http.Request) {
-	idStr := chi.URLParam(request, "id")
-	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
-	user, err := stationHandler.service.GetStation(request.Context(), id)
-
-	if err != nil || user == nil {
+	id, ok := utilities.ParseIDParam(writer, request, "id")
+	if !ok {
+		return
+	}
+	station, err := stationHandler.service.GetStation(request.Context(), id)
+	if err != nil || station == nil {
 		http.Error(writer, errorMessageStationNotFound, http.StatusNotFound)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	err = json.NewEncoder(writer).Encode(user)
+	utilities.WriteJSON(writer, http.StatusOK, station)
 }
 
 // GetAllStations a handlers method to get all stations into repositories memory

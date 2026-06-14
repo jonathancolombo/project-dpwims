@@ -46,17 +46,16 @@ func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *
 
 // GetUser a handlers method to get a user by id from repositories memory
 func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *http.Request) {
-	idStr := chi.URLParam(request, "id")
-	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
+	id, ok := utilities.ParseIDParam(writer, request, "id")
+	if !ok {
+		return
+	}
 	user, err := userHandler.service.GetUser(request.Context(), id)
-
 	if err != nil || user == nil {
 		http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	err = json.NewEncoder(writer).Encode(user)
+	utilities.WriteJSON(writer, http.StatusOK, user)
 }
 
 // GetAllUsers a handlers method to get all users into repositories memory
