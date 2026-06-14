@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"trains-service/internal/models"
 )
 
@@ -34,10 +35,11 @@ func (mySqlScheduleStopRepository *MySqlScheduleStopRepository) Create(context c
 	if err != nil {
 		return nil, fmt.Errorf("prepare statement: %w", err)
 	}
-	defer func(stmt *sql.Stmt) {
-		err := stmt.Close()
-		if err != nil {
 
+	defer func(statement *sql.Stmt) {
+		err := statement.Close()
+		if err != nil {
+			log.Printf("close statement error: %v\n", err)
 		}
 	}(statement)
 
@@ -114,7 +116,7 @@ func (mySqlScheduleStopRepository *MySqlScheduleStopRepository) GetAll(context c
 	defer func(rows *sql.Rows) {
 		err := rows.Close()
 		if err != nil {
-
+			log.Printf("close rows error: %v\n", err)
 		}
 	}(rows)
 
@@ -161,21 +163,21 @@ func (mySqlScheduleStopRepository *MySqlScheduleStopRepository) Update(context c
 }
 
 func (mySqlScheduleStopRepository *MySqlScheduleStopRepository) GetStopsBySchedule(ctx context.Context, scheduleId int64) ([]*models.ScheduleStop, error) {
-	query := `
-        SELECT 
-    schedule_stop.id,
-    schedule_stop.schedule_id,
-    schedule_stop.station_id,
-    station.name AS station_name,
-    schedule_stop.stop_order,
-    schedule_stop.arrival_time,
-    schedule_stop.departure_time
-FROM schedules_stops schedule_stop
-JOIN stations station ON schedule_stop.station_id = station.id
-WHERE schedule_stop.schedule_id = ?
-ORDER BY schedule_stop.stop_order ASC
+	var stops []*models.ScheduleStop
 
-    `
+	query := `
+			SELECT 
+		schedule_stop.id,
+		schedule_stop.schedule_id,
+		schedule_stop.station_id,
+		station.name AS station_name,
+		schedule_stop.stop_order,
+		schedule_stop.arrival_time,
+		schedule_stop.departure_time
+	FROM schedules_stops schedule_stop
+	JOIN stations station ON schedule_stop.station_id = station.id
+	WHERE schedule_stop.schedule_id = ?
+	ORDER BY schedule_stop.stop_order`
 
 	rows, err := mySqlScheduleStopRepository.database.QueryContext(ctx, query, scheduleId)
 	if err != nil {
@@ -184,11 +186,9 @@ ORDER BY schedule_stop.stop_order ASC
 	defer func(rows *sql.Rows) {
 		err := rows.Close()
 		if err != nil {
-
+			log.Printf("close rows error: %v\n", err)
 		}
 	}(rows)
-
-	var stops []*models.ScheduleStop
 
 	for rows.Next() {
 		var stop models.ScheduleStop

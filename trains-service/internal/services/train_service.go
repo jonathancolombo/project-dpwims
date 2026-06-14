@@ -8,7 +8,6 @@ import (
 	"log"
 	topics "project-dpwims/shared/mqtt"
 	"time"
-	"trains-service/internal/events"
 	"trains-service/internal/models"
 	"trains-service/internal/repositories"
 
@@ -20,6 +19,11 @@ import (
 type TrainService struct {
 	repository repositories.ITrainRepository
 	mqttClient mqtt.Client
+}
+
+type TrainEvent struct {
+	Event string `json:"event"`
+	Time  string `json:"time"`
 }
 
 // NewTrainService creates a new TrainService instance
@@ -123,7 +127,7 @@ func (trainService *TrainService) UpdateTrain(context context.Context, uuid stri
 
 // PublishArrival a function for publishing a message for status of the train
 func (trainService *TrainService) PublishArrival(trainUUID string, scheduleID int64) error {
-	event := events.TrainEvent{
+	event := TrainEvent{
 		Event: "arrived",
 		Time:  time.Now().Format(time.RFC3339),
 	}

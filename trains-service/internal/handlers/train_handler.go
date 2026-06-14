@@ -15,8 +15,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-const KeyContentType = "Content-TrainType"
-const ValueAppJson = "application/json"
 const errorMessageTrainNotFound = "train not found"
 const errorMessageInvalidUUID = "invalid uuid"
 
@@ -56,7 +54,7 @@ func (trainHandler *TrainHandler) GetTrain(writer http.ResponseWriter, request *
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(train)
 }
 
@@ -68,7 +66,7 @@ func (trainHandler *TrainHandler) GetAllTrains(writer http.ResponseWriter, reque
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(trains)
 }
 
@@ -117,7 +115,7 @@ func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, reques
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	writer.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(writer).Encode(updateTrain)
 	if err != nil {

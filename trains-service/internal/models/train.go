@@ -13,11 +13,8 @@ type Train struct {
 type TrainType string
 
 const (
-	// TrainTypeRegional represents a regional train type.
-	TrainTypeRegional = TrainType("regional")
-	// TrainTypeIntercity represents an intercity train type.
+	TrainTypeRegional  = TrainType("regional")
 	TrainTypeIntercity = TrainType("intercity")
-	// TrainTypeHighSpeed represents a high speed train type.
 	TrainTypeHighSpeed = TrainType("highspeed")
 )
 
@@ -25,9 +22,7 @@ const (
 type Status string
 
 const (
-	// StatusActive represents an active status.
-	StatusActive = Status("active")
-	// StatusInactive represents an inactive status.
+	StatusActive   = Status("active")
 	StatusInactive = Status("inactive")
 )
 

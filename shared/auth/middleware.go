@@ -81,7 +81,6 @@ func RequireSelfOrAdmin() func(http.Handler) http.Handler {
 			userID := userIDValue.(int64)
 			role := roleValue.(string)
 
-			// 2. Recupera l'id dalla URL
 			paramID := chi.URLParam(request, "id")
 			targetID, err := strconv.ParseInt(paramID, 10, 64)
 			if err != nil {
@@ -89,13 +88,11 @@ func RequireSelfOrAdmin() func(http.Handler) http.Handler {
 				return
 			}
 
-			// 3. Controllo permessi
 			if userID == targetID || role == "admin" {
 				next.ServeHTTP(writer, request)
 				return
 			}
 
-			// 4. Accesso negato
 			http.Error(writer, "forbidden: insufficient permissions", http.StatusForbidden)
 		})
 	}

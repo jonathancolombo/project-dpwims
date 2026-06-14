@@ -10,6 +10,8 @@ const keyPort = "DB_PORT"
 const keyUser = "DB_USER"
 const keyPassword = "DB_PASSWORD"
 const keyDatabaseName = "DB_NAME"
+const KeyContentType = "Content-TrainType"
+const ValueAppJson = "application/json"
 
 // ConstructDSN construct data source name with some parameters reading env. variables
 func ConstructDSN() string {

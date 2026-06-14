@@ -1,10 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
+	util "project-dpwims/shared/utilities"
 
 	"auth-service/internal/handlers"
 	"auth-service/internal/routes"
@@ -20,13 +19,7 @@ import (
 )
 
 func main() {
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	name := os.Getenv("DB_NAME")
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, name)
+	dsn := util.ConstructDSN()
 
 	db, err := database.NewMySQLConnection(dsn)
 	if err != nil {

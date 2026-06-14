@@ -64,7 +64,7 @@ func (stationHandler *StationHandler) GetAllStations(writer http.ResponseWriter,
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(stations)
 }
 
@@ -110,7 +110,7 @@ func (stationHandler *StationHandler) UpdateStation(writer http.ResponseWriter, 
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	writer.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(writer).Encode(updateStation)
 	if err != nil {

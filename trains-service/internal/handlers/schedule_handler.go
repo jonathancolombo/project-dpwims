@@ -47,7 +47,7 @@ func (scheduleHandler *ScheduleHandler) GetSchedule(writer http.ResponseWriter, 
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(schedule)
 }
 
@@ -59,7 +59,7 @@ func (scheduleHandler *ScheduleHandler) GetAllSchedules(writer http.ResponseWrit
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(schedules)
 }
 
@@ -101,7 +101,7 @@ func (scheduleHandler *ScheduleHandler) UpdateSchedule(writer http.ResponseWrite
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	writer.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(writer).Encode(route)
 	if err != nil {
