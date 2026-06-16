@@ -57,6 +57,14 @@ func (ticketHandler *TicketHandler) GetTicket(writer http.ResponseWriter, reques
 		return
 	}
 
+	requesterID := request.Context().Value("userID").(int64)
+	role := request.Context().Value("role").(string)
+
+	if role != "admin" && ticket.UserId != requesterID {
+		http.Error(writer, "forbidden", http.StatusForbidden)
+		return
+	}
+
 	writer.Header().Set(KeyContentType, ValueAppJson)
 	err = json.NewEncoder(writer).Encode(ticket)
 }
@@ -81,7 +89,21 @@ func (ticketHandler *TicketHandler) DeleteTicket(writer http.ResponseWriter, req
 		return
 	}
 
-	err := ticketHandler.service.DeleteTicketByID(request.Context(), idString)
+	ticket, err := ticketHandler.service.GetTicket(request.Context(), idString)
+	if err != nil || ticket == nil {
+		http.Error(writer, errorMessageTicketNotFound, http.StatusNotFound)
+		return
+	}
+
+	requesterID := request.Context().Value("userID").(int64)
+	role := request.Context().Value("role").(string)
+
+	if role != "admin" && ticket.UserId != requesterID {
+		http.Error(writer, "forbidden", http.StatusForbidden)
+		return
+	}
+
+	err = ticketHandler.service.DeleteTicketByID(request.Context(), idString)
 	if err != nil {
 		http.Error(writer, errorMessageTicketNotFound, http.StatusNotFound)
 		return
@@ -133,6 +155,14 @@ func (ticketHandler *TicketHandler) GetTicketsByUserID(writer http.ResponseWrite
 		return
 	}
 
+	requesterID := request.Context().Value("userID").(int64)
+	role := request.Context().Value("role").(string)
+
+	if role != "admin" && userID != requesterID {
+		http.Error(writer, "forbidden", http.StatusForbidden)
+		return
+	}
+
 	tickets, err := ticketHandler.service.GetTicketsByUserID(request.Context(), userID)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
@@ -140,5 +170,8 @@ func (ticketHandler *TicketHandler) GetTicketsByUserID(writer http.ResponseWrite
 	}
 
 	writer.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(writer).Encode(tickets)
+	err = json.NewEncoder(writer).Encode(tickets)
+	if err != nil {
+		return
+	}
 }

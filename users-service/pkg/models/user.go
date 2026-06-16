@@ -4,7 +4,7 @@ package models
 type User struct {
 	ID           int64    `json:"id"`
 	Username     string   `json:"username"`
-	Password     string   `json:"password"`
+	Password     string   `json:"-"`
 	Email        string   `json:"email"`
 	FiscalCode   string   `json:"fiscal_code"`
 	Telephone    string   `json:"telephone"`
