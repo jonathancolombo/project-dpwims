@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"strings"
 	"users-service/pkg/models"
 	"users-service/pkg/repositories"
@@ -120,10 +119,6 @@ func (userService *UserService) UpdateUser(context context.Context, id int64, up
 		user.FiscalCode = *updateUserRequest.FiscalCode
 	}
 
-	if updateUserRequest.Role != nil {
-		user.Role = *updateUserRequest.Role
-	}
-	log.Println("Role charged: %w", user.Role)
 	var numberOfBytes = 16
 
 	if updateUserRequest.Password != nil && *updateUserRequest.Password != "" {

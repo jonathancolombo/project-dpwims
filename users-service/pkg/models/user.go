@@ -22,10 +22,9 @@ const (
 
 // UpdateUserRequest a dto model to updating fields
 type UpdateUserRequest struct {
-	Username   *string   `json:"username"`
-	Email      *string   `json:"email"`
-	Telephone  *string   `json:"telephone"`
-	FiscalCode *string   `json:"fiscal_code"`
-	Role       *UserRole `json:"role"`
-	Password   *string   `json:"password"`
+	Username   *string `json:"username"`
+	Email      *string `json:"email"`
+	Telephone  *string `json:"telephone"`
+	FiscalCode *string `json:"fiscal_code"`
+	Password   *string `json:"password"`
 }

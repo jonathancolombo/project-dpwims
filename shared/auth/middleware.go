@@ -69,7 +69,6 @@ func RequireSelfOrAdmin() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 
-			// 1. Recupera userID dal contesto (inserito da ValidateJWT)
 			userIDValue := request.Context().Value("userID")
 			roleValue := request.Context().Value("role")
 

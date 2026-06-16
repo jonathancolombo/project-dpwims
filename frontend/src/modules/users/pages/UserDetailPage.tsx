@@ -15,7 +15,6 @@ export default function UserDetailPage() {
     const [email, setEmail] = useState("");
     const [telephone, setTelephone] = useState("");
     const [fiscalCode, setFiscalCode] = useState("");
-    const [role, setRole] = useState<"admin" | "customer">("customer");
     const [password, setPassword] = useState("");
 
     useEffect(() => {
@@ -28,7 +27,6 @@ export default function UserDetailPage() {
                 setEmail(u.email);
                 setTelephone(u.telephone);
                 setFiscalCode(u.fiscal_code);
-                setRole(u.role);
             })
             .catch(() => setMessage("Errore nel caricamento dell'utente."))
             .finally(() => setLoading(false));
@@ -44,19 +42,8 @@ export default function UserDetailPage() {
                 email,
                 telephone,
                 fiscal_code: fiscalCode,
-                role,
                 password: password || undefined,
             });
-
-            console.log("PATCH DATA:", {
-                username,
-                email,
-                telephone,
-                fiscal_code: fiscalCode,
-                role,
-                password: password || undefined,
-            });
-
 
             navigate("/users");
         } catch (err) {
@@ -134,20 +121,6 @@ export default function UserDetailPage() {
                             onChange={(e) => setFiscalCode(e.target.value.toUpperCase())}
                             className="mt-1 w-full border rounded-lg p-2"
                         />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Ruolo
-                        </label>
-                        <select
-                            value={role}
-                            onChange={(e) => setRole(e.target.value.toLowerCase() as "admin" | "customer")}
-                            className="mt-1 w-full border rounded-lg p-2"
-                        >
-                            <option value="admin">Admin</option>
-                            <option value="customer">Cliente</option>
-                        </select>
                     </div>
 
                     <div>
