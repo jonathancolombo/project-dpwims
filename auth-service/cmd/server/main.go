@@ -36,7 +36,7 @@ func main() {
 
 	routes.RegisterAuthRoutes(router, authHandler)
 
-	log.Println("Auth Service running on port 8082 with url http://localhost:8085")
+	log.Println("Auth Service running on port 8085 with url http://localhost:8085")
 	if err := http.ListenAndServe(":8085", router); err != nil {
 		log.Fatal(err)
 	}
