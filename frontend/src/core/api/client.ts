@@ -47,3 +47,15 @@ apiNotifications.interceptors.request.use((config) => {
     }
     return config;
 });
+
+export const apiAuth: AxiosInstance = axios.create({
+    baseURL: import.meta.env.VITE_API_URL_AUTH,
+});
+
+apiAuth.interceptors.request.use((config) => {
+    const token: string | null = localStorage.getItem("token");
+    if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+});

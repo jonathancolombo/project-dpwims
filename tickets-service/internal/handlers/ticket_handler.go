@@ -12,7 +12,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-const KeyContentType = "Content-TrainType"
+const KeyContentType = "Content-Type"
 const ValueAppJson = "application/json"
 const errorMessageInvalidUUID = "invalid uuid"
 const errorMessageTicketNotFound = "ticket not found"
@@ -44,6 +44,9 @@ func (ticketHandler *TicketHandler) CreateTicket(writer http.ResponseWriter, req
 	writer.Header().Set(KeyContentType, ValueAppJson)
 	writer.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(writer).Encode(created)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 // GetTicket a handlers method to get a ticket by id from repositories memory

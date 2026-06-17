@@ -120,5 +120,24 @@ services:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL_USERS=http://localhost:8081
+        - VITE_API_URL_TRAINS=http://localhost:8082
+        - VITE_API_URL_TICKETS=http://localhost:8083
+        - VITE_API_URL_NOTIFICATIONS=http://localhost:8084
+        - VITE_API_URL_AUTH=http://localhost:8085
+    container_name: frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - users-service
+      - trains-service
+      - tickets-service
+      - notifications-service
+      - auth-service
 volumes:
   db_data:
