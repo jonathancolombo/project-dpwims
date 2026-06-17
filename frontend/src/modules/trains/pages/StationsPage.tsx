@@ -43,12 +43,20 @@ export default function StationsPage() {
             <div className="p-6 max-w-4xl mx-auto space-y-6">
                 <div className="flex justify-between items-center">
                     <h1 className="text-3xl font-bold">Stazioni</h1>
-                    <button
-                        onClick={() => navigate("/stations/create")}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                        + Nuova Stazione
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition"
+                        >
+                            ← Torna indietro
+                        </button>
+                        <button
+                            onClick={() => navigate("/stations/create")}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                        >
+                            + Nuova Stazione
+                        </button>
+                    </div>
                 </div>
 
                 {message && (

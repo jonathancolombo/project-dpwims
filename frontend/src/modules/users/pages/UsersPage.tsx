@@ -31,15 +31,21 @@ export default function UsersPage() {
                         <p className="text-gray-600 mt-1">Amministrazione degli account del sistema</p>
                     </div>
 
-                    <button
-                        onClick={() => navigate("/users/create")}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow transition"
-                    >
-                        + Crea Utente
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition"
+                        >
+                            ← Torna indietro
+                        </button>
+                        <button
+                            onClick={() => navigate("/users/create")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow transition"
+                        >
+                            + Crea Utente
+                        </button>
+                    </div>
                 </div>
-
-                {/* LISTA UTENTI */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {users.map((user) => (
                         <div
@@ -81,10 +87,15 @@ export default function UsersPage() {
                                     Cancella
                                 </button>
                             </div>
+
                         </div>
+
                     ))}
+
                 </div>
+
             </div>
+
         </MainLayout>
     );
 }

@@ -99,6 +99,7 @@ func (scheduleStopService *ScheduleStopService) UpdateStopSchedule(context conte
 	return stopSchedule, nil
 }
 
+// GetStopsBySchedule retrieves all stops associated with a given schedule ID.
 func (scheduleStopService *ScheduleStopService) GetStopsBySchedule(context context.Context, scheduleId int64) ([]*models.ScheduleStop, error) {
 	stops, err := scheduleStopService.repository.GetStopsBySchedule(context, scheduleId)
 	if err != nil {

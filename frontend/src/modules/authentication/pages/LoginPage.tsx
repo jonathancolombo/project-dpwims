@@ -18,11 +18,9 @@ export default function LoginPage() {
             const response = await login(email, password);
             const user = response.data;
 
-            // Salvo l'utente localmente
             localStorage.setItem("token", user.token);
             localStorage.setItem("user", JSON.stringify(user));
 
-            // Controllo permessi
             if (target === "admin" && user.role !== "admin") {
                 setError("Non hai i permessi per accedere all'area admin.");
                 return;

@@ -22,7 +22,6 @@ type FakeUserRepository struct {
 }
 
 func (r *FakeUserRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
-	//TODO implement me
 	panic("implement me")
 }
 
@@ -132,6 +131,8 @@ func TestCreateAndGetUser(testing *testing.T) {
 	request.Header.Set("Content-Type", "application/json")
 	responseRecorder := httptest.NewRecorder()
 	router.ServeHTTP(responseRecorder, request)
+	testing.Logf("CreateUser status: %d, body: %s", responseRecorder.Code, responseRecorder.Body.String())
+
 	assert.Equal(testing, http.StatusCreated, responseRecorder.Code)
 
 	router.Get("/users/{id}", handler.GetUser)

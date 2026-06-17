@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"project-dpwims/shared/utilities"
 	"strconv"
 	"users-service/pkg/models"
 	"users-service/pkg/repositories"
@@ -31,37 +32,40 @@ func NewUserHandler(userService *services.UserService) *UserHandler {
 
 // CreateUser a handlers method to create a new user into repositories memory
 func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *http.Request) {
-	var user models.User
-	err := json.NewDecoder(request.Body).Decode(&user)
-	if err != nil {
-		http.Error(writer, "invalid JSON body"+err.Error(), http.StatusBadRequest)
+	decodeJson, ok := utilities.DecodeJSON[models.CreateUserRequest](writer, request)
+	if !ok {
 		return
 	}
 
-	created, err := userHandler.service.CreateUser(request.Context(), &user)
+	user := &models.User{
+		Username:   decodeJson.Username,
+		Password:   decodeJson.Password,
+		Email:      decodeJson.Email,
+		FiscalCode: decodeJson.FiscalCode,
+		Telephone:  decodeJson.Telephone,
+		Role:       decodeJson.Role,
+	}
+
+	created, err := userHandler.service.CreateUser(request.Context(), user)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	writer.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(writer).Encode(created)
+	utilities.WriteJSON(writer, http.StatusCreated, created)
 }
 
 // GetUser a handlers method to get a user by id from repositories memory
 func (userHandler *UserHandler) GetUser(writer http.ResponseWriter, request *http.Request) {
-	idStr := chi.URLParam(request, "id")
-	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
+	id, ok := utilities.ParseIDParam(writer, request, "id")
+	if !ok {
+		return
+	}
 	user, err := userHandler.service.GetUser(request.Context(), id)
-
 	if err != nil || user == nil {
 		http.Error(writer, errorMessageUserNotFound, http.StatusNotFound)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	err = json.NewEncoder(writer).Encode(user)
+	utilities.WriteJSON(writer, http.StatusOK, user)
 }
 
 // GetAllUsers a handlers method to get all users into repositories memory

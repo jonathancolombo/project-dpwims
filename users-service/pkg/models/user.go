@@ -1,9 +1,10 @@
 package models
 
+// User represents a system user with credentials and profile info.
 type User struct {
 	ID           int64    `json:"id"`
 	Username     string   `json:"username"`
-	Password     string   `json:"password"`
+	Password     string   `json:"-"`
 	Email        string   `json:"email"`
 	FiscalCode   string   `json:"fiscal_code"`
 	Telephone    string   `json:"telephone"`
@@ -11,6 +12,17 @@ type User struct {
 	PasswordSalt string   `json:"-"`
 }
 
+// CreateUserRequest is the DTO used to create a new user.
+type CreateUserRequest struct {
+	Username   string   `json:"username"`
+	Password   string   `json:"password"`
+	Email      string   `json:"email"`
+	FiscalCode string   `json:"fiscal_code"`
+	Telephone  string   `json:"telephone"`
+	Role       UserRole `json:"role"`
+}
+
+// UserRole defines the role assigned to a user.
 type UserRole string
 
 const (
@@ -20,10 +32,9 @@ const (
 
 // UpdateUserRequest a dto model to updating fields
 type UpdateUserRequest struct {
-	Username   *string   `json:"username"`
-	Email      *string   `json:"email"`
-	Telephone  *string   `json:"telephone"`
-	FiscalCode *string   `json:"fiscal_code"`
-	Role       *UserRole `json:"role"`
-	Password   *string   `json:"password"`
+	Username   *string `json:"username"`
+	Email      *string `json:"email"`
+	Telephone  *string `json:"telephone"`
+	FiscalCode *string `json:"fiscal_code"`
+	Password   *string `json:"password"`
 }

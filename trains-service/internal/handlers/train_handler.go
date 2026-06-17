@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"project-dpwims/shared/utilities"
 	"strconv"
 	"trains-service/internal/models"
 	"trains-service/internal/repositories"
@@ -14,8 +15,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-const KeyContentType = "Content-TrainType"
-const ValueAppJson = "application/json"
 const errorMessageTrainNotFound = "train not found"
 const errorMessageInvalidUUID = "invalid uuid"
 
@@ -31,22 +30,17 @@ func NewTrainHandler(trainService *services.TrainService) *TrainHandler {
 
 // CreateTrain a handlers method to create a new train into repositories memory
 func (trainHandler *TrainHandler) CreateTrain(writer http.ResponseWriter, request *http.Request) {
-	var train models.Train
-	err := json.NewDecoder(request.Body).Decode(&train)
-	if err != nil {
-		http.Error(writer, "invalid JSON body"+err.Error(), http.StatusBadRequest)
+	train, ok := utilities.DecodeJSON[models.Train](writer, request)
+	if !ok {
 		return
 	}
 
-	created, err := trainHandler.service.CreateTrain(request.Context(), &train)
+	created, err := trainHandler.service.CreateTrain(request.Context(), train)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	writer.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(writer).Encode(created)
+	utilities.WriteJSON(writer, http.StatusCreated, created)
 }
 
 // GetTrain a handlers method to get a train by id from repositories memory
@@ -60,7 +54,7 @@ func (trainHandler *TrainHandler) GetTrain(writer http.ResponseWriter, request *
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(train)
 }
 
@@ -72,7 +66,7 @@ func (trainHandler *TrainHandler) GetAllTrains(writer http.ResponseWriter, reque
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(trains)
 }
 
@@ -121,7 +115,7 @@ func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, reques
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	writer.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(writer).Encode(updateTrain)
 	if err != nil {

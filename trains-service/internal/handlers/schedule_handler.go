@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"project-dpwims/shared/utilities"
 	"strconv"
 	"trains-service/internal/models"
 	"trains-service/internal/services"
@@ -22,23 +23,17 @@ func NewScheduleHandler(service *services.ScheduleService) *ScheduleHandler {
 
 // CreateSchedule to manage api request to create a schedule
 func (scheduleHandler *ScheduleHandler) CreateSchedule(writer http.ResponseWriter, request *http.Request) {
-	var schedule models.Schedule
-	err := json.NewDecoder(request.Body).Decode(&schedule)
-	if err != nil {
-		http.Error(writer, "invalid JSON body"+err.Error(), http.StatusBadRequest)
+	schedule, ok := utilities.DecodeJSON[models.Schedule](writer, request)
+	if !ok {
 		return
 	}
 
-	created, err := scheduleHandler.service.CreateSchedule(request.Context(), &schedule)
+	created, err := scheduleHandler.service.CreateSchedule(request.Context(), schedule)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	writer.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(writer).Encode(created)
-
+	utilities.WriteJSON(writer, http.StatusCreated, created)
 }
 
 // GetSchedule a handlers method to get a schedule by id from repositories memory
@@ -52,7 +47,7 @@ func (scheduleHandler *ScheduleHandler) GetSchedule(writer http.ResponseWriter, 
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(schedule)
 }
 
@@ -64,7 +59,7 @@ func (scheduleHandler *ScheduleHandler) GetAllSchedules(writer http.ResponseWrit
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(schedules)
 }
 
@@ -106,7 +101,7 @@ func (scheduleHandler *ScheduleHandler) UpdateSchedule(writer http.ResponseWrite
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	writer.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(writer).Encode(route)
 	if err != nil {

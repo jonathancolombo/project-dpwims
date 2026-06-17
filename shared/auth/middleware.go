@@ -69,7 +69,6 @@ func RequireSelfOrAdmin() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 
-			// 1. Recupera userID dal contesto (inserito da ValidateJWT)
 			userIDValue := request.Context().Value("userID")
 			roleValue := request.Context().Value("role")
 
@@ -81,7 +80,6 @@ func RequireSelfOrAdmin() func(http.Handler) http.Handler {
 			userID := userIDValue.(int64)
 			role := roleValue.(string)
 
-			// 2. Recupera l'id dalla URL
 			paramID := chi.URLParam(request, "id")
 			targetID, err := strconv.ParseInt(paramID, 10, 64)
 			if err != nil {
@@ -89,13 +87,11 @@ func RequireSelfOrAdmin() func(http.Handler) http.Handler {
 				return
 			}
 
-			// 3. Controllo permessi
 			if userID == targetID || role == "admin" {
 				next.ServeHTTP(writer, request)
 				return
 			}
 
-			// 4. Accesso negato
 			http.Error(writer, "forbidden: insufficient permissions", http.StatusForbidden)
 		})
 	}

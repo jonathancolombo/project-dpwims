@@ -138,9 +138,9 @@ export default function EditStationPage() {
 
                     <button
                         onClick={() => navigate("/stations")}
-                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg transition"
+                        className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg transition"
                     >
-                        Annulla
+                        ← Torna indietro
                     </button>
                 </div>
             </div>

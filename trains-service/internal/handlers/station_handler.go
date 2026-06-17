@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"project-dpwims/shared/utilities"
 	"strconv"
 	"trains-service/internal/models"
 	"trains-service/internal/repositories"
@@ -28,37 +29,31 @@ func NewStationHandler(stationService *services.StationService) *StationHandler 
 
 // CreateStation a handlers method to create a new station into repositories memory
 func (stationHandler *StationHandler) CreateStation(writer http.ResponseWriter, request *http.Request) {
-	var station models.Station
-	err := json.NewDecoder(request.Body).Decode(&station)
-	if err != nil {
-		http.Error(writer, "invalid JSON body"+err.Error(), http.StatusBadRequest)
+	station, ok := utilities.DecodeJSON[models.Station](writer, request)
+	if !ok {
 		return
 	}
 
-	stationCreated, err := stationHandler.service.CreateStation(request.Context(), &station)
+	stationCreated, err := stationHandler.service.CreateStation(request.Context(), station)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	writer.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(writer).Encode(stationCreated)
+	utilities.WriteJSON(writer, http.StatusCreated, stationCreated)
 }
 
 // GetStation a handlers method to get a station by id from repositories memory
 func (stationHandler *StationHandler) GetStation(writer http.ResponseWriter, request *http.Request) {
-	idStr := chi.URLParam(request, "id")
-	id, err := strconv.ParseInt(idStr, baseNumber, bitSize)
-	user, err := stationHandler.service.GetStation(request.Context(), id)
-
-	if err != nil || user == nil {
+	id, ok := utilities.ParseIDParam(writer, request, "id")
+	if !ok {
+		return
+	}
+	station, err := stationHandler.service.GetStation(request.Context(), id)
+	if err != nil || station == nil {
 		http.Error(writer, errorMessageStationNotFound, http.StatusNotFound)
 		return
 	}
-
-	writer.Header().Set(KeyContentType, ValueAppJson)
-	err = json.NewEncoder(writer).Encode(user)
+	utilities.WriteJSON(writer, http.StatusOK, station)
 }
 
 // GetAllStations a handlers method to get all stations into repositories memory
@@ -69,7 +64,7 @@ func (stationHandler *StationHandler) GetAllStations(writer http.ResponseWriter,
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(stations)
 }
 
@@ -115,7 +110,7 @@ func (stationHandler *StationHandler) UpdateStation(writer http.ResponseWriter, 
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	writer.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(writer).Encode(updateStation)
 	if err != nil {
