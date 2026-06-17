@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"project-dpwims/shared/utilities"
 	"strconv"
 	"trains-service/internal/models"
 	"trains-service/internal/services"
@@ -34,7 +35,7 @@ func (stopScheduleHandler *StopScheduleHandler) CreateStopSchedule(writer http.R
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	writer.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(writer).Encode(created)
 }
@@ -50,7 +51,7 @@ func (stopScheduleHandler *StopScheduleHandler) GetStopSchedule(writer http.Resp
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	err = json.NewEncoder(writer).Encode(stopSchedule)
 }
 
@@ -66,7 +67,10 @@ func (stopScheduleHandler *StopScheduleHandler) GetAllStopSchedules(writer http.
 	}
 
 	writer.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(writer).Encode(stops)
+	err = json.NewEncoder(writer).Encode(stops)
+	if err != nil {
+		return
+	}
 }
 
 // DeleteStopSchedule a handlers method to delete a stop schedule by id from repositories memory
@@ -108,7 +112,7 @@ func (stopScheduleHandler *StopScheduleHandler) UpdateStopSchedule(writer http.R
 		return
 	}
 
-	writer.Header().Set(KeyContentType, ValueAppJson)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
 	writer.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(writer).Encode(route)
 	if err != nil {
@@ -116,22 +120,23 @@ func (stopScheduleHandler *StopScheduleHandler) UpdateStopSchedule(writer http.R
 	}
 }
 
-func (stopScheduleHandler *StopScheduleHandler) GetStopsBySchedule(w http.ResponseWriter, r *http.Request) {
-	scheduleIdStr := chi.URLParam(r, "scheduleId")
+func (stopScheduleHandler *StopScheduleHandler) GetStopsBySchedule(writer http.ResponseWriter, request *http.Request) {
+	scheduleIdStr := chi.URLParam(request, "scheduleId")
 	scheduleId, err := strconv.ParseInt(scheduleIdStr, 10, 64)
 	if err != nil {
-		http.Error(w, "invalid schedule id", http.StatusBadRequest)
+		http.Error(writer, "invalid schedule id", http.StatusBadRequest)
 		return
 	}
 
-	stops, err := stopScheduleHandler.service.GetStopsBySchedule(r.Context(), scheduleId)
+	stops, err := stopScheduleHandler.service.GetStopsBySchedule(request.Context(), scheduleId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set(KeyContentType, ValueAppJson)
-	err = json.NewEncoder(w).Encode(stops)
+	writer.Header().Set(utilities.KeyContentType, utilities.ValueAppJson)
+
+	err = json.NewEncoder(writer).Encode(stops)
 	if err != nil {
 		return
 	}

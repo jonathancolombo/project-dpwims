@@ -1,11 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"project-dpwims/database"
+	util "project-dpwims/shared/utilities"
 
 	sharedAuth "project-dpwims/shared/auth"
 
@@ -26,14 +25,9 @@ const urlPaymentsID = "/payments/{uuid}"
 
 // main, runs with this command in the terminal: docker compose --env-file ./env/.env up --build
 func main() {
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	name := os.Getenv("DB_NAME")
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, name)
-
+	dsn := util.ConstructDSN()
 	db, errorConnection := database.NewMySQLConnection(dsn)
+
 	if errorConnection != nil {
 		log.Fatal(errorConnection)
 	}
@@ -47,7 +41,6 @@ func main() {
 
 	router := chi.NewRouter()
 
-	// ROTTE PUBBLICHE
 	router.Group(func(chiRouter chi.Router) {
 		chiRouter.Use(sharedAuth.ValidateJWT)
 
@@ -60,15 +53,12 @@ func main() {
 		chiRouter.Delete(urlTicketsID, ticketHandler.DeleteTicket)
 	})
 
-	// ROTTE ADMIN
 	router.Group(func(chiRouter chi.Router) {
 		chiRouter.Use(sharedAuth.ValidateJWT)
 		chiRouter.Use(sharedAuth.RequireRole("admin"))
-		// Ticket admin
 		chiRouter.Get(urlTickets, ticketHandler.GetAllTickets)
 		chiRouter.Patch(urlTicketsID, ticketHandler.UpdateTicket)
 
-		// Payments admin
 		chiRouter.Get(urlPayments, paymentHandler.GetAllPayments)
 		chiRouter.Delete(urlPaymentsID, paymentHandler.DeletePayment)
 		chiRouter.Patch(urlPaymentsID, paymentHandler.UpdatePayment)

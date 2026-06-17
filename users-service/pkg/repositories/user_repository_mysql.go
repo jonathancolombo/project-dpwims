@@ -27,10 +27,7 @@ func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, 
 		return nil, errors.New("user is nil")
 	}
 
-	query := `INSERT INTO users 
-    (username, password, password_salt, email, fiscal_code, telephone, role) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)`
-
+	query := `INSERT INTO users (username, password, password_salt, email, fiscal_code, telephone, role) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	statement, err := mySqlUserRepository.database.PrepareContext(context, query)
 
 	if err != nil {
@@ -68,19 +65,15 @@ func (mySqlUserRepository *MySQLUserRepository) Create(context context.Context, 
 
 // GetByID is a method to find the right user using id field
 func (mySqlUserRepository *MySQLUserRepository) GetByID(context context.Context, id int64) (*models.User, error) {
-	query := `
-        SELECT id, username, password, email, fiscal_code, telephone, role
-        FROM users
-        WHERE id = ?
-    `
-
+	var user models.User
+	query := `SELECT id, username, password, email, fiscal_code, telephone, role FROM users WHERE id = ?`
 	row := mySqlUserRepository.database.QueryRowContext(context, query, id)
 
-	var user models.User
 	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.FiscalCode, &user.Telephone, &user.Role)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, ErrUserNotFound
 	}
+
 	if err != nil {
 		return nil, fmt.Errorf("scan user: %w", err)
 	}
@@ -90,15 +83,15 @@ func (mySqlUserRepository *MySQLUserRepository) GetByID(context context.Context,
 
 // GetAll retrieves all users into a slice
 func (mySqlUserRepository *MySQLUserRepository) GetAll(context context.Context) ([]*models.User, error) {
-	query := `
-        SELECT id, username, password, email, fiscal_code, telephone, role
-        FROM users
-    `
+	var users []*models.User
+
+	query := `SELECT id, username, password, email, fiscal_code, telephone, role FROM users`
 
 	rows, err := mySqlUserRepository.database.QueryContext(context, query)
 	if err != nil {
 		return nil, fmt.Errorf("query all users: %w", err)
 	}
+
 	defer func(rows *sql.Rows) {
 		err := rows.Close()
 		if err != nil {
@@ -106,7 +99,6 @@ func (mySqlUserRepository *MySQLUserRepository) GetAll(context context.Context) 
 		}
 	}(rows)
 
-	var users []*models.User
 	for rows.Next() {
 		var user models.User
 		if err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.FiscalCode, &user.Telephone, &user.Role); err != nil {
@@ -165,6 +157,8 @@ func (mySqlUserRepository *MySQLUserRepository) Update(context context.Context, 
 
 // GetByEmail is a method that's retrieve a user by his email
 func (mySqlUserRepository *MySQLUserRepository) GetByEmail(context context.Context, email string) (*models.User, error) {
+	var user models.User
+
 	query := `
         SELECT id, username, email, password, password_salt, role, fiscal_code, telephone
         FROM users
@@ -173,8 +167,6 @@ func (mySqlUserRepository *MySQLUserRepository) GetByEmail(context context.Conte
     `
 
 	row := mySqlUserRepository.database.QueryRowContext(context, query, email)
-
-	var user models.User
 
 	err := row.Scan(
 		&user.ID,

@@ -8,8 +8,6 @@ import (
 	"trains-service/internal/models"
 )
 
-var ErrScheduleNotFound = errors.New("schedule not found")
-
 // MySQLScheduleRepository is a struct that implements the IScheduleRepository interface using a MySQL database as the data source.
 type MySQLScheduleRepository struct {
 	database *sql.DB

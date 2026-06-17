@@ -139,6 +139,7 @@ func (scheduleService *ScheduleService) UpdateSchedule(context context.Context, 
 	return schedule, nil
 }
 
+// publishScheduleUpdate publishes a schedule_updated event to the MQTT broker for the given schedule.
 func (scheduleService *ScheduleService) publishScheduleUpdate(schedule *models.Schedule) {
 	payload, err := json.Marshal(map[string]interface{}{
 		"event":       "schedule_updated",

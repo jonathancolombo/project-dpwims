@@ -14,7 +14,6 @@ export interface UpdateUserRequest {
     email?: string;
     telephone?: string;
     fiscal_code?: string;
-    role?: UserRole;
     password?: string;
 }
 

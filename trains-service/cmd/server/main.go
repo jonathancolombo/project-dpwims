@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"project-dpwims/database"
 	sharedAuth "project-dpwims/shared/auth"
+	util "project-dpwims/shared/utilities"
 	"time"
 	"trains-service/internal/handlers"
 	"trains-service/internal/repositories"
@@ -35,14 +35,9 @@ const clientID = "train-service"
 const keepAlive = 3 * time.Second
 const connectRetryInterval = 3 * time.Second
 
-// main, runs with this command in the terminal: docker compose --env-file ./env/.env up --build
 func main() {
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	name := os.Getenv("DB_NAME")
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, name)
+	dsn := util.ConstructDSN()
+
 	brokerURL := os.Getenv("MQTT_BROKER")
 
 	db, errorConnection := database.NewMySQLConnection(dsn)
@@ -82,12 +77,11 @@ func main() {
 	stopScheduleHandler := handlers.NewStopScheduleHandler(stopScheduleService)
 
 	router := chi.NewRouter()
-	// ROTTE PUBBLICHE
+
 	router.Get(urlTrains, trainHandler.GetAllTrains)
 	router.Get(urlTrainsId, trainHandler.GetTrain)
 	router.Get(urlSchedules, scheduleHandler.GetAllSchedules)
 
-	// ROTTE ADMIN
 	router.Group(func(chiRouter chi.Router) {
 		chiRouter.Use(sharedAuth.ValidateJWT)
 		chiRouter.Use(sharedAuth.RequireRole("admin"))

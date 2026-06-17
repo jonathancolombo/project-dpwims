@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"strings"
 	"users-service/pkg/models"
 	"users-service/pkg/repositories"
@@ -19,12 +18,12 @@ type UserService struct {
 	repository repositories.IUserRepository
 }
 
-// NewUserService creates a new UserService instance
+// NewUserService creates a new UserService instance.
 func NewUserService(repository repositories.IUserRepository) *UserService {
 	return &UserService{repository: repository}
 }
 
-// CreateUser creates a new user
+// CreateUser creates a new user, validating required fields, normalizing input data, and hashing the password.
 func (userService *UserService) CreateUser(context context.Context, user *models.User) (*models.User, error) {
 	if user == nil {
 		return nil, errors.New("user is nil")
@@ -61,7 +60,6 @@ func (userService *UserService) CreateUser(context context.Context, user *models
 		fmt.Println(err)
 		return nil, err
 	}
-	fmt.Println(hashed)
 
 	user.Username = strings.ToLower(strings.TrimSpace(user.Username))
 	user.Password = hashed.Hash
@@ -70,7 +68,116 @@ func (userService *UserService) CreateUser(context context.Context, user *models
 	return userService.repository.Create(context, user)
 }
 
-// isValidEmail validates an email address, ensuring it is non-empty, contains "@" and ".", and has proper structure.
+// GetUser retrieves a user by their ID
+func (userService *UserService) GetUser(context context.Context, id int64) (*models.User, error) {
+	return userService.repository.GetByID(context, id)
+}
+
+// GetAllUsers retrieves all users
+func (userService *UserService) GetAllUsers(context context.Context) ([]*models.User, error) {
+	if userService.repository == nil {
+		return nil, errors.New("repositories is nil")
+	}
+	return userService.repository.GetAll(context)
+}
+
+// GetUserByEmail retrieves a user by their email
+func (userService *UserService) GetUserByEmail(context context.Context, email string) (*models.User, error) {
+	if strings.TrimSpace(email) == "" {
+		return nil, errors.New("email is required")
+	}
+
+	email = strings.ToLower(strings.TrimSpace(email))
+
+	return userService.repository.GetByEmail(context, email)
+}
+
+// UpdateUser updates an existing user's data, applying only the non-nil fields from the request.
+func (userService *UserService) UpdateUser(context context.Context, id int64, updateUserRequest models.UpdateUserRequest) (*models.User, error) {
+	user, err := userService.repository.GetByID(context, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if updateUserRequest.Username != nil {
+		user.Username = *updateUserRequest.Username
+	}
+
+	if updateUserRequest.Email != nil {
+		if !isValidEmail(*updateUserRequest.Email) {
+			return nil, errors.New("invalid email")
+		}
+		user.Email = *updateUserRequest.Email
+	}
+
+	if updateUserRequest.Telephone != nil {
+		user.Telephone = *updateUserRequest.Telephone
+	}
+
+	if updateUserRequest.FiscalCode != nil {
+		user.FiscalCode = *updateUserRequest.FiscalCode
+	}
+
+	var numberOfBytes = 16
+
+	if updateUserRequest.Password != nil && *updateUserRequest.Password != "" {
+
+		if looksLikeSHA256(*updateUserRequest.Password) {
+			return nil, errors.New("password must be provided in plain text, not hashed")
+		}
+		salt, _ := generateSalt(numberOfBytes)
+		hashed := hashPasswordWithSha256(*updateUserRequest.Password, salt)
+		user.Password = hashed
+		user.PasswordSalt = salt
+	}
+
+	if err := userService.repository.Update(context, user); err != nil {
+		return nil, err
+	}
+	return user, nil
+
+}
+
+// DeleteUserByID deletes a user by their ID
+func (userService *UserService) DeleteUserByID(context context.Context, id int64) error {
+	if id <= 0 {
+		return errors.New("id must be greater than 0")
+	}
+	return userService.repository.DeleteByID(context, id)
+}
+
+// VerifyPassword verifies a plain password against the stored hash+salt
+func (userService *UserService) VerifyPassword(user *models.User, password string) bool {
+	if user == nil {
+		return false
+	}
+	return verifyPasswordSHA256(password, user.PasswordSalt, user.Password)
+}
+
+// HashedPassword holds the hash and salt derived from a plain-text password.
+type HashedPassword struct {
+	Hash string
+	Salt string
+}
+
+// NewHashedPassword generates a random salt and computes the SHA-256 hash of the given password.
+func NewHashedPassword(password string) (*HashedPassword, error) {
+	var numberOfBytes = 16
+	salt, err := generateSalt(numberOfBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	hash := hashPasswordWithSha256(password, salt)
+
+	return &HashedPassword{
+		Hash: hash,
+		Salt: salt,
+	}, nil
+}
+
+// isValidEmail returns true if the email is non-empty, contains exactly one "@", and has a domain with a "."
 func isValidEmail(email string) bool {
 	email = strings.TrimSpace(strings.ToLower(email))
 	if email == "" {
@@ -102,34 +209,7 @@ func isValidEmail(email string) bool {
 	return true
 }
 
-// GetAllUsers retrieves all users
-func (userService *UserService) GetAllUsers(context context.Context) ([]*models.User, error) {
-	if userService.repository == nil {
-		return nil, errors.New("repositories is nil")
-	}
-	return userService.repository.GetAll(context)
-}
-
-// DeleteUserByID deletes a user by their ID
-func (userService *UserService) DeleteUserByID(context context.Context, id int64) error {
-	if id <= 0 {
-		return errors.New("id must be greater than 0")
-	}
-	return userService.repository.DeleteByID(context, id)
-}
-
-// GetUser retrieves a user by their ID
-func (userService *UserService) GetUser(context context.Context, id int64) (*models.User, error) {
-	return userService.repository.GetByID(context, id)
-}
-
-type HashedPassword struct {
-	Hash string
-	Salt string
-}
-
-// generateSalt generates a random salt of the specified number of bytes
-// example generateSalt(16) => "a1b2c3d4e5f6g7h8"
+// generateSalt generates a random salt of the given number of bytes and returns it as a hex-encoded string.
 func generateSalt(numberOfBytes int) (string, error) {
 	bytes := make([]byte, numberOfBytes)
 	if _, err := io.ReadFull(rand.Reader, bytes); err != nil {
@@ -138,11 +218,7 @@ func generateSalt(numberOfBytes int) (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-// hashPasswordWithSha256 hashes a given password using the SHA-256 algorithm and returns the hex-encoded string.
-/*
-	example: hashPasswordWithSha256("SuperSegreta123!", "a1b2c3d4e5f6g7h8") =>
-	"9f3c8e0a7b1d2c4e5f6a7b8c9d0e1f2a3b4c5d67e8f90123456789abcdef0123"
-*/
+// hashPasswordWithSha256 computes the SHA-256 hash of the concatenation of password and salt.
 func hashPasswordWithSha256(password string, salt string) string {
 	hash := sha256.New()
 	hash.Write([]byte(password))
@@ -156,73 +232,6 @@ func verifyPasswordSHA256(password string, salt string, expectedHash string) boo
 	return computed == expectedHash
 }
 
-// NewHashedPassword take a password and computes a hash with a specified salt
-func NewHashedPassword(password string) (*HashedPassword, error) {
-	var numberOfBytes = 16
-	salt, err := generateSalt(numberOfBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	hash := hashPasswordWithSha256(password, salt)
-
-	return &HashedPassword{
-		Hash: hash,
-		Salt: salt,
-	}, nil
-}
-
-// UpdateUser a function services to updating a user
-func (userService *UserService) UpdateUser(context context.Context, id int64, updateUserRequest models.UpdateUserRequest) (*models.User, error) {
-	user, err := userService.repository.GetByID(context, id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if updateUserRequest.Username != nil {
-		user.Username = *updateUserRequest.Username
-	}
-
-	if updateUserRequest.Email != nil {
-		if !isValidEmail(*updateUserRequest.Email) {
-			return nil, errors.New("invalid email")
-		}
-		user.Email = *updateUserRequest.Email
-	}
-
-	if updateUserRequest.Telephone != nil {
-		user.Telephone = *updateUserRequest.Telephone
-	}
-
-	if updateUserRequest.FiscalCode != nil {
-		user.FiscalCode = *updateUserRequest.FiscalCode
-	}
-
-	if updateUserRequest.Role != nil {
-		user.Role = *updateUserRequest.Role
-	}
-	log.Println("Role charged: %w", user.Role)
-	var numberOfBytes = 16
-
-	if updateUserRequest.Password != nil && *updateUserRequest.Password != "" {
-
-		if looksLikeSHA256(*updateUserRequest.Password) {
-			return nil, errors.New("password must be provided in plain text, not hashed")
-		}
-		salt, _ := generateSalt(numberOfBytes)
-		hashed := hashPasswordWithSha256(*updateUserRequest.Password, salt)
-		user.Password = hashed
-		user.PasswordSalt = salt
-	}
-
-	if err := userService.repository.Update(context, user); err != nil {
-		return nil, err
-	}
-	return user, nil
-
-}
-
 // looksLikeSHA256 checks if the provided password string appears to be a valid SHA-256 hash by verifying its length and character composition.
 func looksLikeSHA256(password string) bool {
 	if len(password) != 64 {
@@ -234,23 +243,4 @@ func looksLikeSHA256(password string) bool {
 		}
 	}
 	return true
-}
-
-// GetUserByEmail retrieves a user by their email
-func (userService *UserService) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
-	if strings.TrimSpace(email) == "" {
-		return nil, errors.New("email is required")
-	}
-
-	email = strings.ToLower(strings.TrimSpace(email))
-
-	return userService.repository.GetByEmail(ctx, email)
-}
-
-// VerifyPassword verifies a plain password against the stored hash+salt
-func (userService *UserService) VerifyPassword(user *models.User, password string) bool {
-	if user == nil {
-		return false
-	}
-	return verifyPasswordSHA256(password, user.PasswordSalt, user.Password)
 }

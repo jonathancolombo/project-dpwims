@@ -1,0 +1,28 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+ARG VITE_API_URL_USERS
+ARG VITE_API_URL_TRAINS
+ARG VITE_API_URL_TICKETS
+ARG VITE_API_URL_NOTIFICATIONS
+ARG VITE_API_URL_AUTH
+
+ENV VITE_API_URL_USERS=$VITE_API_URL_USERS
+ENV VITE_API_URL_TRAINS=$VITE_API_URL_TRAINS
+ENV VITE_API_URL_TICKETS=$VITE_API_URL_TICKETS
+ENV VITE_API_URL_NOTIFICATIONS=$VITE_API_URL_NOTIFICATIONS
+ENV VITE_API_URL_AUTH=$VITE_API_URL_AUTH
+
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY print-url.sh /print-url.sh
+RUN chmod +x /print-url.sh
+EXPOSE 80
+CMD ["/print-url.sh"]
