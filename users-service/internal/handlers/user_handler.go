@@ -32,10 +32,20 @@ func NewUserHandler(userService *services.UserService) *UserHandler {
 
 // CreateUser a handlers method to create a new user into repositories memory
 func (userHandler *UserHandler) CreateUser(writer http.ResponseWriter, request *http.Request) {
-	user, ok := utilities.DecodeJSON[models.User](writer, request)
+	decodeJson, ok := utilities.DecodeJSON[models.CreateUserRequest](writer, request)
 	if !ok {
 		return
 	}
+
+	user := &models.User{
+		Username:   decodeJson.Username,
+		Password:   decodeJson.Password,
+		Email:      decodeJson.Email,
+		FiscalCode: decodeJson.FiscalCode,
+		Telephone:  decodeJson.Telephone,
+		Role:       decodeJson.Role,
+	}
+
 	created, err := userHandler.service.CreateUser(request.Context(), user)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)

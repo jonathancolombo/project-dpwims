@@ -12,6 +12,16 @@ type User struct {
 	PasswordSalt string   `json:"-"`
 }
 
+// CreateUserRequest is the DTO used to create a new user.
+type CreateUserRequest struct {
+	Username   string   `json:"username"`
+	Password   string   `json:"password"`
+	Email      string   `json:"email"`
+	FiscalCode string   `json:"fiscal_code"`
+	Telephone  string   `json:"telephone"`
+	Role       UserRole `json:"role"`
+}
+
 // UserRole defines the role assigned to a user.
 type UserRole string
 
