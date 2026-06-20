@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"notifications-service/internal/models"
 	"notifications-service/internal/repository"
+	util "project-dpwims/shared/utilities"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
@@ -40,7 +41,7 @@ func (handler *Handler) Subscribe(writer http.ResponseWriter, request *http.Requ
 }
 
 func (handler *Handler) GetSubscription(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Content-Type", "application/json")
+	writer.Header().Set(util.KeyContentType, util.ValueAppJson)
 	userIDStr := request.URL.Query().Get("user_id")
 	if userIDStr != "" {
 		userID, err := strconv.ParseInt(userIDStr, baseNumber, bitSize)
@@ -54,7 +55,10 @@ func (handler *Handler) GetSubscription(writer http.ResponseWriter, request *htt
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		json.NewEncoder(writer).Encode(subscriptions)
+		err = json.NewEncoder(writer).Encode(subscriptions)
+		if err != nil {
+			return
+		}
 		return
 	}
 
@@ -63,7 +67,10 @@ func (handler *Handler) GetSubscription(writer http.ResponseWriter, request *htt
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(writer).Encode(subs)
+	err = json.NewEncoder(writer).Encode(subs)
+	if err != nil {
+		return
+	}
 }
 
 func (handler *Handler) GetSubscriptionsByTrain(writer http.ResponseWriter, request *http.Request) {
@@ -74,7 +81,10 @@ func (handler *Handler) GetSubscriptionsByTrain(writer http.ResponseWriter, requ
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(writer).Encode(subs)
+	err = json.NewEncoder(writer).Encode(subs)
+	if err != nil {
+		return
+	}
 }
 
 func (handler *Handler) GetSubscriptionsBySchedule(writer http.ResponseWriter, request *http.Request) {
@@ -90,7 +100,10 @@ func (handler *Handler) GetSubscriptionsBySchedule(writer http.ResponseWriter, r
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(writer).Encode(subs)
+	err = json.NewEncoder(writer).Encode(subs)
+	if err != nil {
+		return
+	}
 }
 
 func (handler *Handler) DeleteSubscription(writer http.ResponseWriter, request *http.Request) {

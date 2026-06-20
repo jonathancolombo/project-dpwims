@@ -8,135 +8,110 @@ import (
 )
 
 type MySQLSubscriptionRepository struct {
-	database *sql.DB
+	db *sql.DB
 }
 
 func NewMySQLSubscriptionRepository(db *sql.DB) *MySQLSubscriptionRepository {
-	return &MySQLSubscriptionRepository{database: db}
+	return &MySQLSubscriptionRepository{db: db}
 }
 
-func (r *MySQLSubscriptionRepository) AddSubscription(context context.Context, userID int64, trainUUID string, scheduleID int64) error {
-	_, err := r.database.ExecContext(context, "INSERT INTO subscriptions (user_id, train_uuid, schedule_id) VALUES (?, ?, ?)", userID, trainUUID, scheduleID)
+func (r *MySQLSubscriptionRepository) AddSubscription(ctx context.Context, userID int64, trainUUID string, scheduleID int64) error {
+	_, err := r.db.ExecContext(ctx,
+		"INSERT INTO subscriptions (user_id, train_uuid, schedule_id) VALUES (?, ?, ?)",
+		userID, trainUUID, scheduleID,
+	)
 	return err
 }
 
-func (r *MySQLSubscriptionRepository) GetUsersByScheduleID(context context.Context, scheduleID int64) ([]int64, error) {
-	rows, err := r.database.QueryContext(context, "SELECT user_id FROM subscriptions WHERE schedule_id = ?", scheduleID)
-	if err != nil {
-		return nil, err
-	}
-	defer func(rows *sql.Rows) {
-		if err := rows.Close(); err != nil {
-			log.Fatalf("failed to close rows: %v", err)
-		}
-	}(rows)
+func (r *MySQLSubscriptionRepository) GetUsersByScheduleID(ctx context.Context, scheduleID int64) ([]int64, error) {
+	return r.queryUserIDs(ctx,
+		"SELECT user_id FROM subscriptions WHERE schedule_id = ?",
+		scheduleID,
+	)
+}
 
-	var users []int64
+func (r *MySQLSubscriptionRepository) GetAllSubscriptions(ctx context.Context) ([]models.Subscription, error) {
+	return r.querySubscriptions(ctx,
+		"SELECT id, user_id, train_uuid, schedule_id FROM subscriptions",
+	)
+}
+
+func (r *MySQLSubscriptionRepository) GetByUser(ctx context.Context, userID int64) ([]models.Subscription, error) {
+	return r.querySubscriptions(ctx,
+		"SELECT id, user_id, train_uuid, schedule_id FROM subscriptions WHERE user_id = ?",
+		userID,
+	)
+}
+
+func (r *MySQLSubscriptionRepository) GetByTrain(ctx context.Context, trainUUID string) ([]models.Subscription, error) {
+	return r.querySubscriptions(ctx,
+		"SELECT id, user_id, train_uuid, schedule_id FROM subscriptions WHERE train_uuid = ?",
+		trainUUID,
+	)
+}
+
+func (r *MySQLSubscriptionRepository) GetBySchedule(ctx context.Context, scheduleID int64) ([]models.Subscription, error) {
+	return r.querySubscriptions(ctx,
+		"SELECT id, user_id, train_uuid, schedule_id FROM subscriptions WHERE schedule_id = ?",
+		scheduleID,
+	)
+}
+
+func (r *MySQLSubscriptionRepository) Delete(ctx context.Context, id int64) error {
+	_, err := r.db.ExecContext(ctx,
+		"DELETE FROM subscriptions WHERE id = ?",
+		id,
+	)
+	return err
+}
+
+func (r *MySQLSubscriptionRepository) querySubscriptions(ctx context.Context, query string, args ...any) ([]models.Subscription, error) {
+	rows, err := r.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		log.Println("query error:", err)
+		return []models.Subscription{}, err
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Println("failed to close rows:", err)
+		}
+	}()
+
+	subs := make([]models.Subscription, 0)
+
+	for rows.Next() {
+		var s models.Subscription
+		if err := rows.Scan(&s.ID, &s.UserID, &s.TrainUUID, &s.ScheduleID); err != nil {
+			log.Println("scan error:", err)
+			return []models.Subscription{}, err
+		}
+		subs = append(subs, s)
+	}
+
+	return subs, nil
+}
+
+func (r *MySQLSubscriptionRepository) queryUserIDs(ctx context.Context, query string, args ...any) ([]int64, error) {
+	rows, err := r.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return []int64{}, err
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Println("failed to close rows:", err)
+		}
+	}()
+
+	ids := make([]int64, 0)
+
 	for rows.Next() {
 		var id int64
 		if err := rows.Scan(&id); err != nil {
-			return nil, err
+			log.Println("scan error:", err)
+			return []int64{}, err
 		}
-		users = append(users, id)
+		ids = append(ids, id)
 	}
-	return users, nil
-}
 
-func (r *MySQLSubscriptionRepository) GetAllSubscriptions(context context.Context) ([]models.Subscription, error) {
-	rows, err := r.database.QueryContext(context, "SELECT id, user_id, train_uuid, schedule_id FROM subscriptions")
-	if err != nil {
-		return nil, err
-	}
-	defer func(rows *sql.Rows) {
-		if err := rows.Close(); err != nil {
-			log.Println("failed to close rows: ", err)
-		}
-	}(rows)
-
-	subscriptions := []models.Subscription{}
-	for rows.Next() {
-		var s models.Subscription
-		if err := rows.Scan(&s.ID, &s.UserID, &s.TrainUUID, &s.ScheduleID); err != nil {
-			return nil, err
-		}
-		subscriptions = append(subscriptions, s)
-	}
-	return subscriptions, nil
-}
-
-func (r *MySQLSubscriptionRepository) GetByUser(context context.Context, userID int64) ([]models.Subscription, error) {
-	rows, err := r.database.QueryContext(context, "SELECT id, user_id, train_uuid, schedule_id FROM subscriptions WHERE user_id = ?", userID)
-	if err != nil {
-		log.Println("failed to execute query: ", err)
-		return []models.Subscription{}, err
-	}
-	defer func(rows *sql.Rows) {
-		if err := rows.Close(); err != nil {
-			log.Println("failed to close rows: ", err)
-		}
-	}(rows)
-
-	subscriptions := []models.Subscription{}
-	for rows.Next() {
-		var s models.Subscription
-		if err := rows.Scan(&s.ID, &s.UserID, &s.TrainUUID, &s.ScheduleID); err != nil {
-			log.Println("failed to scan row: ", err)
-			return []models.Subscription{}, err
-		}
-		subscriptions = append(subscriptions, s)
-	}
-	return subscriptions, nil
-}
-
-func (r *MySQLSubscriptionRepository) GetByTrain(context context.Context, trainUUID string) ([]models.Subscription, error) {
-	rows, err := r.database.QueryContext(context, "SELECT id, user_id, train_uuid, schedule_id FROM subscriptions WHERE train_uuid = ?", trainUUID)
-	if err != nil {
-		log.Println("failed to execute query: ", err)
-		return []models.Subscription{}, err
-	}
-	defer func(rows *sql.Rows) {
-		if err := rows.Close(); err != nil {
-			log.Println("failed to close rows: ", err)
-		}
-	}(rows)
-
-	subscriptions := []models.Subscription{}
-	for rows.Next() {
-		var s models.Subscription
-		if err := rows.Scan(&s.ID, &s.UserID, &s.TrainUUID, &s.ScheduleID); err != nil {
-			log.Println("failed to scan row: ", err)
-			return []models.Subscription{}, err
-		}
-		subscriptions = append(subscriptions, s)
-	}
-	return subscriptions, nil
-}
-
-func (r *MySQLSubscriptionRepository) GetBySchedule(context context.Context, scheduleID int64) ([]models.Subscription, error) {
-	rows, err := r.database.QueryContext(context, "SELECT id, user_id, train_uuid, schedule_id FROM subscriptions WHERE schedule_id = ?", scheduleID)
-	if err != nil {
-		log.Println("failed to execute query: ", err)
-		return []models.Subscription{}, err
-	}
-	defer func(rows *sql.Rows) {
-		if err := rows.Close(); err != nil {
-			log.Println("failed to close rows: ", err)
-		}
-	}(rows)
-
-	subscriptions := []models.Subscription{}
-	for rows.Next() {
-		var s models.Subscription
-		if err := rows.Scan(&s.ID, &s.UserID, &s.TrainUUID, &s.ScheduleID); err != nil {
-			log.Println("failed to scan row: ", err)
-			return []models.Subscription{}, err
-		}
-		subscriptions = append(subscriptions, s)
-	}
-	return subscriptions, nil
-}
-
-func (r *MySQLSubscriptionRepository) Delete(context context.Context, id int64) error {
-	_, err := r.database.ExecContext(context, "DELETE FROM subscriptions WHERE id = ?", id)
-	return err
+	return ids, nil
 }

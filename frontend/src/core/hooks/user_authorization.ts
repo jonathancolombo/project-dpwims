@@ -1,68 +1,78 @@
-import {jwtDecode} from "jwt-decode";
-export function useUserAuthorization() {
-    const token: string | null = localStorage.getItem("token");
-    const storedUserRaw = localStorage.getItem("user");
-    let storedUser: { id?: number; role?: string } | null = null;
+import { jwtDecode } from "jwt-decode";
 
-    if (storedUserRaw) {
-        try {
-            storedUser = JSON.parse(storedUserRaw);
-        } catch {
-            storedUser = null;
-        }
-    }
+interface DecodedToken {
+    sub?: string;
+    role: string;
+    exp: number;
+}
 
-    if (!token && !storedUser) return { user: null, isLoggedIn: false, role: null };
+interface StoredUser {
+    id?: number;
+    role?: string;
+}
 
+interface AuthUser {
+    userID: number;
+    role: string | null;
+    exp: number | null;
+}
+
+interface AuthResult {
+    user: AuthUser | null;
+    isLoggedIn: boolean;
+    role: string | null;
+}
+
+const EMPTY_RESULT: AuthResult = { user: null, isLoggedIn: false, role: null };
+
+function parseStoredUser(): StoredUser | null {
+    const raw = localStorage.getItem("user");
+    if (!raw) return null;
     try {
-        const decoded = token ? jwtDecode(token) as {
-            sub?: string;
-            role: string;
-            exp: number;
-        } : null;
-
-        const userIDFromToken = decoded?.sub ? Number(decoded.sub) : Number.NaN;
-        if (!Number.isNaN(userIDFromToken) && userIDFromToken > 0) {
-            const user = {
-                userID: userIDFromToken,
-                role: decoded?.role ?? storedUser?.role ?? null,
-                exp: decoded?.exp,
-            };
-
-            return {
-                user,
-                isLoggedIn: !!user,
-                role: user.role,
-            };
-        }
-
-        const userIDFromStorage = Number(storedUser?.id);
-        if (!Number.isNaN(userIDFromStorage) && userIDFromStorage > 0) {
-            const user = {
-                userID: userIDFromStorage,
-                role: storedUser?.role ?? null,
-                exp: decoded?.exp,
-            };
-
-            return {
-                user,
-                isLoggedIn: !!user,
-                role: user.role,
-            };
-        }
-
-        return { user: null, isLoggedIn: false, role: null };
+        return JSON.parse(raw);
     } catch {
-        if (storedUser !== null)
-        {
-            return storedUser?.id
-                ? { user: { userID: Number(storedUser.id), role: storedUser.role ?? null, exp: null }, isLoggedIn: true, role: storedUser.role ?? null }
-                : { user: null, isLoggedIn: false, role: null };
-        }
-        return { user: null, isLoggedIn: false, role: null };
+        return null;
+    }
+}
+
+function decodeToken(token: string | null): DecodedToken | null {
+    if (!token) return null;
+    try {
+        return jwtDecode(token) as DecodedToken;
+    } catch {
+        return null;
+    }
+}
+
+function buildResultFromID(userID: number, role: string | null, exp: number | null): AuthResult {
+    if (Number.isNaN(userID) || userID <= 0) return EMPTY_RESULT;
+
+    const user: AuthUser = { userID, role, exp };
+    return { user, isLoggedIn: true, role: user.role };
+}
+
+export function useUserAuthorization(): AuthResult {
+    const token = localStorage.getItem("token");
+    const storedUser = parseStoredUser();
+
+    if (!token && !storedUser) return EMPTY_RESULT;
+
+    const decoded = decodeToken(token);
+
+    if (decoded?.sub) {
+        const userIDFromToken = Number(decoded.sub);
+        const role = decoded.role ?? storedUser?.role ?? null;
+        const result = buildResultFromID(userIDFromToken, role, decoded.exp ?? null);
+        if (result.isLoggedIn) return result;
     }
 
+    if (storedUser?.id) {
+        const userIDFromStorage = Number(storedUser.id);
+        const role = storedUser.role ?? null;
+        return buildResultFromID(userIDFromStorage, role, decoded?.exp ?? null);
+    }
+
+    return EMPTY_RESULT;
 }
 
 export const user_authorization = useUserAuthorization;
-

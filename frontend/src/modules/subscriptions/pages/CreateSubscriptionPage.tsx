@@ -49,8 +49,9 @@ export default function CreateSubscriptionPage() {
 
                 <div className="space-y-4 bg-white p-6 rounded-xl shadow border">
                     <div>
-                        <label className="block text-sm font-medium">User ID</label>
+                        <label htmlFor="userId" className="block text-sm font-medium">User ID</label>
                         <input
+                            id="userId"
                             type="number"
                             value={userId}
                             onChange={(e) => setUserId(Number(e.target.value))}
@@ -59,8 +60,9 @@ export default function CreateSubscriptionPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Train UUID</label>
+                        <label htmlFor="trainUUID" className="block text-sm font-medium">Train UUID</label>
                         <input
+                            id="trainUUID"
                             type="text"
                             value={trainUUID}
                             onChange={(e) => setTrainUUID(e.target.value)}
@@ -69,8 +71,9 @@ export default function CreateSubscriptionPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Schedule ID</label>
+                        <label htmlFor="scheduleId" className="block text-sm font-medium">Schedule ID</label>
                         <input
+                            id="scheduleId"
                             type="number"
                             value={scheduleId}
                             onChange={(e) => setScheduleId(Number(e.target.value))}
