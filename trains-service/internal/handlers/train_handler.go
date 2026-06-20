@@ -103,7 +103,6 @@ func (trainHandler *TrainHandler) UpdateTrain(writer http.ResponseWriter, reques
 		http.Error(writer, "invalid request body", http.StatusBadRequest)
 		return
 	}
-	log.Printf("PATCH BODY: %+v\n\n", updateTrainRequest)
 	updateTrain, err := trainHandler.service.UpdateTrain(request.Context(), idString, &updateTrainRequest)
 	if err != nil {
 		if errors.Is(err, repositories.ErrTrainNotFound) {
