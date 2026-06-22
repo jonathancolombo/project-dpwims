@@ -23,6 +23,9 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY print-url.sh /print-url.sh
 
+RUN sed -i 's/\r$//' /print-url.sh || true && \
+    chmod +x /print-url.sh
+
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
